@@ -1,4 +1,4 @@
-name: Generate and commit Go, Python and TypeScript bindings
+name: Generate and commit Go, Python, TypeScript and Java bindings
 
 on:
   push:
@@ -11,6 +11,7 @@ on:
       - 'bindings/**/go/**'
       - 'bindings/**/python/**'
       - 'bindings/**/typescript/**'
+      - 'bindings/**/java/**'
       - 'tooling/extension-bindings/packages.yaml'
       - 'tooling/extension-bindings/toolchain.lock.yaml'
       - 'tooling/extension-bindings/model/**'
@@ -18,12 +19,13 @@ on:
       - 'tooling/extension-bindings/emitters/go/**'
       - 'tooling/extension-bindings/emitters/python/**'
       - 'tooling/extension-bindings/emitters/typescript/**'
+      - 'tooling/extension-bindings/emitters/java/**'
       - 'tooling/extension-bindings/orchestrator/**'
       - 'tooling/extension-bindings/ci/**'
   workflow_dispatch:
     inputs:
       targets:
-        description: 'Comma-separated package-key:go, package-key:python, or package-key:typescript targets, or all; empty uses automatic targets'
+        description: 'Comma-separated package-key:go, package-key:python, package-key:typescript, or package-key:java targets, or all; empty uses automatic targets'
         type: string
         default: ''
 
@@ -42,7 +44,7 @@ jobs:
     permissions:
       contents: write
     env:
-      INPUT_TARGETS: ${{ inputs.targets || vars.BINDING_GENERATION_TARGETS || 'common-integrations:go,env-configuration:go,common-integrations:python,env-configuration:python,common-integrations:typescript,env-configuration:typescript' }}
+      INPUT_TARGETS: ${{ inputs.targets || vars.BINDING_GENERATION_TARGETS || 'common-integrations:go,env-configuration:go,common-integrations:python,env-configuration:python,common-integrations:typescript,env-configuration:typescript,common-integrations:java,env-configuration:java' }}
       GOTOOLCHAIN: local
     steps:
       - name: Check out current main
@@ -62,6 +64,7 @@ jobs:
         env:
           HAS_PYTHON: ${{ steps.tools.outputs.has-python }}
           HAS_TYPESCRIPT: ${{ steps.tools.outputs.has-typescript }}
+          HAS_JAVA: ${{ steps.tools.outputs.has-java }}
         run: |
           set -euo pipefail
           python -m unittest discover -s tooling/extension-bindings/ci -p 'test_*.py'
@@ -77,6 +80,9 @@ jobs:
           if [[ "$HAS_TYPESCRIPT" == true ]]; then
             npm --prefix tooling/extension-bindings/emitters/typescript test
           fi
+          if [[ "$HAS_JAVA" == true ]]; then
+            gradle --project-dir tooling/extension-bindings/emitters/java test --console=plain
+          fi
 
       - name: Generate and verify bindings
         env:
@@ -88,6 +94,8 @@ jobs:
           python tooling/extension-bindings/ci/generate-python.py update --targets "$INPUT_TARGETS" \
             --rc "$RC" --core-schema "$CORE_SCHEMA"
           python tooling/extension-bindings/ci/generate-typescript.py update --targets "$INPUT_TARGETS" \
+            --rc "$RC" --core-schema "$CORE_SCHEMA"
+          python tooling/extension-bindings/ci/generate-java.py update --targets "$INPUT_TARGETS" \
             --rc "$RC" --core-schema "$CORE_SCHEMA"
 
       - name: Commit verified generated source to main
