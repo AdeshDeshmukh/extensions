@@ -1,0 +1,40 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    pom.xml: 2754060f40a3c96f5cdf98904af51b954acedc91e5babe6ff06f1c8aa60ad9d3
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/ApiField.java: 4f2e362bf3babbdaecd4c5248965291c1ee8669c378eb3a921f3ab4f20e636f3
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Bindings.java: 587788b0005780589a5dffa6af14dc5863bb6f5b7508dbf527c0d46bd995e6be
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/CacheField.java: fa2d6b56a30c0b3ad93154275250360d44acc9e5505c543e572f1e62f10ed951
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/DatastoreField.java: ef0a7d4cd1aef3c99f3d931d090ec1569e0e88dd533d6449dc93d5a690d2ac50
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Declaration.java: 90795efb1ef7ab85ffde039c9196a0a522c77c6b31bf0f86ed95affb2707f833
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Document.java: b83bab6e5464ef3140819b651453f557c831c50e58195e71c7e6671e2f763f83
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/DocumentEngine.java: 25106bcdb3edf3215bc46802c701cce1ffb2664245f37813034efa16629c2edd
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Format.java: f4cba8b00768fa8bb9614e3060277ba37876cb8bef846384a234c0ee79807c1d
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Http.java: fa338baed3012f72ac1c7d930c9643b8bf73795723d8e6d7aaa51e168b28c9c1
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/HttpOperations.java: a718dae1ecbccbdaff93f5a9a66fd0fb26598f84c15b9b060be49439ce5ac473
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/HttpOperationsItem.java: f9f458930dc91b1ba8e4e5c322b154a33392915fac86f0119eba22dccc30e845
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/KeyValue.java: b876dfbdc8203ff5d4dee0e4896285f61d14a7434bf552be62c9c5f869dd27b6
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/KeyValueEngine.java: d0aeb5fa0806f53d9a02f8420097e15f3f9f24abe48a71236b6206382365b3d2
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Method.java: 8430b224aec514aa2fd3cdc199b295bc5c0b7ab0830a26ba141c79a0d72f728a
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Relational.java: 9413208cb4ec12a19684e1c7a3f4c285d1b24e652bc238aa95e30796791a29cc
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/RelationalEngine.java: 23ec8fa0b24fa9af43e3d2722359d09dfd7bc1865fdbfeeeae16a37cd529bd5d
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/RequestBodySchema.java: e8015cf739039a50fc22e64e8f7e325035d4b13b808651ab375ce309d0b9e830
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/RequestBodySchemaVariant1.java: 68fdea01127059ba1ea24d76315d322e1a2cdfc8588a1f89c47fb4f6efea6acf
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/RequestBodySchemaVariant2.java: b2f7325d341b11385adae3332a166829afad138ababfa337fa92b3eecb9c83e9
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/RequestBodySchemaVariant3.java: 6a14793f9fa0d945f7bef8c2c30d20b2c317b637be4ed1a4ec8d9ff78928d959
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/ResponseSchema.java: fa0bd64a429004aa149ea44f73dabe2c1831d9a5c3a2e8b2611c69385b000ff1
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/ResponseSchemaVariant1.java: 6aa16645ad5075b3fe73f30cc7c9aa1e036860e646f17b1efb749f5f946c2740
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/ResponseSchemaVariant2.java: 8c5e88f423426a3fa8bedfb079c38c14db08019c55f3fc6d064a7b80dee85160
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/ResponseSchemaVariant3.java: 4fd4ee07c208c844f65a927855c6676595a756e848d3825981d5a61ee5bc0415
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/SimpleSchema.java: 745b4d169976ffcabb6493eb26113cdca94647b6a2f2ba6a515133b83f51730e
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/SimpleSchemaVariant1.java: 5e2d438456ae0d85d016a64fd883452c426dff71bd9a976e9178ef089938e24c
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/SimpleSchemaVariant2.java: 157f3b7176a265819db5fb6eedae6aac9f9d50ad48ffd25b77df2825ea66f3e6
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/SimpleSchemaVariant3.java: ae912a2383bf51f9ae8b09f0c4c778b009a6f4adbbe764fbcaf683fc18a4bcbf
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Smtp.java: 0ec72fe82fee62ea9fff323eaca028fb42e221ffef187ce1857e36438a7ce515
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/SmtpOperations.java: e49c999651f43bb77b3be545c6af0aa0fc0facf367e55d7f309acdc13baaa686
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/SmtpOperationsItem.java: 61b8c1ae1aed4929e7fd7d88f7e13597af88f37965cc8e0b1d3425a0742fd8b3
+    src/main/java/io/runtimeconditions/bindings/commonintegrations/Spec.java: 248b899cf2c846deb7399b7c79d9dbc198f34bee872162e874fe43397bf312d3
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: 4d09a0dcccff6f3748fcc3edb32523dd98f30ce83134c828b59042eb0c5d311a
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 37dffcb270b79d89d5317300228a34ad564721a01dfeed1b808f77f139a1c908
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: c3298bde1c5e23a938cbd5ab6334ae5442aec577b9a9cc3b9787904f6499da33
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: a5d39ee3d57d40dcf9f3f82d812096b5668d133af916d46c766154ab57ece2b5
