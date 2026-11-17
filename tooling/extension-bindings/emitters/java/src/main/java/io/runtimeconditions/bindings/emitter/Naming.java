@@ -273,7 +273,9 @@ public final class Naming {
                 if (group.size() > 1 || reserved != null) {
                     List<Symbol> pair = new ArrayList<>(group);
                     pair.sort(Comparator.comparing(Symbol::coordinate));
-                    if (reserved != null) {
+                    // A symbol that a schema chose the name of, rather than the tooling, can be told apart by the names
+                    // around it. A fixed one cannot, so a clash with a reserved Java name or another fixed name is an error.
+                    if (reserved != null && group.stream().anyMatch(Symbol::fixed)) {
                         throw fail(
                                 "java-naming",
                                 "RCJ2001",
@@ -307,6 +309,10 @@ public final class Naming {
                     if (levels.get(item.key()) == item.parents().size()) {
                         List<Symbol> pair = new ArrayList<>(collision.getValue());
                         pair.sort(Comparator.comparing(Symbol::coordinate));
+                        String other =
+                                pair.size() > 1
+                                        ? pair.get(1).coordinate()
+                                        : RESERVED.getOrDefault(collision.getKey(), "another symbol");
                         throw fail(
                                 "java-naming",
                                 "RCJ2001",
@@ -316,7 +322,7 @@ public final class Naming {
                                         + "' conflicts after full path: "
                                         + pair.get(0).coordinate()
                                         + " and "
-                                        + pair.get(1).coordinate());
+                                        + other);
                     }
                     levels.put(item.key(), levels.get(item.key()) + 1);
                 }

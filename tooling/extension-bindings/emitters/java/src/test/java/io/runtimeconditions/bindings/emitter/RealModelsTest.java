@@ -74,4 +74,30 @@ class RealModelsTest {
             delete(workspace);
         }
     }
+
+    /**
+     * The other first-party extensions have no dependencies. Two of them name a property "optional", which asks for a type
+     * named Optional, a name the generated source must not take from java.util.
+     */
+    @Test
+    void theOtherFirstPartyModelsEmitPackagesThatCompileIncludingPropertiesNamedLikeJavaTypes() throws Exception {
+        List<String> names = List.of("aws-s3", "google-analytics", "kubernetes-api", "nats-service", "source-control");
+        Path workspace = temporaryDirectory();
+        try {
+            for (String name : names) {
+                Path path = TOOLING.resolve("../../bindings/" + name + "/go/runtimeconditions.binding-model.yaml").normalize();
+                assumeTrue(Files.exists(path));
+                ObjectNode model = Model.load(path);
+                EmissionPlan plan = Plan.build(model, target(name, "io.runtimeconditions." + name.replace("-", ""), model, List.of()));
+                Path directory = workspace.resolve(name);
+                Source.emitPackage(plan, model, directory);
+                Verification.verifyPackage(plan, directory, model);
+                Files.writeString(directory.resolve(Source.sourcePath(plan, "Exercise")), Conformance.source(plan, model));
+                Compiled compiled = TestSupport.compile(List.of(directory.resolve("src/main/java")), workspace.resolve(name + "-classes"));
+                assertTrue(compiled.success(), name + ": " + compiled.output());
+            }
+        } finally {
+            delete(workspace);
+        }
+    }
 }
