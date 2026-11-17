@@ -1,11 +1,3 @@
-- case: reserved-global
-  positiveCase: 01-owned-kind-interface
-  expected:
-    category: java-naming
-    code: RCJ2001
-    coordinate: conformance-owned-kind-interface
-    jsonPointer: ''
-    message: "symbol 'Record' conflicts: https://runtimeconditions.io/conformance/owned-kind-interface:1.0.0#schema:service-http/properties/region and java-global:Record"
 - case: fixed-function-collision
   positiveCase: 01-owned-kind-interface
   expected:

@@ -64,6 +64,22 @@ class NamingTest {
     }
 
     @Test
+    void aSymbolNamedBySchemaThatClashesWithAReservedJavaNameIsQualifiedByItsParents() {
+        // google-analytics and source-control have a property named optional, which asks for a type named Optional.
+        Map<String, String> names =
+                Naming.allocateSymbols("pkg", List.of(Symbol.scoped("a", "c1", "optional", Style.PASCAL, List.of("git", "source-control"))));
+        assertEquals("GitOptional", names.get("a"));
+        // Qualifying one level is enough. A name that is reserved at every level has nothing left to qualify with.
+        assertEquals(
+                "RCJ2001",
+                assertThrows(
+                                DiagnosticError.class,
+                                () -> Naming.allocateSymbols("pkg", List.of(Symbol.scoped("a", "c1", "optional", Style.PASCAL, List.of()))))
+                        .diagnostic()
+                        .code());
+    }
+
+    @Test
     void aCollisionThatSurvivesTheFullPathStopsEmissionWithoutRenaming() {
         DiagnosticError error =
                 assertThrows(
