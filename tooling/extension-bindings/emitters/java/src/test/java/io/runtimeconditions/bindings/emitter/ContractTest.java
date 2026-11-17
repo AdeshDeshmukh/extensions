@@ -83,10 +83,14 @@ class ContractTest {
                     List.of(
                             "01-owned-kind-interface",
                             "02-additive-field",
+                            "03-transitive-closure",
                             "06-recursive-reference",
+                            "07-object-alternatives",
                             "08-heterogeneous-union",
                             "09-collections-and-maps",
-                            "10-scoped-domains-collisions")) {
+                            "10-scoped-domains-collisions",
+                            "11-source-name-preservation",
+                            "13-dependency-schema-only")) {
                 Built built = buildCase(name, workspace, null);
                 var errors = MANIFEST.validate(manifestOf(built));
                 assertTrue(errors.isEmpty(), name + ": " + errors);
