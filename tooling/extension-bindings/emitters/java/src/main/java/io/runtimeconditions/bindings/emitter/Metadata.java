@@ -30,6 +30,7 @@ import java.util.TreeMap;
 import org.snakeyaml.engine.v2.api.Dump;
 import org.snakeyaml.engine.v2.api.DumpSettings;
 import org.snakeyaml.engine.v2.common.FlowStyle;
+import org.snakeyaml.engine.v2.schema.CoreSchema;
 
 public final class Metadata {
     public static final String EMITTER_NAME = property("name");
@@ -423,6 +424,9 @@ public final class Metadata {
         Map<String, Object> map = Json.MAPPER.convertValue(document, new TypeReference<LinkedHashMap<String, Object>>() {});
         DumpSettings settings =
                 DumpSettings.builder()
+                        // Quote every string the YAML 1.2 core schema would read as null, a boolean, or a number
+                        // (NULL, Null, ~, true, 1), so the manifest means the same to a parser of any language.
+                        .setSchema(new CoreSchema())
                         .setDefaultFlowStyle(FlowStyle.BLOCK)
                         .setIndent(2)
                         .setIndicatorIndent(2)
