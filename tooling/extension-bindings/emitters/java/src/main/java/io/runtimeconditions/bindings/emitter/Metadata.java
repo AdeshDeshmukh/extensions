@@ -182,6 +182,9 @@ public final class Metadata {
                 add(locations, item);
             }
         }
+        for (JsonNode item : Json.list(vocabulary.path("interfaces"))) {
+            locations.shapes.putIfAbsent(modelLocation(item), Plan.interfaceShape(item));
+        }
         for (JsonNode scope : Json.list(model.path("scopes"))) {
             if (scope.has("projection")) {
                 walk(locations, scope.get("projection"));
@@ -362,6 +365,26 @@ public final class Metadata {
                 }
                 rootBindings.add(binding);
             }
+        }
+        // An interface type no schema of the extension describes has a type of its own, and is the interface of its kind.
+        for (JsonNode item : Json.list(model.path("vocabulary").path("interfaces"))) {
+            String nativeName = plan.names().get("type:interface:" + item.path("coordinate").asText());
+            String kind = item.path("kind").asText();
+            if (nativeName == null || !item.path("owner").asText().equals(rootId) || !declarations.containsKey(kind)) {
+                continue;
+            }
+            ObjectNode binding = Json.object();
+            binding.put("role", "interface");
+            binding.set("modelRef", modelRef(item.path("provenance")));
+            binding.put("declarationCoordinate", declarations.get(kind).path("coordinate").asText());
+            ObjectNode scope = binding.putObject("scope");
+            scope.put("kind", kind);
+            scope.put("interfaceType", item.path("type").asText());
+            binding.put("sourceName", item.path("type").asText());
+            binding.putArray("path").addObject().put("name", "interface");
+            binding.putObject("value").put("type", nativeName);
+            binding.put("fixedInterfaceType", item.path("type").asText());
+            rootBindings.add(binding);
         }
         rootBindings.sort(
                 (a, b) -> {

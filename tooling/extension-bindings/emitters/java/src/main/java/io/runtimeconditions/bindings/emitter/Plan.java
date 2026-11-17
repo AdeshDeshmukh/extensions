@@ -3,6 +3,7 @@ package io.runtimeconditions.bindings.emitter;
 import static io.runtimeconditions.bindings.emitter.DiagnosticError.fail;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.runtimeconditions.bindings.emitter.Naming.Style;
 import io.runtimeconditions.bindings.emitter.Naming.Symbol;
 import io.runtimeconditions.bindings.emitter.Target.Dependency;
@@ -189,6 +190,18 @@ public final class Plan {
     static String location(JsonNode item) {
         JsonNode provenance = item.path("provenance");
         return provenance.path("coordinate").asText() + (provenance.has("jsonPointer") ? provenance.path("jsonPointer").asText() : "");
+    }
+
+    /**
+     * The shape of the interface type a vocabulary entry declares when no schema of the extension describes it: an
+     * object with no properties, located where the vocabulary declares the interface type.
+     */
+    static ObjectNode interfaceShape(JsonNode interfaceType) {
+        ObjectNode shape = Json.object();
+        shape.put("kind", "object");
+        shape.set("provenance", interfaceType.path("provenance").deepCopy());
+        shape.putArray("properties");
+        return shape;
     }
 
     private record RawField(
@@ -501,6 +514,7 @@ public final class Plan {
                                 item.path("segments").path(0).path("name").asText()));
             }
         }
+        Set<List<String>> describedInterfaces = new HashSet<>();
         Map<List<String>, JsonNode> scopeProjections = new LinkedHashMap<>();
         for (JsonNode item : Json.list(model.path("scopes"))) {
             scopeProjections.put(
@@ -550,6 +564,9 @@ public final class Plan {
             for (JsonNode property : projectionProperties) {
                 String propertyName = property.path("name").asText();
                 boolean isInterface = propertyName.equals("interface") && interfaceType != null && !interfaceType.isEmpty();
+                if (isInterface) {
+                    describedInterfaces.add(list(kind, interfaceType));
+                }
                 String fieldSource = isInterface ? interfaceType : propertyName;
                 List<String> fieldParents = new ArrayList<>();
                 if (isInterface) {
@@ -618,6 +635,29 @@ public final class Plan {
                     builder.referencedDefinitions.add(definitionKey);
                 }
             }
+        }
+
+        // An interface type the extension declares but no schema of its own describes, such as a process with no
+        // fields, still needs a type to construct, or a declaration of its kind could never name that interface.
+        for (JsonNode item : Json.list(vocabulary.path("interfaces"))) {
+            String kind = item.path("kind").asText();
+            String interfaceType = item.path("type").asText();
+            if (!item.path("owner").asText().equals(root) || describedInterfaces.contains(list(kind, interfaceType))) {
+                continue;
+            }
+            MarkerReference marker = null;
+            if (ownedKinds.containsKey(kind)) {
+                String declarationCoordinate = ownedKinds.get(kind);
+                marker = new MarkerReference(root, "protocol:" + declarationCoordinate, markerMethod(root, declarationCoordinate), null);
+            } else if (importedKinds.containsKey(kind)) {
+                ImportedRaw owner = importedKinds.get(kind);
+                marker = new MarkerReference(owner.owner(), owner.protocolKey(), owner.method(), owner.providerPackage());
+            }
+            String coordinate = item.path("coordinate").asText();
+            if (marker == null) {
+                throw fail("model", "RCJ1011", coordinate, "kind '" + kind + "' has no declaration contract");
+            }
+            builder.registerShape(interfaceShape(item), "type:interface:" + coordinate, interfaceType, List.of("interface", interfaceType, kind), marker, null);
         }
 
         // Planning a definition can reference more definitions. Each pass removes the definitions it
