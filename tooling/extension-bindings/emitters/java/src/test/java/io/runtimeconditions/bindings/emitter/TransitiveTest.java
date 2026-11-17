@@ -119,8 +119,17 @@ final class TransitiveTest {
             assertTrue(root.toString().contains("import io.runtimeconditions.transitive.leaf.WorkerField;"), root.toString());
             String pom = Files.readString(workspace.resolve("root/pom.xml"));
             assertTrue(pom.contains("<artifactId>leaf</artifactId>") && pom.contains("<artifactId>middle</artifactId>"), pom);
-            // The middle package declares nothing of its own, so it has no Java source directory.
-            assertTrue(!Files.exists(workspace.resolve("middle/src/main/java")));
+            // The middle extension declares the interface type process but describes it with no schema. It still gets a
+            // type to construct, which implements the marker of the leaf's declaration, and it is that kind's interface.
+            Path process = workspace.resolve("middle/src/main/java/io/runtimeconditions/transitive/middle/Process.java");
+            assertTrue(Files.exists(process), "the interface type of an extension without schemas has no generated type");
+            String processSource = Files.readString(process);
+            assertTrue(processSource.contains("import io.runtimeconditions.transitive.leaf.WorkerField;"), processSource);
+            assertTrue(processSource.contains("public record Process() implements WorkerField"), processSource);
+            String middleManifest = Files.readString(workspace.resolve("middle").resolve(Metadata.MANIFEST_PATH));
+            assertTrue(middleManifest.contains("role: interface"), middleManifest);
+            assertTrue(middleManifest.contains("fixedInterfaceType: process"), middleManifest);
+            assertTrue(middleManifest.contains("declarationCoordinate: kind:worker"), middleManifest);
             TestSupport.Compiled compiled = compile(sources, workspace.resolve("classes"));
             assertTrue(compiled.success(), compiled.output());
         } finally {

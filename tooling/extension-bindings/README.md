@@ -153,9 +153,22 @@ python3 tooling/extension-bindings/ci/publish.py configure --targets env-configu
 
 The Java emitter is a standalone program under `emitters/java/`. It needs JDK 21 and
 Gradle 8.14.2, the version pinned in `toolchain.lock.yaml` and used by CI; install
-both before you start (the build selects its JDK through a Gradle toolchain). The
-orchestrator does not run the Java emitter yet, so the three inputs the orchestrator
-supplies to the other emitters are supplied by hand:
+both before you start (the build selects its JDK through a Gradle toolchain).
+
+The committed `bindings/<package>/java` trees are generated like the TypeScript ones:
+`ci/generate-java.py` normalizes the model with `rc bindings normalize`, runs the emitter,
+adds the model and the root extension definition next to the manifest, and writes the file
+manifests. The `Generate and commit` workflow runs it, and `ci/generate-java.py check`
+compares a clean generation with the committed tree. A package carries its resources in the
+`runtimeconditions` directory of its jar, with a file manifest that lists the digest of each:
+
+```sh
+gradle -p tooling/extension-bindings/emitters/java installDist
+python tooling/extension-bindings/ci/generate-java.py update --targets common-integrations:java \
+  --rc /tmp/rc --core-schema /tmp/core-schema.yaml
+```
+
+To run the emitter by hand, supply the three inputs the generation script otherwise supplies:
 
 - the normalized binding model, which the shared normalizer writes. The committed
   conformance models under `model/conformance/expected/` are ready-made examples;

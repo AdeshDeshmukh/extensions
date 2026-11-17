@@ -30,6 +30,7 @@ import java.util.TreeMap;
 import org.snakeyaml.engine.v2.api.Dump;
 import org.snakeyaml.engine.v2.api.DumpSettings;
 import org.snakeyaml.engine.v2.common.FlowStyle;
+import org.snakeyaml.engine.v2.schema.CoreSchema;
 
 public final class Metadata {
     public static final String EMITTER_NAME = property("name");
@@ -180,6 +181,9 @@ public final class Metadata {
             for (JsonNode item : Json.list(vocabulary.path(group))) {
                 add(locations, item);
             }
+        }
+        for (JsonNode item : Json.list(vocabulary.path("interfaces"))) {
+            locations.shapes.putIfAbsent(modelLocation(item), Plan.interfaceShape(item));
         }
         for (JsonNode scope : Json.list(model.path("scopes"))) {
             if (scope.has("projection")) {
@@ -362,6 +366,26 @@ public final class Metadata {
                 rootBindings.add(binding);
             }
         }
+        // An interface type no schema of the extension describes has a type of its own, and is the interface of its kind.
+        for (JsonNode item : Json.list(model.path("vocabulary").path("interfaces"))) {
+            String nativeName = plan.names().get("type:interface:" + item.path("coordinate").asText());
+            String kind = item.path("kind").asText();
+            if (nativeName == null || !item.path("owner").asText().equals(rootId) || !declarations.containsKey(kind)) {
+                continue;
+            }
+            ObjectNode binding = Json.object();
+            binding.put("role", "interface");
+            binding.set("modelRef", modelRef(item.path("provenance")));
+            binding.put("declarationCoordinate", declarations.get(kind).path("coordinate").asText());
+            ObjectNode scope = binding.putObject("scope");
+            scope.put("kind", kind);
+            scope.put("interfaceType", item.path("type").asText());
+            binding.put("sourceName", item.path("type").asText());
+            binding.putArray("path").addObject().put("name", "interface");
+            binding.putObject("value").put("type", nativeName);
+            binding.put("fixedInterfaceType", item.path("type").asText());
+            rootBindings.add(binding);
+        }
         rootBindings.sort(
                 (a, b) -> {
                     int order = text(a.path("declarationCoordinate").asText(), b.path("declarationCoordinate").asText());
@@ -423,6 +447,9 @@ public final class Metadata {
         Map<String, Object> map = Json.MAPPER.convertValue(document, new TypeReference<LinkedHashMap<String, Object>>() {});
         DumpSettings settings =
                 DumpSettings.builder()
+                        // Quote every string the YAML 1.2 core schema would read as null, a boolean, or a number
+                        // (NULL, Null, ~, true, 1), so the manifest means the same to a parser of any language.
+                        .setSchema(new CoreSchema())
                         .setDefaultFlowStyle(FlowStyle.BLOCK)
                         .setIndent(2)
                         .setIndicatorIndent(2)

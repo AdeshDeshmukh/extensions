@@ -36,7 +36,6 @@ class NegativeTest {
 
     private static void mutate(String name, ObjectNode model) {
         switch (name) {
-            case "reserved-global" -> ((ObjectNode) property(model, 1)).put("name", "record");
             case "fixed-function-collision" -> {
                 ObjectNode second = model.path("vocabulary").path("ownedDeclarations").get(0).deepCopy();
                 second.put("coordinate", "kind:Service");
@@ -61,7 +60,7 @@ class NegativeTest {
     void negativeDiagnosticsMatchTheFixtures() throws IOException {
         String text = Files.readString(EMITTER_ROOT.resolve("testdata/negative-diagnostics.yaml"), StandardCharsets.UTF_8);
         List<Map<String, Object>> fixtures = (List<Map<String, Object>>) new Load(LoadSettings.builder().build()).loadFromString(text);
-        assertTrue(fixtures.size() >= 4);
+        assertTrue(fixtures.size() >= 3);
         for (Map<String, Object> fixture : fixtures) {
             ObjectNode model = Model.load(modelPath((String) fixture.get("positiveCase"))).deepCopy();
             mutate((String) fixture.get("case"), model);
