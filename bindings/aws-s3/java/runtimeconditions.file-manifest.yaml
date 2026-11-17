@@ -1,0 +1,24 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    pom.xml: 8a81e496aa648c7505b75f939b34215c33e46c0ac072d8f04a87b4bfb76523f4
+    src/main/java/io/runtimeconditions/bindings/awss3/AwsS3Field.java: 81d5ea318d0f20b33b15a4e605353172ea139a02e70427644107094e9b7578db
+    src/main/java/io/runtimeconditions/bindings/awss3/Bindings.java: 198739497a47781b609536412b36c9599d3f59feb393589e82dc289fcd909bbc
+    src/main/java/io/runtimeconditions/bindings/awss3/Bucket.java: 52b7d3da003ce02914283a8a781c0e0843a785e83bf87b78570417569277d691
+    src/main/java/io/runtimeconditions/bindings/awss3/BucketOperations.java: 4e0699d55926ca6eeecfec8ad70bc876ca5b1518c1cb043e2db50f283c48453a
+    src/main/java/io/runtimeconditions/bindings/awss3/BucketOperationsItem.java: 7281eed1af4fa3a87ea7c1d7af45dc311b4bdc237283a98bd2bc819678e6ae81
+    src/main/java/io/runtimeconditions/bindings/awss3/BucketOperationsItemName.java: 861ba0fc0881823c75ec4fd8469c0a5f090f807598c3e97aa949f977daf1a511
+    src/main/java/io/runtimeconditions/bindings/awss3/Declaration.java: a6b488a634b7d7d89e99f2ee1c937784aefbd65359da14bd05b53e78d664f6e9
+    src/main/java/io/runtimeconditions/bindings/awss3/ObjectLambda.java: 928d88d25f9a892961c3e44d430fd6d2045dcc448bdd2cb137e99923343fb9ae
+    src/main/java/io/runtimeconditions/bindings/awss3/ObjectLambdaOperations.java: 870595e9d7f5a39587f0953a365078a00ef2cd560789bb9201064d226dd7f4aa
+    src/main/java/io/runtimeconditions/bindings/awss3/ObjectLambdaOperationsItem.java: 76438c47bf5b35963b96f77d424012fd4aea9d816c768e316bf9e4ba96862ed6
+    src/main/java/io/runtimeconditions/bindings/awss3/ObjectLambdaOperationsItemName.java: 33e2c12610da5915af0ecf28ac502cbc925f12b45ace0160441fbeb535a821de
+    src/main/java/io/runtimeconditions/bindings/awss3/Role.java: 0f311037f60830ae4343ae669b3cf46bc2247e3b8efbef9663a7d4c3e40b3a97
+    src/main/java/io/runtimeconditions/bindings/awss3/Service.java: 53f80e7c1f62988eb9398b887c72e61df7338384ade005915900f5a6e10cc699
+    src/main/java/io/runtimeconditions/bindings/awss3/ServiceOperations.java: 1611616a0ec3302d55c4b3be8525f9a6ab2bc69c1e1ffc8f83300b67ac25fad7
+    src/main/java/io/runtimeconditions/bindings/awss3/ServiceOperationsItem.java: 3d3f0bb62a36a64feaa2e74517db27f719969e7291113a8cc903d5cc0a7e10ee
+    src/main/java/io/runtimeconditions/bindings/awss3/ServiceOperationsItemName.java: b23b7009806a25845f53ad9a8ce840780987a94d15926407b2cb5c8303299599
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: 25d0b6f18d35d6e675408d79c1b127ba1fcb49d729300ddf225ff43b0f4be78a
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 1c283149066439e54308096e556c46aba5a1a5476ce68d828024949904ca3011
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: 777820d35404d8137ab96e3891d6c6d3c8b491d75accf94c7fdd6e89f6b4ce7b
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: be3ad4eed57389272e0dedf2159b059c4333c5ca6a5b816366241685192e04b9
