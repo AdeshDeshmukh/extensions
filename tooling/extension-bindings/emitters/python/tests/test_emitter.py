@@ -29,7 +29,7 @@ from runtimeconditions_binding_emitter import (
     render_resources,
     render_sources,
 )
-from runtimeconditions_binding_emitter.source import _conformance_source
+from conformance_source import _conformance_source
 from runtimeconditions_binding_emitter.metadata import (
     EMITTER_NAME,
     EMITTER_VERSION,
