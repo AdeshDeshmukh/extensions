@@ -1,0 +1,85 @@
+name: Publish Python bindings
+
+on:
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: 'Comma-separated package-key:python targets, or all'
+        type: string
+        default: ''
+      dry_run:
+        description: 'Build and check the packages without uploading them to PyPI'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: binding-publish-pypi
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      count: ${{ steps.build.outputs.count }}
+    env:
+      INPUT_TARGETS: ${{ inputs.targets }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12.10'
+
+      - name: Install the pinned build tooling
+        run: python -m pip install --disable-pip-version-check --no-deps -r tooling/extension-bindings/ci/python-tooling-requirements.txt
+
+      - name: Test the publication helper
+        run: python -m unittest discover -s tooling/extension-bindings/ci -p 'test_publish_pypi.py'
+
+      - name: Build and check the committed packages that PyPI does not have yet
+        id: build
+        run: python tooling/extension-bindings/ci/publish-pypi.py --targets "$INPUT_TARGETS" --dist dist
+
+      - name: Keep the built files for the upload
+        if: steps.build.outputs.count != '0'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: python-bindings
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    # The upload runs in its own job so that only it holds the PyPI identity, and only for a real run.
+    if: ${{ !inputs.dry_run && needs.build.outputs.count != '0' }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: pypi
+    permissions:
+      contents: read
+      # Trusted publishing: PyPI accepts this workflow's OIDC identity, so no token is stored.
+      id-token: write
+
+    steps:
+      - name: Download the built files
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: python-bindings
+          path: dist/
+
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: dist/
