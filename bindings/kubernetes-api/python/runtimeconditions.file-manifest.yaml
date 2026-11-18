@@ -1,0 +1,12 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    MANIFEST.in: d51e89c4c7c5e16c06d543c7aac32df945dd4f536e578b6ad089b68a6f489fca
+    pyproject.toml: d1bb61c39e5e5594cc2642a5d29ae3bd3d09db7221158b864df588fd694e854e
+    src/runtimeconditions_kubernetes_api/__init__.py: 9193e3c2a69e8f9fa09d55821db58b48ca320501f972eb1d82f158b095db0997
+    src/runtimeconditions_kubernetes_api/bindings.py: 25091177ced94ade990faa6582410e5da784cd46970da8cb307b3c9e27ff3e85
+    src/runtimeconditions_kubernetes_api/py.typed: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    src/runtimeconditions_kubernetes_api/runtimeconditions.binding-model.yaml: 24b03374b87ec36cca8ccf8cb1402b2ae639ed8bd10790852b1c7bc9eafa584d
+    src/runtimeconditions_kubernetes_api/runtimeconditions.binding-release.yaml: 142522bbfbe2749d71c2e344920f165c424934ef80eb7b447c881adc2d432283
+    src/runtimeconditions_kubernetes_api/runtimeconditions.bindings.yaml: 61730281317f14a62cfc56b5eb3cc026f65fdcd6c15f928ea29baaac3b6a1dc6
+    src/runtimeconditions_kubernetes_api/runtimeconditions.extension.yaml: ebbd6dcd866cbb65dd5ca7114f3872e66c12c6f6a0ef7cdd9e4e847cb4ca71d4

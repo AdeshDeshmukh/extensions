@@ -1,0 +1,39 @@
+apiVersion: runtimeconditions.io/binding-release/v1alpha1
+dependencyLock:
+    extensions:
+        - id: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          version: 0.1.0
+          sourceSha256: 3662d3b383cfc5d018b194b9b95faf559bdc17b60d76184f3b1b17674e96deef
+          semanticSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+          sourceBackend: catalog
+          sourceLocator: catalog:google/analytics/releases/0.1.0/runtimeconditions.extension.yaml
+kind: RuntimeConditionsBindingRelease
+model:
+    apiVersion: runtimeconditions.io/binding-model/v1alpha1
+    semanticSha256: a5d157645fe16f159e92ade062b40dd874752a7ad6f2f90c2d14a2474cb9c38d
+package:
+    coordinate: runtimeconditions-google-analytics
+    language: python
+    minimumPythonVersion: "3.12"
+    name: runtimeconditions_google_analytics
+    packageKey: google-analytics
+    publicationMode: registry
+    registryId: pypi
+    version: 0.1.0
+packageDependencies: []
+provenance:
+    mode: production
+    orchestrator:
+        name: rc
+        version: 0.1.0
+        sha256: 08044437569c5b03586552b73b93657ca6aded8fc7a9f58fb961a094f3753ad2
+    profiler:
+        name: python-rc-profiler
+        version: 0.4.0
+        sha256: 6382d2f2a48b79c1b9e90c4084062a30259e74942ec72264264f1a594826ced9
+    sourceDirectory: bindings/google-analytics/python
+    targetReleaseTag: bindings/google-analytics/python/v0.1.0
+rootExtension:
+    id: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+    version: 0.1.0
+    semanticSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9

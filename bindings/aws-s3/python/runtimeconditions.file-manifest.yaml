@@ -1,0 +1,12 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    MANIFEST.in: d51e89c4c7c5e16c06d543c7aac32df945dd4f536e578b6ad089b68a6f489fca
+    pyproject.toml: 15a760781517c8abe526620ebc8c21fc7212920a54ba16a2f21d8c107f0e5939
+    src/runtimeconditions_aws_s3/__init__.py: b8b851ec41119326f286309cec5c198ad9fa5ed78977482e63058c02c59fa72c
+    src/runtimeconditions_aws_s3/bindings.py: ca1865327eadbc3c7adbc8b3765fcca5ab82ecdd4cc3b603a219f1001d3aa543
+    src/runtimeconditions_aws_s3/py.typed: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    src/runtimeconditions_aws_s3/runtimeconditions.binding-model.yaml: 25d0b6f18d35d6e675408d79c1b127ba1fcb49d729300ddf225ff43b0f4be78a
+    src/runtimeconditions_aws_s3/runtimeconditions.binding-release.yaml: 4354620a4c52fb3697808a1b2c6b4a1df968e120961b1d3a75de1eaf7ed5dbaa
+    src/runtimeconditions_aws_s3/runtimeconditions.bindings.yaml: b0bd1693f650701f4430874e1a454a7f7c6b7b74b63f8968102826189f1307fd
+    src/runtimeconditions_aws_s3/runtimeconditions.extension.yaml: 777820d35404d8137ab96e3891d6c6d3c8b491d75accf94c7fdd6e89f6b4ce7b
