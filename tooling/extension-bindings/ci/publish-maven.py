@@ -9,6 +9,7 @@ presses Publish on the deployment. Versions already on Maven Central are never u
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 import tempfile
@@ -82,10 +83,55 @@ def already_published(coordinate: Coordinate) -> bool:
         raise
 
 
+def numbers(version: str) -> tuple[int, ...] | None:
+    """The numbers of a plain release version such as 0.1.0, or None for anything else."""
+    return tuple(int(part) for part in version.split(".")) if re.fullmatch(r"[0-9]+(?:\.[0-9]+)*", version) else None
+
+
+def in_range(version: str, spec: str) -> bool:
+    """Whether a release version satisfies a Maven version requirement: a version, or a range such as [0.1.0,0.2.0)."""
+    found = numbers(version)
+    if found is None:
+        return False
+    if spec[:1] not in "[(":
+        return found == numbers(spec)
+    match = re.fullmatch(r"([\[(])\s*([0-9.]*)\s*(?:(,)\s*([0-9.]*)\s*)?([\])])", spec)
+    if match is None:
+        raise ValueError(f"cannot read the version range {spec}")
+    opening, low, comma, high, closing = match.groups()
+    if not comma:
+        return opening == "[" and closing == "]" and found == numbers(low)
+    if low and (found < numbers(low) or (found == numbers(low) and opening == "(")):
+        return False
+    return not (high and (found > numbers(high) or (found == numbers(high) and closing == ")")))
+
+
+def metadata_versions(group: str, artifact: str) -> list[str]:
+    """The versions Maven Central lists for an artifact, or none when it is not there."""
+    url = f"{CENTRAL}/{group.replace('.', '/')}/{artifact}/maven-metadata.xml"
+    try:
+        with urllib.request.urlopen(url, timeout=30) as response:
+            root = ET.parse(response).getroot()
+    except urllib.error.HTTPError as error:
+        if error.code == 404:
+            return []
+        raise
+    return [(item.text or "").strip() for item in root.findall("./versioning/versions/version")]
+
+
+def available(dependency: Coordinate) -> bool:
+    """Whether Maven Central has a version that satisfies what a package depends on."""
+    group, artifact, spec = dependency
+    if spec[:1] not in "[(":
+        return already_published(dependency)
+    return any(in_range(version, spec) for version in metadata_versions(group, artifact))
+
+
 def publication_order(packages: dict[Coordinate, dict]) -> list[Coordinate]:
     """Order the selected packages so every one comes after the selected packages it depends on."""
     ordered: list[Coordinate] = []
     state: dict[Coordinate, int] = {}
+    by_name = {(group, artifact): (group, artifact, version) for group, artifact, version in packages}
 
     def visit(coordinate: Coordinate) -> None:
         if state.get(coordinate) == 2:
@@ -93,9 +139,10 @@ def publication_order(packages: dict[Coordinate, dict]) -> list[Coordinate]:
         if state.get(coordinate) == 1:
             raise ValueError(f"package dependency cycle at {':'.join(coordinate)}")
         state[coordinate] = 1
-        for dependency in sorted(packages[coordinate]["dependencies"]):
-            if dependency in packages:
-                visit(dependency)
+        for group, artifact, spec in sorted(packages[coordinate]["dependencies"]):
+            selected = by_name.get((group, artifact))
+            if selected is not None and in_range(selected[2], spec):
+                visit(selected)
         state[coordinate] = 2
         ordered.append(coordinate)
 
@@ -111,7 +158,7 @@ def run(command: list[str], cwd: Path) -> subprocess.CompletedProcess:
 def check_dependencies(coordinate: Coordinate, dependencies: list[Coordinate]) -> None:
     """A real upload is built against Maven Central, so what a package depends on must be public first."""
     for dependency in dependencies:
-        if not already_published(dependency):
+        if not available(dependency):
             raise ValueError(
                 f"{':'.join(coordinate)} depends on {':'.join(dependency)}, which is not on Maven Central yet. "
                 f"Publish it first, press Publish in the Portal at {DEPLOYMENTS}, wait until it is on Central, "
