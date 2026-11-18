@@ -1,14 +1,14 @@
-name: Publish Java bindings (placeholder, publishes nothing)
+name: Publish Java bindings
 
 on:
   workflow_dispatch:
     inputs:
       targets:
-        description: 'Comma-separated package-key:java targets, or all'
+        description: 'Comma-separated package-key:java targets, or all. A package must be public on Maven Central before one that depends on it is uploaded.'
         type: string
         default: ''
       dry_run:
-        description: 'Must stay true: the workflow is a placeholder and verifies and publishes nothing'
+        description: 'Build and check the packages without uploading them to Maven Central'
         type: boolean
         default: true
 
@@ -20,29 +20,84 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish:
+  check:
+    # Builds every selected package with its sources and Javadoc jars. It never sees the Maven Central credentials.
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      INPUT_TARGETS: ${{ inputs.targets }}
 
     steps:
-      - name: Reject real publication
-        if: ${{ !inputs.dry_run }}
-        run: |
-          echo "::error::Maven publication is not implemented. Run with dry_run enabled; nothing was published."
-          exit 1
-      - name: Record that nothing was verified or published
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python for the publication helper
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12.10'
+
+      - name: Install the helper dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+
+      - name: Set up the pinned JDK
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21.0.12'
+
+      - name: Test the publication helper
+        run: python -m unittest discover -s tooling/extension-bindings/ci -p 'test_publish_maven.py'
+
+      - name: Build and check the committed packages that Maven Central does not have yet
+        run: python tooling/extension-bindings/ci/publish-maven.py --targets "$INPUT_TARGETS"
+
+  publish:
+    # Signs and uploads in its own job, in the maven-central environment, so only it holds the credentials,
+    # and only for a real run. The Portal then validates the upload; nothing is public until someone presses
+    # Publish on the deployment at https://central.sonatype.com/publishing/deployments.
+    if: ${{ !inputs.dry_run }}
+    needs: check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment: maven-central
+    permissions:
+      contents: read
+    env:
+      INPUT_TARGETS: ${{ inputs.targets }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python for the publication helper
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12.10'
+
+      - name: Install the helper dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+
+      - name: Set up the pinned JDK, the Central Portal login, and the signing key
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21.0.12'
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Sign and upload the committed packages that Maven Central does not have yet
         env:
-          TARGETS: ${{ inputs.targets }}
-          DRY_RUN: ${{ inputs.dry_run }}
-        run: |
-          set -euo pipefail
-          {
-            echo "## Placeholder: nothing was verified or published"
-            echo
-            echo "Maven publication is not implemented. This run did not verify, build, or publish any package."
-            echo
-            echo "- targets: \`${TARGETS:-<none>}\`"
-            echo "- dry_run: \`${DRY_RUN}\`"
-          } >> "$GITHUB_STEP_SUMMARY"
-          echo "::notice::Placeholder only. No package was verified or published."
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: python tooling/extension-bindings/ci/publish-maven.py --targets "$INPUT_TARGETS" --execute
