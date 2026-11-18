@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
-    pom.xml: 8b290bd8b559ab9d6150149aac4a17374dd9f4bdc152e360f42ea0df709c5c15
+    pom.xml: fd4a2bd068afc0fd20b82bd4db17f28e6e2f0964f0c90bdea3ca9b49ea8a6e7e
     src/main/java/io/runtimeconditions/bindings/googleanalytics/Bindings.java: 9d803db2f2723ae90b22993c8dc5eb24ebba4c2671d5074d97f3f3b2c5410470
     src/main/java/io/runtimeconditions/bindings/googleanalytics/Configuration.java: 1e1c807f9542cea14e41c44620cc2d84a77d0689aa146c993837f082b7592f23
     src/main/java/io/runtimeconditions/bindings/googleanalytics/Declaration.java: 4f4e70b1a81dc0b4838b110c0e94acf4aefd9395399673c647d504b8f6e21e36
@@ -13,6 +13,6 @@ files:
     src/main/java/io/runtimeconditions/bindings/googleanalytics/Web.java: a0b1ace44bff175158f671897545f3339b5826f58f82a6c4dd78ee1c762335d2
     src/main/java/io/runtimeconditions/bindings/googleanalytics/WebOptional.java: 032585fe303de4e77e4e8cf21eb5b088a890dbbeb23e84f9108502c2d0bb1d8e
     src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: a3852d8aeb4d1e0019e1d93980302e1be3f0afb4eb1245938ac1f75a8272f92f
-    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: a7b417283083f7c80bbdbff6a7142e1da449dac870ac0e5b4a13e8bd12ca445a
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: ff678c51d60730902befc83c37ce67a37fd7a8cd5674ae30d67098f3a990eca8
     src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: 3662d3b383cfc5d018b194b9b95faf559bdc17b60d76184f3b1b17674e96deef
-    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: aa71e73bf8e1d9cd90e00cc6c7f502c4f7da55e4357692c358a41ee25e77ed87
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 87297923fc224eb5be9a2998a7308f6527542fa38bce90b195cd353c447e3c19

@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
-    pom.xml: fa5a1b8a06383c6e02a883ca640a047b377429e3180bc36375dc3fbb2ed9b199
+    pom.xml: b58e0a3d9a0e5d177f6ef45ca483eba25e7eebe186ab508c6a9db355085d1576
     src/main/java/io/runtimeconditions/bindings/kubernetesapi/Api.java: 1e814f2de0b814c26a2e4a3b5f1eb19bfaca4e0de2dd9e536cc14187e02a7136
     src/main/java/io/runtimeconditions/bindings/kubernetesapi/Bindings.java: c3546d66672931797ecd27d7b5f56cb86c9a917445f48dfa158f675e34506bf1
     src/main/java/io/runtimeconditions/bindings/kubernetesapi/Declaration.java: bf3ebe1e77f75ed7546d5ae4a05e4e240db6c332e4baa3aeb87946150c9be3f9
@@ -12,6 +12,6 @@ files:
     src/main/java/io/runtimeconditions/bindings/kubernetesapi/Scope.java: 2631eef2d396befa0fc7adefd1b8b43252e51087314695071f25e1cf3c8b0827
     src/main/java/io/runtimeconditions/bindings/kubernetesapi/Verb.java: bde6e3cc24bcfe0869e7ee48a3d2e44190246ecf3ef438891681e0b2a113fa67
     src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: 24b03374b87ec36cca8ccf8cb1402b2ae639ed8bd10790852b1c7bc9eafa584d
-    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: b6d8b09624f090e6ae29c1351601d6f4df55c296cbf6e6479b0364b9adaf5c2a
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 4a937ba984e5ec76c509d974d600dad5a921d7cc344fb7825ba0a58be5c205cd
     src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: ebbd6dcd866cbb65dd5ca7114f3872e66c12c6f6a0ef7cdd9e4e847cb4ca71d4
-    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 185536616c50e9c5d8e82a24599dc278f7e0ed3e161300bbe8a87bc02554ca18
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 0d27c6aabfdc809e274f8a4f3a3e71fa5b919b613c0ae5c81c06aba8a099529a
