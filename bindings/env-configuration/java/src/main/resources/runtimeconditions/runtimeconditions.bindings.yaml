@@ -3,7 +3,7 @@ apiVersion: runtimeconditions.io/bindings/v1alpha2
 kind: RuntimeConditionsBindingManifest
 generated:
   nonEditable: true
-  emitter: runtimeconditions-binding-emitter-java@sha256:7e0f69affcf06a2c4fbb8d57eea1ed4d053e889f453d1fef8fa7439094aa2c6e
+  emitter: runtimeconditions-binding-emitter-java@sha256:41dbfd6b9504bf99f37e2384433ae0e21df928a18f6ee416a23983fad848c414
   version: 0.1.0
 model:
   apiVersion: runtimeconditions.io/binding-model/v1alpha1
