@@ -104,6 +104,55 @@ class MavenPublicationTests(RepoTestCase):
         with self.assertRaisesRegex(ValueError, "cycle"):
             script.publication_order(packages)
 
+    def test_version_requirements_are_matched_like_maven_does(self) -> None:
+        for version, spec, expected in (
+            ("0.1.0", "0.1.0", True),
+            ("0.1.1", "0.1.0", False),
+            ("0.1.0", "[0.1.0,0.2.0)", True),
+            ("0.1.9", "[0.1.0,0.2.0)", True),
+            ("0.2.0", "[0.1.0,0.2.0)", False),
+            ("0.0.9", "[0.1.0,0.2.0)", False),
+            ("0.2.0", "[0.1.0,0.2.0]", True),
+            ("0.1.0", "(0.1.0,0.2.0)", False),
+            ("1.0.0", "[0.1.0,)", True),
+            ("0.1.0", "[0.1.0]", True),
+            ("0.1.1", "[0.1.0]", False),
+            ("0.2.0-rc.1", "[0.1.0,1.0.0)", False),
+        ):
+            self.assertEqual(script.in_range(version, spec), expected, f"{version} in {spec}")
+        with self.assertRaisesRegex(ValueError, "cannot read the version range"):
+            script.in_range("0.1.0", "[nonsense")
+
+    def test_a_range_is_met_by_any_version_central_lists(self) -> None:
+        dependency = (GROUP, "addon", "[0.1.0,0.2.0)")
+        with patch.object(script, "metadata_versions", return_value=["0.0.9", "0.1.3"]):
+            self.assertTrue(script.available(dependency))
+        with patch.object(script, "metadata_versions", return_value=["0.2.0"]):
+            self.assertFalse(script.available(dependency))
+        with patch.object(script, "metadata_versions", return_value=[]):
+            self.assertFalse(script.available(dependency))
+        with patch.object(script, "already_published", return_value=True) as exact:
+            self.assertTrue(script.available((GROUP, "addon", "0.1.0")))
+        exact.assert_called_once()
+
+    def test_central_metadata_lists_versions_and_a_missing_artifact_lists_none(self) -> None:
+        body = b"<metadata><versioning><versions><version>0.1.0</version><version>0.1.1</version></versions></versioning></metadata>"
+        with patch.object(script.urllib.request, "urlopen", return_value=io.BytesIO(body)) as opened:
+            self.assertEqual(script.metadata_versions(GROUP, "addon"), ["0.1.0", "0.1.1"])
+        self.assertEqual(
+            opened.call_args.args[0], "https://repo1.maven.org/maven2/io/example/bindings/addon/maven-metadata.xml"
+        )
+        missing = urllib.error.HTTPError("u", 404, "Not Found", {}, None)
+        with patch.object(script.urllib.request, "urlopen", side_effect=missing):
+            self.assertEqual(script.metadata_versions(GROUP, "addon"), [])
+
+    def test_a_dependency_on_a_range_is_ordered_after_the_selected_package_that_meets_it(self) -> None:
+        needs, provides = (GROUP, "aaa-needs", "0.1.0"), (GROUP, "zzz-provides", "0.1.0")
+        packages = {needs: {"dependencies": [(GROUP, "zzz-provides", "[0.1.0,0.2.0)")]}, provides: {"dependencies": []}}
+        self.assertEqual(script.publication_order(packages), [provides, needs])
+        packages = {needs: {"dependencies": [(GROUP, "zzz-provides", "[0.2.0,0.3.0)")]}, provides: {"dependencies": []}}
+        self.assertEqual(script.publication_order(packages), [needs, provides], "the selected version is not what it needs")
+
     def test_a_dry_run_builds_into_a_local_repository_and_never_uploads(self) -> None:
         with patch.object(script, "run") as run, patch.object(script, "already_published", return_value=False):
             count = script.publish(self.root, self.targets, False)
