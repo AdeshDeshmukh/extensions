@@ -50,6 +50,19 @@ jobs:
           distribution: temurin
           java-version: '21.0.12'
 
+      - name: Install the pinned Maven
+        # The runner's Maven moves ahead on its own, and 3.10 broke the Central bundle, so run the release on one version.
+        env:
+          MAVEN_VERSION: '3.9.16'
+          MAVEN_SHA512: 831a8591fe20c8243b1dbe7d71e3244f31d1665b0804b2e825e38cbbe5ce0cafb8338851f90780735568773e0a6cd07bbec107cda0b896b008b861075358b6f6
+        run: |
+          set -euo pipefail
+          archive="apache-maven-$MAVEN_VERSION-bin.tar.gz"
+          curl -fsSL -o "$RUNNER_TEMP/$archive" "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/$MAVEN_VERSION/$archive"
+          echo "$MAVEN_SHA512  $RUNNER_TEMP/$archive" | sha512sum --check -
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/apache-maven-$MAVEN_VERSION/bin" >> "$GITHUB_PATH"
+
       - name: Test the publication helper
         run: python -m unittest discover -s tooling/extension-bindings/ci -p 'test_publish_maven.py'
 
@@ -94,6 +107,19 @@ jobs:
           server-password: MAVEN_CENTRAL_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Install the pinned Maven
+        # The runner's Maven moves ahead on its own, and 3.10 broke the Central bundle, so run the release on one version.
+        env:
+          MAVEN_VERSION: '3.9.16'
+          MAVEN_SHA512: 831a8591fe20c8243b1dbe7d71e3244f31d1665b0804b2e825e38cbbe5ce0cafb8338851f90780735568773e0a6cd07bbec107cda0b896b008b861075358b6f6
+        run: |
+          set -euo pipefail
+          archive="apache-maven-$MAVEN_VERSION-bin.tar.gz"
+          curl -fsSL -o "$RUNNER_TEMP/$archive" "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/$MAVEN_VERSION/$archive"
+          echo "$MAVEN_SHA512  $RUNNER_TEMP/$archive" | sha512sum --check -
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/apache-maven-$MAVEN_VERSION/bin" >> "$GITHUB_PATH"
 
       - name: Sign and upload the committed packages that Maven Central does not have yet
         env:
