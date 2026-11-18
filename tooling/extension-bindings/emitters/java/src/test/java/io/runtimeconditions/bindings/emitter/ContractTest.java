@@ -146,6 +146,13 @@ class ContractTest {
         Matcher plugin = Pattern.compile("<artifactId>maven-compiler-plugin</artifactId>\\s*<version>([^<]+)</version>").matcher(Templates.read("pom.xml.tmpl"));
         assertTrue(plugin.find());
         assertEquals(plugin.group(1), tools.path("maven-compiler-plugin").asText());
+        Matcher plugins = Pattern.compile("<artifactId>([a-z-]+-plugin)</artifactId>\\s*<version>([^<]+)</version>").matcher(Templates.read("pom.xml.tmpl"));
+        int pinned = 0;
+        while (plugins.find()) {
+            assertEquals(tools.path(plugins.group(1)).asText(), plugins.group(2), plugins.group(1) + " matches the lock");
+            pinned += 1;
+        }
+        assertEquals(5, pinned, "the compiler plugin and the four release plugins are pinned");
         String build = read(EMITTER_ROOT.resolve("build.gradle.kts"));
         Matcher matcher = Pattern.compile("\"([A-Za-z0-9_.-]+):([A-Za-z0-9_.-]+):([0-9][A-Za-z0-9_.-]*)\"").matcher(build);
         int matched = 0;

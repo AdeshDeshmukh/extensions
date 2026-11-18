@@ -9,10 +9,27 @@
   <version>{{version}}</version>
   <packaging>jar</packaging>
   <name>{{artifactId}}</name>
+  <description>Runtime Conditions Java bindings: {{artifactId}}</description>
   <url>{{repositoryUrl}}</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/license/mit</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Runtime Conditions</name>
+      <email>rjsumit71@gmail.com</email>
+      <organization>Runtime Conditions</organization>
+      <organizationUrl>https://runtimeconditions.io</organizationUrl>
+    </developer>
+  </developers>
   <scm>
     <url>{{repositoryUrl}}</url>
     <connection>scm:git:{{scmConnection}}</connection>
+    <developerConnection>scm:git:{{scmConnection}}</developerConnection>
   </scm>
   <properties>
     <maven.compiler.release>{{minimumJavaVersion}}</maven.compiler.release>
@@ -28,4 +45,74 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <!-- Only the release build, mvn -Prelease deploy, attaches sources and Javadoc, signs, and uploads to Maven Central. -->
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.11.2</version>
+            <configuration>
+              <doclint>none</doclint>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.7</version>
+            <configuration>
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.9.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>false</autoPublish>
+              <waitUntil>validated</waitUntil>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

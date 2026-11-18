@@ -37,6 +37,10 @@ languages:
     tools:
       gradle: '8.14.2'
       maven-compiler-plugin: '3.14.0'
+      maven-source-plugin: '3.3.1'
+      maven-javadoc-plugin: '3.11.2'
+      maven-gpg-plugin: '3.2.7'
+      central-publishing-maven-plugin: '0.9.0'
       snakeyaml-engine: '3.2'
       json-schema-validator: '1.5.9'
       jackson-databind: '2.22.4'
