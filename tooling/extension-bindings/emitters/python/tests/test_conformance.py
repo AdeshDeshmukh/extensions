@@ -26,7 +26,7 @@ from runtimeconditions_binding_emitter import (
     load_target,
     render_sources,
 )
-from runtimeconditions_binding_emitter.source import _conformance_source
+from conformance_source import _conformance_source
 from runtimeconditions_binding_emitter.verification import verify_package
 from runtimeconditions_binding_emitter.package import DiagnosticError, PackageDependency
 
