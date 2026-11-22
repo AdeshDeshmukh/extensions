@@ -95,12 +95,12 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		})
 		if root {
 			model.Vocabulary.OwnedDeclarations = append(model.Vocabulary.OwnedDeclarations, DeclarationModel{
-				Coordinate: coordinate, Owner: owner, Kind: kind.Name,
+				Coordinate: coordinate, Owner: owner, Kind: kind.Name, Description: kind.Description,
 				Provenance: provenance(coordinate, ""),
 			})
 		} else {
 			model.Vocabulary.ImportedDeclarations = append(model.Vocabulary.ImportedDeclarations, DeclarationModel{
-				Coordinate: coordinate, Owner: owner, Kind: kind.Name,
+				Coordinate: coordinate, Owner: owner, Kind: kind.Name, Description: kind.Description,
 				Provenance: provenance(coordinate, ""),
 			})
 		}
@@ -113,7 +113,7 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		})
 		model.Vocabulary.Interfaces = append(model.Vocabulary.Interfaces, InterfaceModel{
 			Coordinate: coordinate, Owner: owner, Kind: interfaceType.TargetKind, Type: interfaceType.Name,
-			Provenance: provenance(coordinate, ""),
+			Description: interfaceType.Description, Provenance: provenance(coordinate, ""),
 		})
 	}
 	for _, field := range document.Definition.Spec.ConditionFields {
@@ -355,7 +355,7 @@ func projectShape(schema, root map[string]any, coordinate, extensionDigest, poin
 				return Shape{}, diagnostic("schema", "RCB1314", coordinate, pointer+"/"+keyword, fmt.Sprintf("structure-changing sibling %q beside $ref is unsupported by binding-model v1alpha1", keyword))
 			}
 		}
-		return Shape{Kind: "ref", Ref: reference, Provenance: provenance, Constraints: extractConstraints(schema)}, nil
+		return Shape{Kind: "ref", Ref: reference, Provenance: provenance, Constraints: extractConstraints(schema), Description: schemaDescription(schema)}, nil
 	}
 	base, err := projectDirectShape(schema, root, coordinate, extensionDigest, pointer, active)
 	if err != nil {
@@ -393,8 +393,15 @@ func projectShape(schema, root map[string]any, coordinate, extensionDigest, poin
 		}
 	}
 	base.Constraints = extractConstraints(schema)
+	base.Description = schemaDescription(schema)
 	base.Provenance = provenance
 	return base, nil
+}
+
+// schemaDescription returns the JSON Schema "description" annotation, if any.
+func schemaDescription(schema map[string]any) string {
+	description, _ := schema["description"].(string)
+	return strings.TrimSpace(description)
 }
 
 func projectDirectShape(schema, root map[string]any, coordinate, extensionDigest, pointer string, active map[string]bool) (Shape, error) {
@@ -763,11 +770,40 @@ func deduplicateShapes(shapes []Shape) []Shape {
 }
 
 func shapeStructuralKey(shape Shape) string {
-	copyShape := shape
+	copyShape := withoutDescriptions(shape)
 	copyShape.Provenance = Provenance{}
 	copyShape.Constraints = nil
 	encoded, _ := canonicalJSON(copyShape)
 	return string(encoded)
+}
+
+// withoutDescriptions copies a shape with every description removed, so two
+// shapes that differ only in documentation compare as structurally equal.
+func withoutDescriptions(shape Shape) Shape {
+	result := shape
+	result.Description = ""
+	if shape.Properties != nil {
+		result.Properties = make([]PropertyShape, len(shape.Properties))
+		for i, property := range shape.Properties {
+			property.Shape = withoutDescriptions(property.Shape)
+			result.Properties[i] = property
+		}
+	}
+	if shape.Items != nil {
+		items := withoutDescriptions(*shape.Items)
+		result.Items = &items
+	}
+	if shape.MapValues != nil {
+		values := withoutDescriptions(*shape.MapValues)
+		result.MapValues = &values
+	}
+	if shape.Variants != nil {
+		result.Variants = make([]Shape, len(shape.Variants))
+		for i, variant := range shape.Variants {
+			result.Variants[i] = withoutDescriptions(variant)
+		}
+	}
+	return result
 }
 
 func shapesEqual(left, right Shape) bool {
@@ -863,7 +899,13 @@ func expandShapeForMerge(shape Shape, schema NormalizedSchema, active map[string
 			}
 			activeCopy := cloneBoolMap(active)
 			activeCopy[shape.Ref] = true
-			return expandShapeForMerge(definition.Shape, schema, activeCopy)
+			expanded := expandShapeForMerge(definition.Shape, schema, activeCopy)
+			// A description written beside $ref documents this use of the
+			// definition and takes precedence over the definition's own text.
+			if shape.Description != "" {
+				expanded.Description = shape.Description
+			}
+			return expanded
 		}
 		return shape
 	}

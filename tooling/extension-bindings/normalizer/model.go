@@ -37,12 +37,14 @@ type ExtensionSpec struct {
 }
 
 type KindDefinition struct {
-	Name string `yaml:"name" json:"name"`
+	Name        string `yaml:"name" json:"name"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 type InterfaceTypeDefinition struct {
-	Name       string `yaml:"name" json:"name"`
-	TargetKind string `yaml:"targetKind" json:"targetKind"`
+	Name        string `yaml:"name" json:"name"`
+	TargetKind  string `yaml:"targetKind" json:"targetKind"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 type ConditionFieldDefinition struct {
@@ -157,18 +159,20 @@ type VocabularyOwner struct {
 }
 
 type DeclarationModel struct {
-	Coordinate string     `yaml:"coordinate" json:"coordinate"`
-	Owner      string     `yaml:"owner" json:"owner"`
-	Kind       string     `yaml:"kind" json:"kind"`
-	Provenance Provenance `yaml:"provenance" json:"provenance"`
+	Coordinate  string     `yaml:"coordinate" json:"coordinate"`
+	Owner       string     `yaml:"owner" json:"owner"`
+	Kind        string     `yaml:"kind" json:"kind"`
+	Description string     `yaml:"description,omitempty" json:"description,omitempty"`
+	Provenance  Provenance `yaml:"provenance" json:"provenance"`
 }
 
 type InterfaceModel struct {
-	Coordinate string     `yaml:"coordinate" json:"coordinate"`
-	Owner      string     `yaml:"owner" json:"owner"`
-	Kind       string     `yaml:"kind" json:"kind"`
-	Type       string     `yaml:"type" json:"type"`
-	Provenance Provenance `yaml:"provenance" json:"provenance"`
+	Coordinate  string     `yaml:"coordinate" json:"coordinate"`
+	Owner       string     `yaml:"owner" json:"owner"`
+	Kind        string     `yaml:"kind" json:"kind"`
+	Type        string     `yaml:"type" json:"type"`
+	Description string     `yaml:"description,omitempty" json:"description,omitempty"`
+	Provenance  Provenance `yaml:"provenance" json:"provenance"`
 }
 
 type FieldModel struct {
@@ -239,7 +243,10 @@ type Shape struct {
 	Variants    []Shape           `yaml:"variants,omitempty" json:"variants,omitempty"`
 	Values      []NormalizedValue `yaml:"values,omitempty" json:"values,omitempty"`
 	Constraints map[string]any    `yaml:"constraints,omitempty" json:"constraints,omitempty"`
-	Provenance  Provenance        `yaml:"provenance" json:"provenance"`
+	// Description is the JSON Schema "description" annotation. It is
+	// documentation only and never affects structural shape comparison.
+	Description string     `yaml:"description,omitempty" json:"description,omitempty"`
+	Provenance  Provenance `yaml:"provenance" json:"provenance"`
 }
 
 type PropertyShape struct {

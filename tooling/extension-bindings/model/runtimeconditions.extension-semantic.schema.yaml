@@ -96,12 +96,16 @@ $defs:
     properties:
       name:
         $ref: '#/$defs/nonEmptyString'
+      description:
+        $ref: '#/$defs/nonEmptyString'
   interfaceTypeDefinition:
     type: object
     required: [name, targetKind]
     additionalProperties: false
     properties:
       name:
+        $ref: '#/$defs/nonEmptyString'
+      description:
         $ref: '#/$defs/nonEmptyString'
       targetKind:
         $ref: '#/$defs/nonEmptyString'
