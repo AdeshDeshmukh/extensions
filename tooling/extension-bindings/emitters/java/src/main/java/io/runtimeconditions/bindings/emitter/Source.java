@@ -71,6 +71,96 @@ public final class Source {
         return builder.append('"').toString();
     }
 
+    /**
+     * Renders extension documentation as Javadoc. Descriptions come from the
+     * extension's vocabulary and JSON Schema; empty text renders nothing. Text is
+     * HTML-escaped so values such as {@code >=1.2.0} stay valid Javadoc.
+     */
+    static List<String> javadoc(String text, List<String[]> params, String indent) {
+        List<String> body = new ArrayList<>();
+        List<String> paragraphs = paragraphs(text);
+        for (int index = 0; index < paragraphs.size(); index += 1) {
+            if (index > 0) {
+                body.add("");
+            }
+            body.addAll(wrap((index > 0 ? "<p>" : "") + paragraphs.get(index), indent, ""));
+        }
+        boolean first = true;
+        for (String[] param : params) {
+            List<String> parts = paragraphs(param[1]);
+            if (parts.isEmpty()) {
+                continue;
+            }
+            if (first && !body.isEmpty()) {
+                body.add("");
+            }
+            first = false;
+            body.addAll(wrap("@param " + param[0] + " " + String.join(" <p>", parts), indent, "    "));
+        }
+        if (body.isEmpty()) {
+            return List.of();
+        }
+        List<String> lines = new ArrayList<>();
+        lines.add(indent + "/**");
+        for (String line : body) {
+            lines.add(line.isEmpty() ? indent + " *" : indent + " * " + line);
+        }
+        lines.add(indent + " */");
+        return lines;
+    }
+
+    private static List<String> paragraphs(String text) {
+        List<String> result = new ArrayList<>();
+        if (text == null) {
+            return result;
+        }
+        for (String paragraph : text.strip().split("\\n\\s*\\n")) {
+            String joined = String.join(" ", paragraph.strip().split("\\s+"));
+            if (!joined.isEmpty()) {
+                result.add(escapeHtml(joined));
+            }
+        }
+        return result;
+    }
+
+    private static String escapeHtml(String text) {
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("@", "&#64;")
+                .replace("*/", "*&#47;");
+    }
+
+    private static List<String> wrap(String text, String indent, String continuation) {
+        int width = 100 - indent.length() - 3;
+        List<String> lines = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (word.isEmpty()) {
+                continue;
+            }
+            if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+                lines.add(line.toString());
+                line = new StringBuilder(continuation);
+            } else if (line.length() > 0 && !line.toString().equals(continuation)) {
+                line.append(' ');
+            }
+            line.append(word);
+        }
+        if (line.length() > 0) {
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
+    private static List<String[]> fieldParams(List<FieldPlan> fields) {
+        List<String[]> params = new ArrayList<>();
+        for (FieldPlan field : fields) {
+            params.add(new String[] {field.name(), field.description()});
+        }
+        return params;
+    }
+
     private static boolean nullable(String annotation) {
         return annotation.equals("Void") || annotation.equals("Object");
     }
@@ -102,8 +192,8 @@ public final class Source {
     }
 
     private static List<String> recordBody(
-            String name, List<FieldPlan> fields, String implement, String markerMethod, String indent) {
-        List<String> lines = new ArrayList<>();
+            String name, List<FieldPlan> fields, String implement, String markerMethod, String indent, String description) {
+        List<String> lines = new ArrayList<>(javadoc(description, fieldParams(fields), indent));
         String modifier = indent.isEmpty() ? "public " : "";
         String declaration = indent + modifier + "record " + name + "(" + components(fields) + ")" + implement;
         boolean checks = fields.stream().anyMatch(field -> field.required() && !nullable(field.annotation()));
@@ -169,9 +259,11 @@ public final class Source {
         List<String> imports = new ArrayList<>();
         List<String> body = new ArrayList<>();
         if (item.kind() == Kind.ENUM) {
+            body.addAll(javadoc(item.description(), List.of(), ""));
             body.add("public enum " + item.name() + " {");
             for (int index = 0; index < item.members().size(); index += 1) {
                 Plan.Member member = item.members().get(index);
+                body.addAll(javadoc(member.description(), List.of(), "    "));
                 body.add(
                         "    "
                                 + member.name()
@@ -194,6 +286,7 @@ public final class Source {
         } else if (item.kind() == Kind.ALIAS) {
             String kind = item.expression().kind();
             if (kind.equals("union")) {
+                body.addAll(javadoc(item.description(), List.of(), ""));
                 body.add("public sealed interface " + item.name() + " {");
                 for (int index = 0; index < item.expression().arguments().size(); index += 1) {
                     String annotation = Plan.annotate(item.expression().arguments().get(index), plan.names());
@@ -203,13 +296,13 @@ public final class Source {
                         body.add("");
                     }
                     String variant = "Variant" + (index + 1);
-                    body.addAll(recordBody(variant, single, " implements " + item.name(), null, "    "));
+                    body.addAll(recordBody(variant, single, " implements " + item.name(), null, "    ", ""));
                 }
                 body.add("}");
             } else {
                 String annotation = Plan.annotate(item.expression(), plan.names());
                 List<FieldPlan> single = List.of(new FieldPlan("", "value", "value", item.expression(), annotation, true));
-                body.addAll(recordBody(item.name(), single, "", null, ""));
+                body.addAll(recordBody(item.name(), single, "", null, "", item.description()));
             }
         } else {
             String implement = implementsClause(item, imports);
@@ -219,7 +312,8 @@ public final class Source {
                             item.fields(),
                             implement,
                             item.marker() == null ? null : item.marker().method(),
-                            ""));
+                            "",
+                            item.description()));
         }
         return file(plan, model, item.name(), body, imports);
     }
@@ -241,12 +335,24 @@ public final class Source {
 
     private static String renderFunctions(EmissionPlan plan, JsonNode model) {
         List<String> body = new ArrayList<>();
+        if (plan.packageDescription() != null && !plan.packageDescription().isBlank()) {
+            body.addAll(javadoc(
+                    "Runtime Conditions defined by " + plan.target().rootExtension() + ".\n\n" + plan.packageDescription(),
+                    List.of(),
+                    ""));
+        }
         body.add("public final class " + Plan.FUNCTIONS_CLASS + " {");
         body.add("    private " + Plan.FUNCTIONS_CLASS + "() {}");
         List<DeclarationPlan> ordered = new ArrayList<>(plan.declarations());
         ordered.sort(Comparator.comparing(DeclarationPlan::function));
         for (DeclarationPlan declaration : ordered) {
             body.add("");
+            if (declaration.description() != null && !declaration.description().isBlank()) {
+                body.addAll(javadoc(
+                        "Declares a " + declaration.kind() + " Condition.\n\n" + declaration.description(),
+                        List.<String[]>of(new String[] {"fields", "the fields of the Condition"}),
+                        "    "));
+            }
             body.add(
                     "    public static "
                             + Plan.DECLARATION_CLASS

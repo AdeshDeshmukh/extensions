@@ -31,7 +31,13 @@ public final class Plan {
             String name,
             TypeExpr typeExpr,
             String annotation,
-            boolean required) {}
+            boolean required,
+            String description) {
+        public FieldPlan(
+                String coordinate, String sourceName, String name, TypeExpr typeExpr, String annotation, boolean required) {
+            this(coordinate, sourceName, name, typeExpr, annotation, required, "");
+        }
+    }
 
     public record ProviderPackage(String coordinate, String javaPackage) {}
 
@@ -44,7 +50,11 @@ public final class Plan {
         ENUM
     }
 
-    public record Member(String name, String value) {}
+    public record Member(String name, String value, String description) {
+        public Member(String name, String value) {
+            this(name, value, "");
+        }
+    }
 
     public record TypePlan(
             String coordinate,
@@ -56,10 +66,29 @@ public final class Plan {
             MarkerReference marker,
             boolean isDeclarationField,
             String schemaCoordinate,
-            String sourceName) {}
+            String sourceName,
+            String description) {
+        public TypePlan(
+                String coordinate,
+                String name,
+                Kind kind,
+                List<FieldPlan> fields,
+                TypeExpr expression,
+                List<Member> members,
+                MarkerReference marker,
+                boolean isDeclarationField,
+                String schemaCoordinate,
+                String sourceName) {
+            this(coordinate, name, kind, fields, expression, members, marker, isDeclarationField, schemaCoordinate, sourceName, "");
+        }
+    }
 
     public record DeclarationPlan(
-            String coordinate, String kind, String function, String protocol, String method) {}
+            String coordinate, String kind, String function, String protocol, String method, String description) {
+        public DeclarationPlan(String coordinate, String kind, String function, String protocol, String method) {
+            this(coordinate, kind, function, protocol, method, "");
+        }
+    }
 
     public record ImportedDeclarationPlan(
             String coordinate,
@@ -77,7 +106,19 @@ public final class Plan {
             List<ImportedDeclarationPlan> importedDeclarations,
             List<TypePlan> types,
             boolean usesAny,
-            String modelDigest) {}
+            String modelDigest,
+            String packageDescription) {
+        public EmissionPlan(
+                PackageTarget target,
+                Map<String, String> names,
+                List<DeclarationPlan> declarations,
+                List<ImportedDeclarationPlan> importedDeclarations,
+                List<TypePlan> types,
+                boolean usesAny,
+                String modelDigest) {
+            this(target, names, declarations, importedDeclarations, types, usesAny, modelDigest, "");
+        }
+    }
 
     public static final String DECLARATION_CLASS = "Declaration";
     public static final String FUNCTIONS_CLASS = "Bindings";
@@ -205,7 +246,7 @@ public final class Plan {
     }
 
     private record RawField(
-            String key, String coordinate, String sourceName, TypeExpr typeExpr, boolean required) {}
+            String key, String coordinate, String sourceName, TypeExpr typeExpr, boolean required, String description) {}
 
     private record RawType(
             Kind kind,
@@ -348,7 +389,8 @@ public final class Plan {
                                     propertyCoordinate,
                                     name,
                                     expression,
-                                    required.contains(name) || property.path("required").asBoolean(false)));
+                                    required.contains(name) || property.path("required").asBoolean(false),
+                                    property.path("shape").path("description").asText("")));
                 }
                 rawTypes.put(key, new RawType(Kind.OBJECT, shape, null, rawFields, List.of(), marker));
                 typeSources.put(key, sourceName);
@@ -622,7 +664,8 @@ public final class Plan {
                                 Kind.OBJECT,
                                 shape,
                                 null,
-                                List.of(new RawField(valueKey, coordinate, "value", fieldExpression, true)),
+                                List.of(new RawField(
+                                        valueKey, coordinate, "value", fieldExpression, true, shape.path("description").asText(""))),
                                 List.of(),
                                 marker));
                 builder.typeSources.put(key, fieldSource);
@@ -692,15 +735,20 @@ public final class Plan {
                                 names.get(field.key()),
                                 resolved,
                                 annotate(resolved, names),
-                                field.required()));
+                                field.required(),
+                                field.description()));
             }
             fields.sort(
                     Comparator.comparing((FieldPlan field) -> !field.required())
                             .thenComparing(FieldPlan::name)
                             .thenComparing(FieldPlan::coordinate));
             List<Member> members = new ArrayList<>();
-            for (String[] member : raw.members()) {
-                members.add(new Member(names.get(member[0]), member[1]));
+            List<JsonNode> memberValues = Json.list(raw.shape().path("values"));
+            for (int index = 0; index < raw.members().size(); index += 1) {
+                String[] member = raw.members().get(index);
+                String memberDescription =
+                        index < memberValues.size() ? memberValues.get(index).path("description").asText("") : "";
+                members.add(new Member(names.get(member[0]), member[1], memberDescription));
             }
             MarkerReference marker =
                     raw.marker() == null
@@ -723,21 +771,29 @@ public final class Plan {
                             marker,
                             raw.marker() != null && raw.kind() == Kind.OBJECT,
                             builder.declarationFieldSchemas.getOrDefault(key, ""),
-                            builder.typeSources.get(key)));
+                            builder.typeSources.get(key),
+                            raw.shape().path("description").asText("")));
         }
         declarations.sort(Comparator.comparing((String[] item) -> item[0]));
         List<DeclarationPlan> resultDeclarations = new ArrayList<>();
         for (String[] item : declarations) {
             String declarationKind = "";
+            String declarationDescription = "";
             for (JsonNode owned : Json.list(vocabulary.path("ownedDeclarations"))) {
                 if (owned.path("coordinate").asText().equals(item[0])) {
                     declarationKind = owned.path("kind").asText();
+                    declarationDescription = owned.path("description").asText("");
                     break;
                 }
             }
             resultDeclarations.add(
                     new DeclarationPlan(
-                            item[0], declarationKind, names.get(item[1]), names.get(item[2]), markerMethod(root, item[0])));
+                            item[0],
+                            declarationKind,
+                            names.get(item[1]),
+                            names.get(item[2]),
+                            markerMethod(root, item[0]),
+                            declarationDescription));
         }
         List<ImportedRaw> sortedImported = new ArrayList<>(imported);
         sortedImported.sort(Comparator.comparing(ImportedRaw::coordinate));
@@ -760,6 +816,16 @@ public final class Plan {
                 List.copyOf(resultImported),
                 List.copyOf(types),
                 builder.anyUsed,
-                model.path("metadata").path("semanticSha256").asText());
+                model.path("metadata").path("semanticSha256").asText(),
+                rootDescription(model, root));
+    }
+
+    private static String rootDescription(JsonNode model, String root) {
+        for (JsonNode extension : Json.list(model.path("extensions"))) {
+            if (extension.path("id").asText().equals(root)) {
+                return extension.path("description").asText("");
+            }
+        }
+        return "";
     }
 }
