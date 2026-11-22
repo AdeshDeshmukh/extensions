@@ -14,6 +14,12 @@ An extension release is an immutable semantic vocabulary artifact. Its Runtime C
 
 The AWS S3 candidate therefore uses `https://runtimeconditions.io/aws/aws-s3:0.1.0` while retaining `apiVersion: runtimeconditions.io/v1alpha1` as the Runtime Conditions document schema version.
 
+## Dependent releases
+
+An extension release pins the exact releases it depends on. When an extension gets a new release, every extension whose newest release still depends on an older release of it gets its next release as well, depending on the newest releases. The new release copies the previous one and changes only its identifier, its `metadata.version` and the dependency identifiers; earlier releases are never changed.
+
+`tooling/common/downstream_releases.py` finds such dependents and writes their next releases (`0.2.0` becomes `0.3.0`, `v1alpha3` becomes `v1alpha4`), repeating until no dependent is left behind. The **Release downstream extensions** workflow reports them on pull requests and, after a merge to `main`, opens a pull request with the new releases for review.
+
 ## Authoritative provenance
 
 Generated provider extensions record the authoritative model repository, the exact commit that last changed the selected service model, the model path, the model SHA-256 digest, the Smithy service shape, and the service version. Unrelated commits elsewhere in an upstream model repository do not create extension releases.
