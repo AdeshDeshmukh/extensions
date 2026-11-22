@@ -26,3 +26,13 @@ conditions:
       type: mount
       path: /etc/media-library
       access: read_only
+
+  - name: credentials
+    kind: rc.file_system
+    interface:
+      type: mount
+      access: read_only
+    configuration:
+      env:
+        - property: path
+          name: CREDENTIALS_DIR

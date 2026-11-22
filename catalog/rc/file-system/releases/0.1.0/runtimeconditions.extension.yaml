@@ -13,6 +13,13 @@ spec:
     - name: mount
       targetKind: rc.file_system
 
+  conditionFields:
+    - name: configuration
+      appliesToKinds:
+        - rc.file_system
+      appliesToInterfaceTypes:
+        - mount
+
   interfaceFields:
     - name: path
       targetKind: rc.file_system
@@ -49,6 +56,11 @@ spec:
       values:
         - shared
         - exclusive
+    - field: configuration.env[].property
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - path
 
   schemas:
     - id: file-system-mount
@@ -68,7 +80,6 @@ spec:
             type: object
             required:
               - type
-              - path
               - access
             properties:
               type:
@@ -101,4 +112,40 @@ spec:
               required:
                 - persistence
             additionalProperties: false
+          configuration:
+            type: object
+            required:
+              - env
+            properties:
+              env:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  required:
+                    - property
+                    - name
+                  properties:
+                    property:
+                      enum:
+                        - path
+                    name:
+                      type: string
+                      pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
+                    sensitive:
+                      type: boolean
+                    required:
+                      type: boolean
+                  additionalProperties: false
+            additionalProperties: false
+        if:
+          not:
+            required:
+              - configuration
+        then:
+          properties:
+            interface:
+              required:
+                - path
         additionalProperties: true
