@@ -5,6 +5,8 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 import { apiSurface } from "../src/verification.js";
+import { buildCase, temporaryDirectory } from "./support.js";
+import { readFileSync } from "node:fs";
 
 const plain = `export class Declaration {}
 export interface ApiField {
@@ -82,4 +84,33 @@ test("doc comments never change the API surface used for release compatibility",
   const expected = surface(plain);
   assert.ok(expected.some((entry) => entry.startsWith("constructor|Spec|")));
   assert.deepEqual(surface(documented), expected);
+});
+
+test("extension descriptions become JSDoc in the generated bindings", async () => {
+  const workspace = temporaryDirectory();
+  try {
+    const built = await buildCase("14-documented-extension", workspace);
+    const source = readFileSync(join(built.directory, "src/bindings.ts"), "utf-8");
+    for (const expected of [
+      // Extension summary as the package documentation.
+      "@packageDocumentation",
+      "Common integrations a workload depends on",
+      // Kind description on the declaration function.
+      "The workload calls another service through a network API",
+      // Interface type description on the interface class.
+      "A key/value store, such as Redis or Memcached.",
+      // Interface field meaning, then the JSON Schema rule.
+      "The cache engine the workload needs.",
+      "Optional. When present, must be one of the defined engine values.",
+      // Field value descriptions on enum members.
+      "Redis, an in-memory key/value store.",
+      "Read a resource.",
+    ]) {
+      assert.ok(source.includes(expected), `generated bindings are missing ${JSON.stringify(expected)}`);
+    }
+    // Field docs also appear inside the constructor's fields type, where editors show them.
+    assert.match(source, /constructor\(\s*fields: \{[^}]*\/\*\*[^}]*The cache engine the workload needs\./s);
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
 });

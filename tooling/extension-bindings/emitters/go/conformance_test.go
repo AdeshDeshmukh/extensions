@@ -36,6 +36,7 @@ var positiveGoCases = []string{
 	"10-scoped-domains-collisions",
 	"11-source-name-preservation",
 	"13-dependency-schema-only",
+	"14-documented-extension",
 }
 
 type conformanceModule struct {

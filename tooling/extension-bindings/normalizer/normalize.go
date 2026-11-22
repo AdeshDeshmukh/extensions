@@ -75,6 +75,7 @@ func Normalize(closure ResolvedClosure, lock DependencyLock, schemas *Schemas, c
 	if err := validateFieldValueDomains(model); err != nil {
 		return BindingModel{}, err
 	}
+	attachScopeDocumentation(&model)
 	sortModel(&model)
 	digest, err := ModelSemanticSHA256(model)
 	if err != nil {
@@ -1318,4 +1319,131 @@ func cloneBoolMap(source map[string]bool) map[string]bool {
 		result[key] = value
 	}
 	return result
+}
+
+// attachScopeDocumentation copies vocabulary documentation onto the scope and
+// schema projections that emitters read, so no emitter has to look descriptions up
+// by path:
+//
+//   - an interface type's description is placed before the schema description
+//     of the "interface" object;
+//   - a condition or interface field's description (its meaning) is placed
+//     before the JSON Schema description of that property (its rule);
+//   - each value of a field-value domain gets the matching valueDescriptions
+//     text.
+//
+// Descriptions never change structure; shapeStructuralKey ignores them.
+func attachScopeDocumentation(model *BindingModel) {
+	fieldDocs := map[string]string{}
+	for _, fields := range [][]FieldModel{model.Vocabulary.ConditionFields, model.Vocabulary.InterfaceFields} {
+		for _, field := range fields {
+			if field.Description != "" {
+				fieldDocs[docKey(field.Kind, field.InterfaceType, field.Path)] = field.Description
+			}
+		}
+	}
+	for _, interfaceModel := range model.Vocabulary.Interfaces {
+		if interfaceModel.Description != "" {
+			fieldDocs[docKey(interfaceModel.Kind, interfaceModel.Type, "interface")] = interfaceModel.Description
+		}
+	}
+	valueDocs := map[string]map[string]string{}
+	for _, domain := range model.Vocabulary.ValueDomains {
+		for _, value := range domain.Values {
+			text, ok := value.Value.(string)
+			if !ok || value.Description == "" {
+				continue
+			}
+			key := docKey(domain.Kind, domain.InterfaceType, domain.Path)
+			if valueDocs[key] == nil {
+				valueDocs[key] = map[string]string{}
+			}
+			valueDocs[key][text] = value.Description
+		}
+	}
+	if len(fieldDocs) == 0 && len(valueDocs) == 0 {
+		return
+	}
+	for index, scope := range model.Scopes {
+		if scope.Projection == nil {
+			continue
+		}
+		documented := documentShape(*scope.Projection, scope.Kind, scope.InterfaceType, "", fieldDocs, valueDocs)
+		model.Scopes[index].Projection = &documented
+	}
+	// Some emitters plan types from each schema's own projection rather than
+	// the merged scope projection, so document those too.
+	for index, schema := range model.Schemas {
+		if schema.Kind == "" {
+			continue
+		}
+		model.Schemas[index].Projection = documentShape(schema.Projection, schema.Kind, schema.InterfaceType, "", fieldDocs, valueDocs)
+	}
+}
+
+func docKey(kind, interfaceType, path string) string {
+	return kind + "\x00" + interfaceType + "\x00" + path
+}
+
+// lookupDoc prefers documentation scoped to the interface type and falls back
+// to documentation that applies to every interface type of the kind.
+func lookupDoc[T any](docs map[string]T, kind, interfaceType, path string) (T, bool) {
+	if value, ok := docs[docKey(kind, interfaceType, path)]; ok {
+		return value, true
+	}
+	value, ok := docs[docKey(kind, "", path)]
+	return value, ok
+}
+
+func documentShape(shape Shape, kind, interfaceType, path string, fieldDocs map[string]string, valueDocs map[string]map[string]string) Shape {
+	result := shape
+	if values, ok := lookupDoc(valueDocs, kind, interfaceType, path); ok && shape.Values != nil {
+		result.Values = make([]NormalizedValue, len(shape.Values))
+		for i, value := range shape.Values {
+			result.Values[i] = value
+			if text, isString := value.Value.(string); isString && values[text] != "" {
+				result.Values[i].Description = values[text]
+			}
+		}
+	}
+	if shape.Properties != nil {
+		result.Properties = make([]PropertyShape, len(shape.Properties))
+		for i, property := range shape.Properties {
+			childPath := property.Name
+			if path != "" {
+				childPath = path + "." + property.Name
+			}
+			property.Shape = documentShape(property.Shape, kind, interfaceType, childPath, fieldDocs, valueDocs)
+			if meaning, ok := lookupDoc(fieldDocs, kind, interfaceType, childPath); ok {
+				property.Shape.Description = joinDescriptions(meaning, property.Shape.Description)
+			}
+			result.Properties[i] = property
+		}
+	}
+	if shape.Items != nil {
+		items := documentShape(*shape.Items, kind, interfaceType, path+"[]", fieldDocs, valueDocs)
+		result.Items = &items
+	}
+	if shape.MapValues != nil {
+		values := documentShape(*shape.MapValues, kind, interfaceType, path, fieldDocs, valueDocs)
+		result.MapValues = &values
+	}
+	if shape.Variants != nil {
+		result.Variants = make([]Shape, len(shape.Variants))
+		for i, variant := range shape.Variants {
+			result.Variants[i] = documentShape(variant, kind, interfaceType, path, fieldDocs, valueDocs)
+		}
+	}
+	return result
+}
+
+// joinDescriptions puts meaning first and the validation rule second.
+func joinDescriptions(parts ...string) string {
+	var kept []string
+	for _, part := range parts {
+		if part = strings.TrimSpace(part); part != "" {
+			kept = append(kept, part)
+		}
+	}
+	return strings.Join(kept, "\n\n")
 }

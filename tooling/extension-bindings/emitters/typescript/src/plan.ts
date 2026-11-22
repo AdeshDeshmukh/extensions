@@ -18,6 +18,7 @@ export interface FieldPlan {
   readonly typeExpr: TypeExpr;
   readonly annotation: string;
   readonly required: boolean;
+  readonly description: string;
 }
 
 export interface MarkerReference {
@@ -39,6 +40,8 @@ export interface TypePlan {
   readonly isDeclarationField: boolean;
   readonly schemaCoordinate: string;
   readonly sourceName: string;
+  readonly description: string;
+  readonly memberDescriptions: readonly string[];
 }
 
 export interface DeclarationPlan {
@@ -47,6 +50,7 @@ export interface DeclarationPlan {
   readonly function: string;
   readonly protocol: string;
   readonly method: string;
+  readonly description?: string;
 }
 
 export interface ImportedDeclarationPlan extends DeclarationPlan {
@@ -62,6 +66,7 @@ export interface EmissionPlan {
   readonly types: readonly TypePlan[];
   readonly usesJsonValue: boolean;
   readonly modelDigest: string;
+  readonly packageDescription: string;
 }
 
 export const JSON_VALUE_ALIAS_RHS =
@@ -164,7 +169,7 @@ interface RawType {
   kind: "object" | "alias" | "enum";
   shape: any;
   expression: TypeExpr | null;
-  fields: [string, string, string, TypeExpr, boolean][];
+  fields: [string, string, string, TypeExpr, boolean, string][];
   members: [string, string][];
   marker: MarkerReference | null;
 }
@@ -387,6 +392,7 @@ export function buildPlan(model: Model, target: PackageTarget): EmissionPlan {
           name,
           expression,
           required.has(name) || property.required === true,
+          property.shape.description ?? "",
         ]);
       }
       rawTypes.set(key, {
@@ -528,7 +534,7 @@ export function buildPlan(model: Model, target: PackageTarget): EmissionPlan {
         kind: "object",
         shape,
         expression: null,
-        fields: [[valueKey, coordinate, "value", fieldExpression, true]],
+        fields: [[valueKey, coordinate, "value", fieldExpression, true, shape.description ?? ""]],
         members: [],
         marker,
       });
@@ -565,7 +571,7 @@ export function buildPlan(model: Model, target: PackageTarget): EmissionPlan {
   for (const key of [...rawTypes.keys()].sort()) {
     const raw = rawTypes.get(key)!;
     const fields: FieldPlan[] = raw.fields.map(
-      ([fieldKey, coordinate, sourceName, planned, required]) => {
+      ([fieldKey, coordinate, sourceName, planned, required, description]) => {
         const typeExpr = resolve(planned, definitionExpressions);
         return {
           coordinate,
@@ -574,6 +580,7 @@ export function buildPlan(model: Model, target: PackageTarget): EmissionPlan {
           typeExpr,
           annotation: annotate(typeExpr, names),
           required,
+          description,
         };
       },
     );
@@ -604,6 +611,11 @@ export function buildPlan(model: Model, target: PackageTarget): EmissionPlan {
       isDeclarationField: raw.marker !== null && raw.kind === "object",
       schemaCoordinate: declarationFieldSchemas.get(key) ?? "",
       sourceName: typeSources.get(key)!,
+      description: raw.shape.description ?? "",
+      memberDescriptions:
+        raw.kind === "enum"
+          ? (raw.shape.values ?? []).map((entry: any) => entry.description ?? "")
+          : [],
     });
   }
   const sortedDeclarations = [...declarations].sort((a, b) =>
@@ -617,6 +629,9 @@ export function buildPlan(model: Model, target: PackageTarget): EmissionPlan {
       function: names.get(functionKey)!,
       protocol: names.get(protocolKey)!,
       method: markerMethod(root, coordinate),
+      description:
+        (vocabulary.ownedDeclarations as any[]).find((item) => item.coordinate === coordinate)
+          .description ?? "",
     }),
   );
   const resultImported: ImportedDeclarationPlan[] = [...imported]
@@ -638,5 +653,7 @@ export function buildPlan(model: Model, target: PackageTarget): EmissionPlan {
     types,
     usesJsonValue: anyUsed,
     modelDigest: model["metadata"].semanticSha256,
+    packageDescription:
+      (model["extensions"] as any[]).find((item) => item.id === root)?.description ?? "",
   };
 }

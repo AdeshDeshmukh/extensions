@@ -104,7 +104,6 @@ type packageIR struct {
 	constants          []constantIR
 	schemas            map[string]normalizer.NormalizedSchema
 	domains            map[string]normalizer.ValueDomainModel
-	fieldDocs          map[string]string
 	rootBindings       []rootBindingIR
 	sampleError        error
 }
@@ -135,7 +134,6 @@ func buildPackageIR(model normalizer.BindingModel, target PackageTarget) (*packa
 		types:              map[string]*typeIR{},
 		schemas:            map[string]normalizer.NormalizedSchema{},
 		domains:            map[string]normalizer.ValueDomainModel{},
-		fieldDocs:          map[string]string{},
 	}
 	ir.addRequest(&symbolRequest{
 		key: "fixed:type:Declaration", coordinate: "runtimeconditions:declaration",
@@ -167,15 +165,6 @@ func buildPackageIR(model normalizer.BindingModel, target PackageTarget) (*packa
 	for _, domain := range model.Vocabulary.ValueDomains {
 		ir.domains[scopePathKey(domain.Kind, domain.InterfaceType, domain.Path)] = domain
 	}
-	// Vocabulary descriptions explain what a field means; they are looked up by
-	// the same scope and path as value domains.
-	for _, fields := range [][]normalizer.FieldModel{model.Vocabulary.ConditionFields, model.Vocabulary.InterfaceFields} {
-		for _, field := range fields {
-			if field.Description != "" {
-				ir.fieldDocs[scopePathKey(field.Kind, field.InterfaceType, field.Path)] = field.Description
-			}
-		}
-	}
 
 	for _, interfaceModel := range model.Vocabulary.Interfaces {
 		if interfaceModel.Owner != model.RootExtension.ID {
@@ -189,15 +178,6 @@ func buildPackageIR(model normalizer.BindingModel, target PackageTarget) (*packa
 		if scope.Projection != nil {
 			if property, found := findProperty(*scope.Projection, "interface"); found {
 				shape = property.Shape
-			}
-		}
-		// The interface type's own description comes first; the schema's
-		// description of the interface object, when present, follows it.
-		if interfaceModel.Description != "" {
-			if shape.Description == "" {
-				shape.Description = interfaceModel.Description
-			} else {
-				shape.Description = interfaceModel.Description + "\n\n" + shape.Description
 			}
 		}
 		declaration, ok := ir.declarationsByKind[interfaceModel.Kind]
@@ -314,7 +294,6 @@ func (ir *packageIR) ensureNamedShape(key, coordinate, sourceName string, base [
 		}
 	}
 	typeValue.provenance = shape.Provenance
-	typeValue.description = joinDocs(ir.vocabularyDoc(context, context.semanticPath), typeValue.description)
 	switch shape.Kind {
 	case "scalar":
 		typeValue.kind = "scalar"
@@ -355,7 +334,7 @@ func (ir *packageIR) ensureNamedShape(key, coordinate, sourceName string, base [
 			typeValue.fields = append(typeValue.fields, fieldIR{
 				provenance: property.Provenance,
 				sourceName: property.Name, name: fieldName, typeRef: reference, required: property.Required,
-				description: joinDocs(ir.vocabularyDoc(propertyContext, propertyContext.semanticPath), property.Shape.Description),
+				description: property.Shape.Description,
 			})
 		}
 	case "array":
@@ -1448,12 +1427,6 @@ func writeDocComment(buffer *bytes.Buffer, indent, text string) {
 	}
 }
 
-// vocabularyDoc returns the vocabulary description of the condition or
-// interface field at path in the current scope, if the extension gives one.
-func (ir *packageIR) vocabularyDoc(context shapeContext, path []pathPart) string {
-	return ir.fieldDocs[scopePathKey(context.scope.Kind, context.scope.InterfaceType, pathString(path))]
-}
-
 // rootDescription returns the root extension's metadata description.
 func (ir *packageIR) rootDescription() string {
 	for _, extension := range ir.model.Extensions {
@@ -1462,16 +1435,4 @@ func (ir *packageIR) rootDescription() string {
 		}
 	}
 	return ""
-}
-
-// joinDocs puts the meaning (vocabulary) first and the validation rule
-// (JSON Schema description) second, skipping whichever is empty.
-func joinDocs(parts ...string) string {
-	var kept []string
-	for _, part := range parts {
-		if part = strings.TrimSpace(part); part != "" {
-			kept = append(kept, part)
-		}
-	}
-	return strings.Join(kept, "\n\n")
 }
