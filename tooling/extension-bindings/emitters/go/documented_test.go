@@ -1,12 +1,14 @@
 package goemitter
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
 
+	"github.com/runtimeconditions/extensions/tooling/extension-bindings/normalizer"
 	"gopkg.in/yaml.v3"
 )
 
@@ -36,18 +38,46 @@ func TestDocumentedExtensionEmitsGodoc(t *testing.T) {
 	}
 
 	for _, want := range []string{
+		// Extension description as the package comment.
+		"// Package common declares Runtime Conditions defined by",
+		"// Common integrations a workload depends on",
 		// Kind description on the declaration function.
 		"// The workload calls another service through a network API",
 		// Interface type description on the interface struct.
 		"// Http: The API is reached over HTTP.",
-		// JSON Schema property descriptions on struct fields.
+		// Interface field description (meaning) followed by the JSON Schema
+		// description (validation rule) on the struct field.
+		"\t// The cache engine the workload needs.\n\t//\n\t// Optional. When present, must be one of the defined engine values.",
+		// JSON Schema description of a nested property.
 		"\t// Where the API document can be found",
-		"\t// HTTP method of the operation, such as GET or POST.",
-		"\t// The cache engine the workload needs, redis or memcached.",
+		// Field value descriptions on the generated constants.
+		"\t// Redis, an in-memory key/value store.\n\tKeyValueEngineRedis KeyValueEngine = \"redis\"",
+		"\t// Read a resource.\n\tMethodGet Method = \"GET\"",
 	} {
 		if !strings.Contains(string(source), want) {
 			t.Errorf("generated bindings are missing doc comment %q", want)
 		}
+	}
+}
+
+// TestUnknownValueDescriptionIsRejected checks that a valueDescriptions key
+// must name one of the values it documents.
+func TestUnknownValueDescriptionIsRejected(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("testdata", documentedFixture, "root.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	broken := strings.Replace(string(data), "redis: Redis, an in-memory key/value store.", "valkey: Not a defined value.", 1)
+	if broken == string(data) {
+		t.Fatal("fixture text changed; update this test")
+	}
+	catalog := t.TempDir()
+	if err = os.WriteFile(filepath.Join(catalog, "root.yaml"), []byte(broken), 0644); err != nil {
+		t.Fatal(err)
+	}
+	_, err = tryNormalize(catalog, documentedRoot)
+	if err == nil || !strings.Contains(err.Error(), "RCB1315") || !strings.Contains(err.Error(), "valkey") {
+		t.Fatalf("expected RCB1315 for the unknown key valkey, got %v", err)
 	}
 }
 
@@ -120,11 +150,16 @@ func apiOf(t *testing.T, directory string, source []byte) []string {
 // stripOptionalDescriptions removes kind, interface type and JSON Schema
 // descriptions, keeping the description that every schemas[] entry requires.
 func stripOptionalDescriptions(extension map[string]any) {
+	delete(extension["metadata"].(map[string]any), "description")
 	spec := extension["spec"].(map[string]any)
-	for _, list := range []string{"kinds", "interfaceTypes"} {
-		for _, item := range spec[list].([]any) {
+	for _, list := range []string{"kinds", "interfaceTypes", "conditionFields", "interfaceFields"} {
+		items, _ := spec[list].([]any)
+		for _, item := range items {
 			delete(item.(map[string]any), "description")
 		}
+	}
+	for _, item := range spec["fieldValues"].([]any) {
+		delete(item.(map[string]any), "valueDescriptions")
 	}
 	for _, item := range spec["schemas"].([]any) {
 		stripSchemaDescriptions(item.(map[string]any)["schema"])
@@ -143,4 +178,30 @@ func stripSchemaDescriptions(value any) {
 			stripSchemaDescriptions(child)
 		}
 	}
+}
+
+func tryNormalize(root, rootID string) (normalizer.BindingModel, error) {
+	schemas, err := normalizer.LoadSchemas(
+		filepath.Join("..", "..", "model", "runtimeconditions.extension-semantic.schema.yaml"),
+		filepath.Join("..", "..", "model", "runtimeconditions.binding-model.schema.yaml"),
+	)
+	if err != nil {
+		return normalizer.BindingModel{}, err
+	}
+	resolver, err := normalizer.NewResolver(normalizer.ResolverConfig{Schemas: schemas, CatalogRoots: []string{root}})
+	if err != nil {
+		return normalizer.BindingModel{}, err
+	}
+	closure, err := resolver.Resolve(context.Background(), rootID)
+	if err != nil {
+		return normalizer.BindingModel{}, err
+	}
+	return normalizer.Normalize(closure, normalizer.BuildDependencyLock(closure), schemas, normalizer.NormalizeConfig{
+		CoreProfileSchema: normalizer.CoreProfileIdentity{
+			ID: "https://runtimeconditions.io/test/core-profile-schema:1.0.0", Version: "0.0.0-test", SemanticSHA256: strings.Repeat("c", 64),
+		},
+		Normalizer: normalizer.ToolIdentity{
+			Name: normalizer.NormalizerName, Version: normalizer.NormalizerVersion, SHA256: strings.Repeat("d", 64),
+		},
+	})
 }

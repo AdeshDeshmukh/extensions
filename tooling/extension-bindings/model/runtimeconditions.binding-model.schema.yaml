@@ -92,6 +92,7 @@ $defs:
       id: {$ref: '#/$defs/extensionIdentifier'}
       version: {type: string, minLength: 1}
       semanticSha256: {$ref: '#/$defs/sha256'}
+      description: {type: string, minLength: 1}
       dependencies:
         type: array
         x-runtimeconditions-ordering: set
@@ -193,6 +194,7 @@ $defs:
       owner: {type: string, minLength: 1}
       kind: {type: string, minLength: 1}
       interfaceType: {type: string, minLength: 1}
+      description: {type: string, minLength: 1}
       path: {type: string, minLength: 1}
       segments:
         type: array
@@ -228,6 +230,7 @@ $defs:
     properties:
       value:
         type: [string, number, integer, boolean, 'null']
+      description: {type: string, minLength: 1}
   scope:
     type: object
     required: [coordinate, kind]

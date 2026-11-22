@@ -73,11 +73,12 @@ type rootBindingIR struct {
 }
 
 type constantIR struct {
-	coordinate string
-	sourceName string
-	name       string
-	typeKey    string
-	value      string
+	coordinate  string
+	sourceName  string
+	name        string
+	typeKey     string
+	value       string
+	description string
 }
 
 type pathPart struct {
@@ -103,6 +104,7 @@ type packageIR struct {
 	constants          []constantIR
 	schemas            map[string]normalizer.NormalizedSchema
 	domains            map[string]normalizer.ValueDomainModel
+	fieldDocs          map[string]string
 	rootBindings       []rootBindingIR
 	sampleError        error
 }
@@ -133,6 +135,7 @@ func buildPackageIR(model normalizer.BindingModel, target PackageTarget) (*packa
 		types:              map[string]*typeIR{},
 		schemas:            map[string]normalizer.NormalizedSchema{},
 		domains:            map[string]normalizer.ValueDomainModel{},
+		fieldDocs:          map[string]string{},
 	}
 	ir.addRequest(&symbolRequest{
 		key: "fixed:type:Declaration", coordinate: "runtimeconditions:declaration",
@@ -163,6 +166,15 @@ func buildPackageIR(model normalizer.BindingModel, target PackageTarget) (*packa
 	}
 	for _, domain := range model.Vocabulary.ValueDomains {
 		ir.domains[scopePathKey(domain.Kind, domain.InterfaceType, domain.Path)] = domain
+	}
+	// Vocabulary descriptions explain what a field means; they are looked up by
+	// the same scope and path as value domains.
+	for _, fields := range [][]normalizer.FieldModel{model.Vocabulary.ConditionFields, model.Vocabulary.InterfaceFields} {
+		for _, field := range fields {
+			if field.Description != "" {
+				ir.fieldDocs[scopePathKey(field.Kind, field.InterfaceType, field.Path)] = field.Description
+			}
+		}
 	}
 
 	for _, interfaceModel := range model.Vocabulary.Interfaces {
@@ -302,6 +314,7 @@ func (ir *packageIR) ensureNamedShape(key, coordinate, sourceName string, base [
 		}
 	}
 	typeValue.provenance = shape.Provenance
+	typeValue.description = joinDocs(ir.vocabularyDoc(context, context.semanticPath), typeValue.description)
 	switch shape.Kind {
 	case "scalar":
 		typeValue.kind = "scalar"
@@ -342,7 +355,7 @@ func (ir *packageIR) ensureNamedShape(key, coordinate, sourceName string, base [
 			typeValue.fields = append(typeValue.fields, fieldIR{
 				provenance: property.Provenance,
 				sourceName: property.Name, name: fieldName, typeRef: reference, required: property.Required,
-				description: property.Shape.Description,
+				description: joinDocs(ir.vocabularyDoc(propertyContext, propertyContext.semanticPath), property.Shape.Description),
 			})
 		}
 	case "array":
@@ -614,10 +627,11 @@ func (ir *packageIR) discoverStructuralTypes() error {
 }
 
 type constantCandidate struct {
-	typeKey    string
-	coordinate string
-	value      string
-	suffix     string
+	typeKey     string
+	coordinate  string
+	value       string
+	suffix      string
+	description string
 }
 
 type packageSymbol struct {
@@ -657,7 +671,7 @@ func (ir *packageIR) allocatePackageSymbols() error {
 			seen[suffix] = value
 			candidates = append(candidates, constantCandidate{
 				typeKey: key, coordinate: typeValue.coordinate + ":" + strconv.Quote(value),
-				value: value, suffix: suffix,
+				value: value, suffix: suffix, description: member.Description,
 			})
 		}
 	}
@@ -716,6 +730,7 @@ func (ir *packageIR) allocatePackageSymbols() error {
 		ir.constants = append(ir.constants, constantIR{
 			coordinate: candidate.coordinate, sourceName: candidate.value,
 			name: name, typeKey: candidate.typeKey, value: candidate.value,
+			description: candidate.description,
 		})
 	}
 	sort.Slice(ir.constants, func(i, j int) bool { return ir.constants[i].name < ir.constants[j].name })
@@ -741,6 +756,10 @@ func (ir *packageIR) files() (map[string][]byte, error) {
 func (ir *packageIR) renderBindings() ([]byte, error) {
 	var buffer bytes.Buffer
 	writeGoHeader(&buffer, ir.model.Metadata.SemanticSHA256)
+	if description := ir.rootDescription(); description != "" {
+		fmt.Fprintf(&buffer, "// Package %s declares Runtime Conditions defined by %s.\n//\n", ir.target.PackageName, ir.model.RootExtension.ID)
+		writeDocComment(&buffer, "", description)
+	}
 	fmt.Fprintf(&buffer, "package %s\n\n", ir.target.PackageName)
 	buffer.WriteString("// Declaration is the inert result of a Runtime Conditions declaration.\n")
 	buffer.WriteString("type Declaration struct{}\n\n")
@@ -802,6 +821,9 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 	if len(ir.constants) != 0 {
 		buffer.WriteString("const (\n")
 		for _, constant := range ir.constants {
+			if constant.description != "" {
+				writeDocComment(&buffer, "\t", constant.description)
+			}
 			fmt.Fprintf(&buffer, "\t%s %s = %s\n", constant.name, ir.types[constant.typeKey].request.name, strconv.Quote(constant.value))
 		}
 		buffer.WriteString(")\n")
@@ -1424,4 +1446,32 @@ func writeDocComment(buffer *bytes.Buffer, indent, text string) {
 			fmt.Fprintf(buffer, "%s// %s\n", indent, line)
 		}
 	}
+}
+
+// vocabularyDoc returns the vocabulary description of the condition or
+// interface field at path in the current scope, if the extension gives one.
+func (ir *packageIR) vocabularyDoc(context shapeContext, path []pathPart) string {
+	return ir.fieldDocs[scopePathKey(context.scope.Kind, context.scope.InterfaceType, pathString(path))]
+}
+
+// rootDescription returns the root extension's metadata description.
+func (ir *packageIR) rootDescription() string {
+	for _, extension := range ir.model.Extensions {
+		if extension.ID == ir.model.RootExtension.ID {
+			return extension.Description
+		}
+	}
+	return ""
+}
+
+// joinDocs puts the meaning (vocabulary) first and the validation rule
+// (JSON Schema description) second, skipping whichever is empty.
+func joinDocs(parts ...string) string {
+	var kept []string
+	for _, part := range parts {
+		if part = strings.TrimSpace(part); part != "" {
+			kept = append(kept, part)
+		}
+	}
+	return strings.Join(kept, "\n\n")
 }

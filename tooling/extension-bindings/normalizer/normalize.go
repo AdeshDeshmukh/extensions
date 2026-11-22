@@ -52,9 +52,13 @@ func Normalize(closure ResolvedClosure, lock DependencyLock, schemas *Schemas, c
 		dependencies := append([]string(nil), document.Definition.Spec.Dependencies...)
 		sort.Strings(dependencies)
 		id := document.Definition.Metadata.ID
+		if err := validateValueDescriptions(document); err != nil {
+			return BindingModel{}, err
+		}
 		model.Extensions = append(model.Extensions, ResolvedExtension{
 			ID: id, Version: document.Definition.Metadata.Version,
 			SemanticSHA256: document.SemanticSHA256, Dependencies: dependencies,
+			Description: strings.TrimSpace(document.Definition.Metadata.Description),
 		})
 		appendVocabulary(&model, document, interfaces, id == closure.Root)
 		normalizedSchemas, err := normalizeSchemas(document)
@@ -135,7 +139,7 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 				})
 				model.Vocabulary.ConditionFields = append(model.Vocabulary.ConditionFields, FieldModel{
 					Coordinate: coordinate, Owner: owner, Kind: kind, InterfaceType: interfaceType,
-					Path: path, Segments: segments,
+					Description: strings.TrimSpace(field.Description), Path: path, Segments: segments,
 					Provenance: provenance(coordinate, ""),
 				})
 			}
@@ -151,7 +155,7 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		})
 		model.Vocabulary.InterfaceFields = append(model.Vocabulary.InterfaceFields, FieldModel{
 			Coordinate: coordinate, Owner: owner, Kind: field.TargetKind, InterfaceType: field.TargetType,
-			Path: path, Segments: segments,
+			Description: strings.TrimSpace(field.Description), Path: path, Segments: segments,
 			Provenance: provenance(coordinate, ""),
 		})
 	}
@@ -159,6 +163,11 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		coordinate := "field-domain:" + domain.TargetKind + ":" + domain.TargetType + ":" + domain.Field
 		segments, _ := parsePath(domain.Field)
 		values := normalizeValues(domain.Values)
+		for i := range values {
+			if text, ok := values[i].Value.(string); ok {
+				values[i].Description = strings.TrimSpace(domain.ValueDescriptions[text])
+			}
+		}
 		model.Vocabulary.ValueDomains = append(model.Vocabulary.ValueDomains, ValueDomainModel{
 			Coordinate: coordinate, Owner: owner, Kind: domain.TargetKind, InterfaceType: domain.TargetType,
 			Path: domain.Field, Segments: segments, Values: values,
@@ -172,6 +181,32 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 			})
 		}
 	}
+}
+
+// validateValueDescriptions requires every valueDescriptions key to name a
+// string value of the same fieldValues entry.
+func validateValueDescriptions(document ResolvedDocument) error {
+	for index, domain := range document.Definition.Spec.FieldValues {
+		defined := map[string]bool{}
+		for _, value := range domain.Values {
+			if text, ok := value.(string); ok {
+				defined[text] = true
+			}
+		}
+		keys := make([]string, 0, len(domain.ValueDescriptions))
+		for key := range domain.ValueDescriptions {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+		for _, key := range keys {
+			if !defined[key] {
+				return diagnostic("extension", "RCB1315", document.Definition.Metadata.ID,
+					fmt.Sprintf("/spec/fieldValues/%d/valueDescriptions/%s", index, escapeJSONPointer(key)),
+					fmt.Sprintf("valueDescriptions key %q is not one of the values of field %q", key, domain.Field))
+			}
+		}
+	}
+	return nil
 }
 
 func normalizeValues(values []any) []NormalizedValue {
@@ -782,6 +817,12 @@ func shapeStructuralKey(shape Shape) string {
 func withoutDescriptions(shape Shape) Shape {
 	result := shape
 	result.Description = ""
+	if shape.Values != nil {
+		result.Values = make([]NormalizedValue, len(shape.Values))
+		for i, value := range shape.Values {
+			result.Values[i] = NormalizedValue{Value: value.Value}
+		}
+	}
 	if shape.Properties != nil {
 		result.Properties = make([]PropertyShape, len(shape.Properties))
 		for i, property := range shape.Properties {
