@@ -318,11 +318,14 @@ def _shape(value: Any, pointer: str) -> None:
             "variants",
             "values",
             "constraints",
+            "description",
             "provenance",
         },
         {"kind", "provenance"},
         pointer,
     )
+    if "description" in item:
+        _string(item["description"], _pointer(pointer, "description"))
     kind = _string(item["kind"], _pointer(pointer, "kind"))
     _provenance(item["provenance"], _pointer(pointer, "provenance"))
     supported = {"scalar", "object", "array", "map", "union", "ref", "any"}
@@ -406,7 +409,12 @@ def _shape(value: Any, pointer: str) -> None:
             _string(name, _pointer(_pointer(pointer, "required"), index))
     if "values" in item:
         for index, entry in enumerate(
-            _records(item["values"], _pointer(pointer, "values"), {"value"}, {"value"})
+            _records(
+                item["values"],
+                _pointer(pointer, "values"),
+                {"value", "description"},
+                {"value"},
+            )
         ):
             if isinstance(entry["value"], (list, dict)):
                 fail(
@@ -498,7 +506,7 @@ def _validate_model(value: dict[str, Any]) -> None:
     extensions = _records(
         model["extensions"],
         "/extensions",
-        {"id", "version", "semanticSha256", "dependencies"},
+        {"id", "version", "semanticSha256", "dependencies", "description"},
         {"id", "semanticSha256"},
     )
     if not extensions:
@@ -603,15 +611,15 @@ def _validate_model(value: dict[str, Any]) -> None:
             {"coordinate", "category", "owner"},
         ),
         "ownedDeclarations": (
-            {"coordinate", "owner", "kind", "provenance"},
+            {"coordinate", "owner", "kind", "description", "provenance"},
             {"coordinate", "owner", "kind", "provenance"},
         ),
         "importedDeclarations": (
-            {"coordinate", "owner", "kind", "provenance"},
+            {"coordinate", "owner", "kind", "description", "provenance"},
             {"coordinate", "owner", "kind", "provenance"},
         ),
         "interfaces": (
-            {"coordinate", "owner", "kind", "type", "provenance"},
+            {"coordinate", "owner", "kind", "type", "description", "provenance"},
             {"coordinate", "owner", "kind", "type", "provenance"},
         ),
         "conditionFields": (
@@ -620,6 +628,7 @@ def _validate_model(value: dict[str, Any]) -> None:
                 "owner",
                 "kind",
                 "interfaceType",
+                "description",
                 "path",
                 "segments",
                 "provenance",
@@ -632,6 +641,7 @@ def _validate_model(value: dict[str, Any]) -> None:
                 "owner",
                 "kind",
                 "interfaceType",
+                "description",
                 "path",
                 "segments",
                 "provenance",
@@ -702,7 +712,10 @@ def _validate_model(value: dict[str, Any]) -> None:
                         )
             if "values" in item:
                 values = _records(
-                    item["values"], _pointer(pointer, "values"), {"value"}, {"value"}
+                    item["values"],
+                    _pointer(pointer, "values"),
+                    {"value", "description"},
+                    {"value"},
                 )
                 if not values:
                     fail(
