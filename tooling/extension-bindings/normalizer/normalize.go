@@ -574,7 +574,7 @@ func mergeAlternativeShapes(shapes []Shape, provenance Provenance) (Shape, error
 			properties[property.Name] = append(properties[property.Name], property)
 		}
 	}
-	result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance}
+	result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance, Description: firstDescription(shapes...)}
 	for _, name := range sortedPropertyNames(properties) {
 		candidates := properties[name]
 		property := candidates[0]
@@ -584,6 +584,7 @@ func mergeAlternativeShapes(shapes []Shape, provenance Provenance) (Shape, error
 				variants = append(variants, candidate.Shape)
 			}
 			property.Shape = collapseEquivalentShapes(variants, provenance)
+			property.Shape.Description = firstDescription(append([]Shape{property.Shape}, variants...)...)
 		}
 		property.Required = required[name]
 		result.Properties = append(result.Properties, property)
@@ -626,7 +627,7 @@ func mergeBaseAndCombinator(base, combined Shape, provenance Provenance) (Shape,
 		for name := range stringSetFromSlice(combined.Required) {
 			required[name] = true
 		}
-		result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance}
+		result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance, Description: firstDescription(base, combined)}
 		for _, name := range sortedPropertyNames(properties) {
 			candidates := properties[name]
 			property := candidates[0]
@@ -657,6 +658,8 @@ func mergeBaseAndCombinator(base, combined Shape, provenance Provenance) (Shape,
 		}
 		return result, nil
 	}
+	// Documentation follows the merge: keep the first description either side has.
+	base.Description = firstDescription(base, combined)
 	if shapesEqual(base, combined) {
 		return base, nil
 	}
@@ -710,10 +713,22 @@ func intersectValues(left, right []NormalizedValue) []NormalizedValue {
 	return result
 }
 
+// firstDescription returns the first non-empty description among shapes.
+func firstDescription(shapes ...Shape) string {
+	for _, shape := range shapes {
+		if shape.Description != "" {
+			return shape.Description
+		}
+	}
+	return ""
+}
+
 func collapseEquivalentShapes(shapes []Shape, provenance Provenance) Shape {
 	deduplicated := deduplicateShapes(shapes)
 	if len(deduplicated) == 1 {
-		return deduplicated[0]
+		result := deduplicated[0]
+		result.Description = firstDescription(shapes...)
+		return result
 	}
 	// Alternative string constants at one vocabulary path are one value
 	// domain. Branch-specific constraints remain in the exact schema.
