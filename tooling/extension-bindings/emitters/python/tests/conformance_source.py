@@ -11,7 +11,7 @@ from collections import defaultdict
 from typing import Any
 
 from runtimeconditions_binding_emitter.emitter import EmissionPlan, TypeExpr, TypePlan
-from runtimeconditions_binding_emitter.package import fail
+from runtimeconditions_binding_emitter.package import DiagnosticError, fail
 from runtimeconditions_binding_emitter.source import _header
 
 
@@ -39,7 +39,15 @@ def _sample(
     if expr.kind == "map":
         return '{"sample": ' + _sample(expr.arguments[0], plan, types, active) + "}"
     if expr.kind == "union":
-        return _sample(expr.arguments[0], plan, types, active)
+        # Use the first variant that has a finite sample. A recursive union such as
+        # list[Self] | dict[str, Self] | str is sampled through its scalar variant.
+        for index, argument in enumerate(expr.arguments):
+            try:
+                return _sample(argument, plan, types, active)
+            except DiagnosticError:
+                if index == len(expr.arguments) - 1:
+                    raise
+        raise AssertionError("union has no variants")
     name = plan.names[expr.symbol_key]
     type_plan = types[name]
     if type_plan.kind == "enum":
