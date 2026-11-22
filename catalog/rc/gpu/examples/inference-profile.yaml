@@ -1,0 +1,15 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsProfile
+metadata:
+  name: gpu-inference
+workload:
+  uri: https://example.com/inference
+extensions:
+  - https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml:0.1.0
+conditions:
+  - name: inference-accelerator
+    kind: rc.gpu
+    interface:
+      type: device
+      count: 1
+      minMemoryMiB: 16384

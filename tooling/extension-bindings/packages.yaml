@@ -143,6 +143,41 @@ packages:
         languageVersion: 21.0.12
         publicationMode: registry
         registryId: maven-central
+  gpu:
+    rootExtension: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+    coreProfileSchemaVersion: 0.4.0
+    languages:
+      go:
+        coordinate: runtimeconditions.io/x/rc/gpu
+        name: gpu
+        version: 0.1.0
+        sourceDirectory: bindings/gpu/go
+        languageVersion: 1.25.0
+        publicationMode: github-tag
+      python:
+        coordinate: runtimeconditions-gpu
+        name: runtimeconditions_gpu
+        version: 0.1.0
+        sourceDirectory: bindings/gpu/python
+        languageVersion: 3.12.10
+        publicationMode: registry
+        registryId: pypi
+      typescript:
+        coordinate: '@runtimeconditions/gpu'
+        name: '@runtimeconditions/gpu'
+        version: 0.1.0
+        sourceDirectory: bindings/gpu/typescript
+        languageVersion: 20.19.6
+        publicationMode: registry
+        registryId: npm
+      java:
+        coordinate: io.runtimeconditions.bindings:runtimeconditions-gpu
+        name: io.runtimeconditions.bindings.gpu
+        version: 0.1.0
+        sourceDirectory: bindings/gpu/java
+        languageVersion: 21.0.12
+        publicationMode: registry
+        registryId: maven-central
   kubernetes-api:
     rootExtension: https://runtimeconditions.io/extensions/kubernetes/api/0.1.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0

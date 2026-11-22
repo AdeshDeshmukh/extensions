@@ -1,0 +1,49 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+  version: 0.1.0
+spec:
+  kinds:
+    - name: rc.gpu
+  interfaceTypes:
+    - name: device
+      targetKind: rc.gpu
+  interfaceFields:
+    - name: count
+      targetKind: rc.gpu
+      targetType: device
+    - name: minMemoryMiB
+      targetKind: rc.gpu
+      targetType: device
+  schemas:
+    - id: rc-gpu-device
+      appliesToKind: rc.gpu
+      appliesToInterfaceType: device
+      description: Requires whole GPU devices with optional minimum memory per device.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required: [kind, interface]
+        properties:
+          name:
+            type: string
+            minLength: 1
+          optional:
+            type: boolean
+          kind:
+            const: rc.gpu
+          interface:
+            type: object
+            required: [type, count]
+            properties:
+              type:
+                const: device
+              count:
+                type: integer
+                minimum: 1
+              minMemoryMiB:
+                type: integer
+                minimum: 1
+            additionalProperties: false
+        additionalProperties: false
