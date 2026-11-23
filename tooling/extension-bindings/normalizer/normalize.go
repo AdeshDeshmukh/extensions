@@ -34,6 +34,9 @@ func Normalize(closure ResolvedClosure, lock DependencyLock, schemas *Schemas, c
 	if !exists {
 		return BindingModel{}, diagnostic("model", "RCB1304", closure.Root, "", "resolved closure does not contain its root")
 	}
+	if err := validateExamples(closure); err != nil {
+		return BindingModel{}, err
+	}
 	model := BindingModel{
 		APIVersion: ModelAPIVersion,
 		Kind:       ModelKind,

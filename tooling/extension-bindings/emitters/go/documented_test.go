@@ -3,8 +3,10 @@ package goemitter
 import (
 	"context"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -204,4 +206,79 @@ func tryNormalize(root, rootID string) (normalizer.BindingModel, error) {
 			Name: normalizer.NormalizerName, Version: normalizer.NormalizerVersion, SHA256: strings.Repeat("d", 64),
 		},
 	})
+}
+
+// TestExamplesCompile builds every example Condition of the documented fixture,
+// as rendered in Godoc and the README, against the generated package.
+func TestExamplesCompile(t *testing.T) {
+	fixture := filepath.Join("testdata", documentedFixture)
+	model := normalizeFixture(t, fixture, documentedRoot)
+	target, err := loadFixtureTarget(t, filepath.Join(fixture, "package-target.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	workspace := t.TempDir()
+	generated := filepath.Join(workspace, "generated")
+	if err := Emit(model, target, generated); err != nil {
+		t.Fatal(err)
+	}
+	ir, err := buildPackageIR(model, target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var statements []string
+	for _, declaration := range model.Vocabulary.OwnedDeclarations {
+		segments, err := normalizer.SplitDocumentation(declaration.Description)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, segment := range segments {
+			if segment.Condition == nil {
+				continue
+			}
+			code, ok := ir.exampleCode(segment.Condition)
+			if !ok {
+				t.Fatalf("example for %s could not be rendered as Go:\n%s", declaration.Kind, segment.Source)
+			}
+			statements = append(statements, "_ = "+code)
+		}
+	}
+	if len(statements) < 4 {
+		t.Fatalf("expected the fixture's examples, found %d", len(statements))
+	}
+	consumer := filepath.Join(workspace, "consumer")
+	if err := os.MkdirAll(consumer, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	goMod := "module example.com/consumer\n\ngo 1.22\n\nrequire " + target.ModulePath + " " + target.Version +
+		"\n\nreplace " + target.ModulePath + " => " + generated + "\n"
+	main := "package main\n\nimport " + target.PackageName + " " + strconv.Quote(target.ModulePath) +
+		"\n\nfunc main() {\n" + strings.Join(statements, "\n") + "\n}\n"
+	if err := os.WriteFile(filepath.Join(consumer, "go.mod"), []byte(goMod), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(consumer, "main.go"), []byte(main), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	command := exec.Command("go", "build", "./...")
+	command.Dir = consumer
+	command.Env = append(os.Environ(), "GOFLAGS=-mod=mod", "GOWORK=off")
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("examples do not compile: %v\n%s\n%s", err, output, main)
+	}
+
+	readme, err := os.ReadFile(filepath.Join(generated, "README.md"))
+	if err != nil {
+		t.Fatalf("documented package has no README: %v", err)
+	}
+	for _, want := range []string{
+		"# " + target.ModulePath,
+		"go get " + target.ModulePath + "@" + target.Version,
+		"```go\ncommon.Cache(",
+		"In a Profile, this declares:\n\n```yaml\nkind: cache",
+	} {
+		if !strings.Contains(string(readme), want) {
+			t.Errorf("README is missing %q", want)
+		}
+	}
 }
