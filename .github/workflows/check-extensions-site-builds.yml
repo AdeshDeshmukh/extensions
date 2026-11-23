@@ -9,6 +9,7 @@ on:
       - "tooling/common/serialization.py"
       - "tooling/common/go_bindings.py"
       - "tooling/common/test_*.py"
+      - "tooling/common/downstream_releases.py"
       - "tooling/extension-bindings/packages.yaml"
       - "bindings/**/go/**"
 

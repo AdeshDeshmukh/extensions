@@ -35,6 +35,8 @@ $defs:
       version:
         type: string
         minLength: 1
+      description:
+        $ref: '#/$defs/nonEmptyString'
       semanticSha256:
         type: string
         pattern: '^[0-9a-f]{64}$'
@@ -96,12 +98,16 @@ $defs:
     properties:
       name:
         $ref: '#/$defs/nonEmptyString'
+      description:
+        $ref: '#/$defs/nonEmptyString'
   interfaceTypeDefinition:
     type: object
     required: [name, targetKind]
     additionalProperties: false
     properties:
       name:
+        $ref: '#/$defs/nonEmptyString'
+      description:
         $ref: '#/$defs/nonEmptyString'
       targetKind:
         $ref: '#/$defs/nonEmptyString'
@@ -126,6 +132,8 @@ $defs:
         uniqueItems: true
         items:
           $ref: '#/$defs/nonEmptyString'
+      description:
+        $ref: '#/$defs/nonEmptyString'
   interfaceFieldDefinition:
     type: object
     required: [name, targetKind, targetType]
@@ -136,6 +144,8 @@ $defs:
       targetKind:
         $ref: '#/$defs/nonEmptyString'
       targetType:
+        $ref: '#/$defs/nonEmptyString'
+      description:
         $ref: '#/$defs/nonEmptyString'
   fieldValuesDefinition:
     type: object
@@ -156,6 +166,11 @@ $defs:
         uniqueItems: true
         items:
           $ref: '#/$defs/scalar'
+      valueDescriptions:
+        type: object
+        minProperties: 1
+        additionalProperties:
+          $ref: '#/$defs/nonEmptyString'
   schemaDefinition:
     type: object
     required: [id, description, schema]

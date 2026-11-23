@@ -1,0 +1,9 @@
+apiVersion: runtimeconditions.io/go-package-target/v1alpha1
+kind: RuntimeConditionsGoPackageTarget
+packageKey: go-fixture-documented-common-integrations
+rootExtension: https://runtimeconditions.io/go-fixture/documented-common-integrations:1.0.0
+modulePath: example.com/runtimeconditions/go-fixture/documented-common-integrations
+packageName: common
+version: v1.0.0
+minimumGoVersion: "1.22"
+publicationMode: github-tag

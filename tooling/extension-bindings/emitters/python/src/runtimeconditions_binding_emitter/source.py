@@ -45,12 +45,53 @@ def _all_literal(names: list[str]) -> list[str]:
     ]
 
 
-def _bindings_source(plan: EmissionPlan, model: dict[str, Any]) -> str:
-    lines = [
-        _header(model).rstrip("\n"),
-        "from __future__ import annotations",
-        "",
+def _docstring(text: str, indent: str = "") -> list[str]:
+    """Render extension documentation as a docstring; empty text renders nothing.
+
+    Descriptions come from the extension's vocabulary and JSON Schema. Docstrings
+    are expression statements, which the AST verification ignores.
+    """
+    paragraphs = [
+        paragraph.split() for paragraph in text.strip().split("\n\n") if paragraph.split()
     ]
+    if not paragraphs:
+        return []
+    width = 88 - len(indent) - 4
+    lines: list[str] = []
+    for index, words in enumerate(paragraphs):
+        if index:
+            lines.append("")
+        line = ""
+        for word in words:
+            word = word.replace("\\", "\\\\").replace('"""', '\\"\\"\\"')
+            if line and len(line) + 1 + len(word) > width:
+                lines.append(line)
+                line = word
+            else:
+                line = f"{line} {word}" if line else word
+        if line:
+            lines.append(line)
+    if lines[-1].endswith('"'):
+        lines[-1] += " "
+    if len(lines) == 1:
+        return [f'{indent}"""{lines[0]}"""']
+    return [
+        f'{indent}"""{lines[0]}',
+        *(f"{indent}{line}" if line else "" for line in lines[1:]),
+        f'{indent}"""',
+    ]
+
+
+def _bindings_source(plan: EmissionPlan, model: dict[str, Any]) -> str:
+    lines = [_header(model).rstrip("\n")]
+    if plan.package_description:
+        lines.extend(
+            _docstring(
+                f"Runtime Conditions defined by {plan.target.root_extension}."
+                f"\n\n{plan.package_description}"
+            )
+        )
+    lines.extend(("from __future__ import annotations", ""))
     if plan.declarations or any(item.kind == "object" for item in plan.types):
         lines.append("from dataclasses import dataclass")
     if any(item.kind == "enum" for item in plan.types):
@@ -111,19 +152,23 @@ def _bindings_source(plan: EmissionPlan, model: dict[str, Any]) -> str:
         lines.extend(("", ""))
         if type_plan.kind == "enum":
             lines.append(f"class {type_plan.name}(StrEnum):")
-            lines.extend(
-                f"    {name} = {json.dumps(value, ensure_ascii=False)}"
-                for name, value in type_plan.members
-            )
+            lines.extend(_docstring(type_plan.description, "    "))
+            for index, (name, value) in enumerate(type_plan.members):
+                lines.append(f"    {name} = {json.dumps(value, ensure_ascii=False)}")
+                if index < len(type_plan.member_descriptions):
+                    lines.extend(_docstring(type_plan.member_descriptions[index], "    "))
         elif type_plan.kind == "alias":
             lines.append(f"{type_plan.name}: TypeAlias = {type_plan.alias_rhs}")
+            lines.extend(_docstring(type_plan.description))
         elif type_plan.kind == "object":
             lines.extend(
                 ("@dataclass(frozen=True, kw_only=True)", f"class {type_plan.name}:")
             )
+            lines.extend(_docstring(type_plan.description, "    "))
             for field in type_plan.fields:
                 default = " = None" if field.default_none else ""
                 lines.append(f"    {field.name}: {field.annotation}{default}")
+                lines.extend(_docstring(field.description, "    "))
             if type_plan.marker:
                 if type_plan.fields:
                     lines.append("")
@@ -144,6 +189,13 @@ def _bindings_source(plan: EmissionPlan, model: dict[str, Any]) -> str:
                 "",
                 "",
                 f"def {owned_declaration.function}(*fields: {owned_declaration.protocol}) -> Declaration:",
+                *_docstring(
+                    f"Declare a {owned_declaration.kind} Condition."
+                    f"\n\n{owned_declaration.description}"
+                    if owned_declaration.description
+                    else "",
+                    "    ",
+                ),
                 "    return Declaration()",
             )
         )

@@ -52,6 +52,7 @@ class FieldPlan:
     annotation: str
     required: bool
     default_none: bool
+    description: str = ""
 
 
 @dataclass(frozen=True)
@@ -68,6 +69,8 @@ class TypePlan:
     is_declaration_field: bool = False
     schema_coordinate: str = ""
     source_name: str = ""
+    description: str = ""
+    member_descriptions: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -85,6 +88,7 @@ class DeclarationPlan:
     function: str
     protocol: str
     method: str
+    description: str = ""
 
 
 @dataclass(frozen=True)
@@ -109,6 +113,7 @@ class EmissionPlan:
     model_digest: str
     json_value_alias_rhs: str = JSON_VALUE_ALIAS_RHS
     any_coordinates: tuple[tuple[str, str], ...] = ()
+    package_description: str = ""
 
 
 def _direct_dependencies(model: dict[str, Any]) -> set[str]:
@@ -264,7 +269,7 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
             str,
             Any,
             TypeExpr | None,
-            list[tuple[str, str, str, TypeExpr, bool]],
+            list[tuple[str, str, str, TypeExpr, bool, str]],
             list[tuple[str, str]],
             MarkerReference | None,
         ],
@@ -363,7 +368,7 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
                         fixed=True,
                     )
                 )
-            raw_fields: list[tuple[str, str, str, TypeExpr, bool]] = []
+            raw_fields: list[tuple[str, str, str, TypeExpr, bool, str]] = []
             required = set(shape.get("required", []))
             properties = shape.get("properties", [])
             property_names = {property_["name"] for property_ in properties}
@@ -399,6 +404,7 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
                         name,
                         expression,
                         name in required or property_.get("required", False),
+                        property_["shape"].get("description", ""),
                     )
                 )
             raw_types[key] = ("object", shape, None, raw_fields, [], marker)
@@ -556,7 +562,16 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
                 "object",
                 shape,
                 None,
-                [(value_key, coordinate, "value", field_expression, True)],
+                [
+                    (
+                        value_key,
+                        coordinate,
+                        "value",
+                        field_expression,
+                        True,
+                        shape.get("description", ""),
+                    )
+                ],
                 [],
                 marker,
             )
@@ -594,7 +609,14 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
     for key in sorted(raw_types):
         kind, shape, expression, raw_fields, raw_members, marker = raw_types[key]
         fields: list[FieldPlan] = []
-        for field_key, coordinate, source_name, field_type, required in raw_fields:
+        for (
+            field_key,
+            coordinate,
+            source_name,
+            field_type,
+            required,
+            description,
+        ) in raw_fields:
             annotation = field_type.annotation(names)
             if not required and "None" not in annotation.split(" | "):
                 annotation += " | None"
@@ -607,6 +629,7 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
                     annotation,
                     required,
                     not required,
+                    description,
                 )
             )
         fields.sort(key=lambda item: (not item.required, item.name, item.coordinate))
@@ -639,6 +662,10 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
                 marker is not None and kind == "object",
                 declaration_field_schemas.get(key, ""),
                 type_sources[key],
+                shape.get("description", ""),
+                tuple(entry.get("description", "") for entry in shape.get("values", []))
+                if kind == "enum"
+                else (),
             )
         )
     result_declarations = tuple(
@@ -652,6 +679,11 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
             names[function_key],
             names[protocol_key],
             _marker_method(root, coordinate),
+            next(
+                item.get("description", "")
+                for item in vocabulary.get("ownedDeclarations", [])
+                if item["coordinate"] == coordinate
+            ),
         )
         for coordinate, function_key, protocol_key in sorted(declarations)
     )
@@ -676,4 +708,12 @@ def build_plan(model: dict[str, Any], target: PackageTarget) -> EmissionPlan:
         any_used,
         model["metadata"]["semanticSha256"],
         any_coordinates=tuple(sorted(any_coordinates)),
+        package_description=next(
+            (
+                item.get("description", "")
+                for item in model["extensions"]
+                if item["id"] == root
+            ),
+            "",
+        ),
     )

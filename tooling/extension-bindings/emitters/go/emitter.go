@@ -30,11 +30,12 @@ type typeReference struct {
 }
 
 type fieldIR struct {
-	provenance normalizer.Provenance
-	sourceName string
-	name       string
-	typeRef    typeReference
-	required   bool
+	provenance  normalizer.Provenance
+	sourceName  string
+	name        string
+	typeRef     typeReference
+	required    bool
+	description string
 }
 
 type typeIR struct {
@@ -55,6 +56,7 @@ type typeIR struct {
 	unionVariants []string
 	variantSource []normalizer.Provenance
 	unionParents  []string
+	description   string
 	building      bool
 	built         bool
 }
@@ -71,11 +73,12 @@ type rootBindingIR struct {
 }
 
 type constantIR struct {
-	coordinate string
-	sourceName string
-	name       string
-	typeKey    string
-	value      string
+	coordinate  string
+	sourceName  string
+	name        string
+	typeKey     string
+	value       string
+	description string
 }
 
 type pathPart struct {
@@ -279,12 +282,16 @@ func (ir *packageIR) ensureNamedShape(key, coordinate, sourceName string, base [
 		methods: map[string]bool{}, building: true,
 	}
 	ir.types[key] = typeValue
+	typeValue.description = shape.Description
 	if shape.Kind == "ref" {
 		resolved, err := ir.resolveReference(shape)
 		if err != nil {
 			return nil, err
 		}
 		shape = resolved.Shape
+		if typeValue.description == "" {
+			typeValue.description = shape.Description
+		}
 	}
 	typeValue.provenance = shape.Provenance
 	switch shape.Kind {
@@ -327,6 +334,7 @@ func (ir *packageIR) ensureNamedShape(key, coordinate, sourceName string, base [
 			typeValue.fields = append(typeValue.fields, fieldIR{
 				provenance: property.Provenance,
 				sourceName: property.Name, name: fieldName, typeRef: reference, required: property.Required,
+				description: property.Shape.Description,
 			})
 		}
 	case "array":
@@ -598,10 +606,11 @@ func (ir *packageIR) discoverStructuralTypes() error {
 }
 
 type constantCandidate struct {
-	typeKey    string
-	coordinate string
-	value      string
-	suffix     string
+	typeKey     string
+	coordinate  string
+	value       string
+	suffix      string
+	description string
 }
 
 type packageSymbol struct {
@@ -641,7 +650,7 @@ func (ir *packageIR) allocatePackageSymbols() error {
 			seen[suffix] = value
 			candidates = append(candidates, constantCandidate{
 				typeKey: key, coordinate: typeValue.coordinate + ":" + strconv.Quote(value),
-				value: value, suffix: suffix,
+				value: value, suffix: suffix, description: member.Description,
 			})
 		}
 	}
@@ -700,6 +709,7 @@ func (ir *packageIR) allocatePackageSymbols() error {
 		ir.constants = append(ir.constants, constantIR{
 			coordinate: candidate.coordinate, sourceName: candidate.value,
 			name: name, typeKey: candidate.typeKey, value: candidate.value,
+			description: candidate.description,
 		})
 	}
 	sort.Slice(ir.constants, func(i, j int) bool { return ir.constants[i].name < ir.constants[j].name })
@@ -725,6 +735,10 @@ func (ir *packageIR) files() (map[string][]byte, error) {
 func (ir *packageIR) renderBindings() ([]byte, error) {
 	var buffer bytes.Buffer
 	writeGoHeader(&buffer, ir.model.Metadata.SemanticSHA256)
+	if description := ir.rootDescription(); description != "" {
+		fmt.Fprintf(&buffer, "// Package %s declares Runtime Conditions defined by %s.\n//\n", ir.target.PackageName, ir.model.RootExtension.ID)
+		writeDocComment(&buffer, "", description)
+	}
 	fmt.Fprintf(&buffer, "package %s\n\n", ir.target.PackageName)
 	buffer.WriteString("// Declaration is the inert result of a Runtime Conditions declaration.\n")
 	buffer.WriteString("type Declaration struct{}\n\n")
@@ -733,12 +747,20 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 		fmt.Fprintf(&buffer, "// %sField is the field contract for %s declarations.\n", declaration.function.name, declaration.function.name)
 		fmt.Fprintf(&buffer, "type %s interface {\n\t%s()\n}\n\n", declaration.fieldInterface.name, declaration.markerMethod)
 		fmt.Fprintf(&buffer, "// %s declares a %s Condition.\n", declaration.function.name, declaration.model.Kind)
+		if declaration.model.Description != "" {
+			buffer.WriteString("//\n")
+			writeDocComment(&buffer, "", declaration.model.Description)
+		}
 		fmt.Fprintf(&buffer, "func %s(fields ...%s) Declaration { return Declaration{} }\n\n", declaration.function.name, declaration.fieldInterface.name)
 	}
 	keys := sortedTypeKeys(ir.types)
 	for _, key := range keys {
 		typeValue := ir.types[key]
 		name := typeValue.request.name
+		if typeValue.description != "" {
+			writeDocComment(&buffer, "", name+": "+typeValue.description)
+			buffer.WriteString("//\n")
+		}
 		fmt.Fprintf(&buffer, "// %s is generated from %s.\n", name, typeValue.coordinate)
 		switch typeValue.kind {
 		case "scalar":
@@ -746,6 +768,9 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 		case "struct":
 			fmt.Fprintf(&buffer, "type %s struct {\n", name)
 			for _, field := range typeValue.fields {
+				if field.description != "" {
+					writeDocComment(&buffer, "\t", field.description)
+				}
 				fmt.Fprintf(&buffer, "\t%s %s\n", field.name, ir.renderTypeReference(field.typeRef))
 			}
 			buffer.WriteString("}\n")
@@ -775,6 +800,9 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 	if len(ir.constants) != 0 {
 		buffer.WriteString("const (\n")
 		for _, constant := range ir.constants {
+			if constant.description != "" {
+				writeDocComment(&buffer, "\t", constant.description)
+			}
 			fmt.Fprintf(&buffer, "\t%s %s = %s\n", constant.name, ir.types[constant.typeKey].request.name, strconv.Quote(constant.value))
 		}
 		buffer.WriteString(")\n")
@@ -1370,4 +1398,41 @@ func writeGoHeader(buffer *bytes.Buffer, digest string) {
 func writeGeneratedHeader(buffer *bytes.Buffer, prefix, digest string) {
 	fmt.Fprintf(buffer, "%s Code generated by %s %s. DO NOT EDIT.\n", prefix, EmitterName, EmitterVersion)
 	fmt.Fprintf(buffer, "%s Binding model SHA-256: %s\n\n", prefix, digest)
+}
+
+// writeDocComment writes text as Go line comments wrapped near 80 columns.
+// Descriptions come from the extension's JSON Schema "description" annotations
+// and from optional kind and interface type descriptions.
+func writeDocComment(buffer *bytes.Buffer, indent, text string) {
+	const width = 77
+	for i, paragraph := range strings.Split(strings.TrimSpace(text), "\n\n") {
+		if i > 0 {
+			fmt.Fprintf(buffer, "%s//\n", indent)
+		}
+		line := ""
+		for _, word := range strings.Fields(paragraph) {
+			if line != "" && len(line)+1+len(word) > width {
+				fmt.Fprintf(buffer, "%s// %s\n", indent, line)
+				line = word
+				continue
+			}
+			if line != "" {
+				line += " "
+			}
+			line += word
+		}
+		if line != "" {
+			fmt.Fprintf(buffer, "%s// %s\n", indent, line)
+		}
+	}
+}
+
+// rootDescription returns the root extension's metadata description.
+func (ir *packageIR) rootDescription() string {
+	for _, extension := range ir.model.Extensions {
+		if extension.ID == ir.model.RootExtension.ID {
+			return extension.Description
+		}
+	}
+	return ""
 }

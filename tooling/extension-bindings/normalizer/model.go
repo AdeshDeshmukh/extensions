@@ -23,6 +23,7 @@ type ExtensionDefinition struct {
 type ExtensionMetadata struct {
 	ID             string `yaml:"id" json:"id"`
 	Version        string `yaml:"version,omitempty" json:"version,omitempty"`
+	Description    string `yaml:"description,omitempty" json:"description,omitempty"`
 	SemanticSHA256 string `yaml:"semanticSha256,omitempty" json:"semanticSha256,omitempty"`
 }
 
@@ -37,24 +38,28 @@ type ExtensionSpec struct {
 }
 
 type KindDefinition struct {
-	Name string `yaml:"name" json:"name"`
+	Name        string `yaml:"name" json:"name"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 type InterfaceTypeDefinition struct {
-	Name       string `yaml:"name" json:"name"`
-	TargetKind string `yaml:"targetKind" json:"targetKind"`
+	Name        string `yaml:"name" json:"name"`
+	TargetKind  string `yaml:"targetKind" json:"targetKind"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 type ConditionFieldDefinition struct {
 	Name                    string   `yaml:"name" json:"name"`
 	AppliesToKinds          []string `yaml:"appliesToKinds" json:"appliesToKinds"`
 	AppliesToInterfaceTypes []string `yaml:"appliesToInterfaceTypes,omitempty" json:"appliesToInterfaceTypes,omitempty"`
+	Description             string   `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 type InterfaceFieldDefinition struct {
-	Name       string `yaml:"name" json:"name"`
-	TargetKind string `yaml:"targetKind" json:"targetKind"`
-	TargetType string `yaml:"targetType" json:"targetType"`
+	Name        string `yaml:"name" json:"name"`
+	TargetKind  string `yaml:"targetKind" json:"targetKind"`
+	TargetType  string `yaml:"targetType" json:"targetType"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 type FieldValuesDefinition struct {
@@ -62,6 +67,8 @@ type FieldValuesDefinition struct {
 	TargetKind string `yaml:"targetKind" json:"targetKind"`
 	TargetType string `yaml:"targetType,omitempty" json:"targetType,omitempty"`
 	Values     []any  `yaml:"values" json:"values"`
+	// ValueDescriptions documents individual values, keyed by value.
+	ValueDescriptions map[string]string `yaml:"valueDescriptions,omitempty" json:"valueDescriptions,omitempty"`
 }
 
 type ExtensionSchema struct {
@@ -113,6 +120,7 @@ type ResolvedExtension struct {
 	Version        string   `yaml:"version,omitempty" json:"version,omitempty"`
 	SemanticSHA256 string   `yaml:"semanticSha256" json:"semanticSha256"`
 	Dependencies   []string `yaml:"dependencies,omitempty" json:"dependencies,omitempty"`
+	Description    string   `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 // DependencyLock is exact source-resolution evidence. It is intentionally not
@@ -157,18 +165,20 @@ type VocabularyOwner struct {
 }
 
 type DeclarationModel struct {
-	Coordinate string     `yaml:"coordinate" json:"coordinate"`
-	Owner      string     `yaml:"owner" json:"owner"`
-	Kind       string     `yaml:"kind" json:"kind"`
-	Provenance Provenance `yaml:"provenance" json:"provenance"`
+	Coordinate  string     `yaml:"coordinate" json:"coordinate"`
+	Owner       string     `yaml:"owner" json:"owner"`
+	Kind        string     `yaml:"kind" json:"kind"`
+	Description string     `yaml:"description,omitempty" json:"description,omitempty"`
+	Provenance  Provenance `yaml:"provenance" json:"provenance"`
 }
 
 type InterfaceModel struct {
-	Coordinate string     `yaml:"coordinate" json:"coordinate"`
-	Owner      string     `yaml:"owner" json:"owner"`
-	Kind       string     `yaml:"kind" json:"kind"`
-	Type       string     `yaml:"type" json:"type"`
-	Provenance Provenance `yaml:"provenance" json:"provenance"`
+	Coordinate  string     `yaml:"coordinate" json:"coordinate"`
+	Owner       string     `yaml:"owner" json:"owner"`
+	Kind        string     `yaml:"kind" json:"kind"`
+	Type        string     `yaml:"type" json:"type"`
+	Description string     `yaml:"description,omitempty" json:"description,omitempty"`
+	Provenance  Provenance `yaml:"provenance" json:"provenance"`
 }
 
 type FieldModel struct {
@@ -176,6 +186,7 @@ type FieldModel struct {
 	Owner         string        `yaml:"owner" json:"owner"`
 	Kind          string        `yaml:"kind" json:"kind"`
 	InterfaceType string        `yaml:"interfaceType,omitempty" json:"interfaceType,omitempty"`
+	Description   string        `yaml:"description,omitempty" json:"description,omitempty"`
 	Path          string        `yaml:"path" json:"path"`
 	Segments      []PathSegment `yaml:"segments" json:"segments"`
 	Provenance    Provenance    `yaml:"provenance" json:"provenance"`
@@ -193,7 +204,8 @@ type ValueDomainModel struct {
 }
 
 type NormalizedValue struct {
-	Value any `yaml:"value" json:"value"`
+	Value       any    `yaml:"value" json:"value"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 type PathSegment struct {
@@ -239,7 +251,10 @@ type Shape struct {
 	Variants    []Shape           `yaml:"variants,omitempty" json:"variants,omitempty"`
 	Values      []NormalizedValue `yaml:"values,omitempty" json:"values,omitempty"`
 	Constraints map[string]any    `yaml:"constraints,omitempty" json:"constraints,omitempty"`
-	Provenance  Provenance        `yaml:"provenance" json:"provenance"`
+	// Description is the JSON Schema "description" annotation. It is
+	// documentation only and never affects structural shape comparison.
+	Description string     `yaml:"description,omitempty" json:"description,omitempty"`
+	Provenance  Provenance `yaml:"provenance" json:"provenance"`
 }
 
 type PropertyShape struct {

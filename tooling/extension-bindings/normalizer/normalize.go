@@ -52,9 +52,13 @@ func Normalize(closure ResolvedClosure, lock DependencyLock, schemas *Schemas, c
 		dependencies := append([]string(nil), document.Definition.Spec.Dependencies...)
 		sort.Strings(dependencies)
 		id := document.Definition.Metadata.ID
+		if err := validateValueDescriptions(document); err != nil {
+			return BindingModel{}, err
+		}
 		model.Extensions = append(model.Extensions, ResolvedExtension{
 			ID: id, Version: document.Definition.Metadata.Version,
 			SemanticSHA256: document.SemanticSHA256, Dependencies: dependencies,
+			Description: strings.TrimSpace(document.Definition.Metadata.Description),
 		})
 		appendVocabulary(&model, document, interfaces, id == closure.Root)
 		normalizedSchemas, err := normalizeSchemas(document)
@@ -71,6 +75,7 @@ func Normalize(closure ResolvedClosure, lock DependencyLock, schemas *Schemas, c
 	if err := validateFieldValueDomains(model); err != nil {
 		return BindingModel{}, err
 	}
+	attachScopeDocumentation(&model)
 	sortModel(&model)
 	digest, err := ModelSemanticSHA256(model)
 	if err != nil {
@@ -95,12 +100,12 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		})
 		if root {
 			model.Vocabulary.OwnedDeclarations = append(model.Vocabulary.OwnedDeclarations, DeclarationModel{
-				Coordinate: coordinate, Owner: owner, Kind: kind.Name,
+				Coordinate: coordinate, Owner: owner, Kind: kind.Name, Description: kind.Description,
 				Provenance: provenance(coordinate, ""),
 			})
 		} else {
 			model.Vocabulary.ImportedDeclarations = append(model.Vocabulary.ImportedDeclarations, DeclarationModel{
-				Coordinate: coordinate, Owner: owner, Kind: kind.Name,
+				Coordinate: coordinate, Owner: owner, Kind: kind.Name, Description: kind.Description,
 				Provenance: provenance(coordinate, ""),
 			})
 		}
@@ -113,7 +118,7 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		})
 		model.Vocabulary.Interfaces = append(model.Vocabulary.Interfaces, InterfaceModel{
 			Coordinate: coordinate, Owner: owner, Kind: interfaceType.TargetKind, Type: interfaceType.Name,
-			Provenance: provenance(coordinate, ""),
+			Description: interfaceType.Description, Provenance: provenance(coordinate, ""),
 		})
 	}
 	for _, field := range document.Definition.Spec.ConditionFields {
@@ -135,7 +140,7 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 				})
 				model.Vocabulary.ConditionFields = append(model.Vocabulary.ConditionFields, FieldModel{
 					Coordinate: coordinate, Owner: owner, Kind: kind, InterfaceType: interfaceType,
-					Path: path, Segments: segments,
+					Description: strings.TrimSpace(field.Description), Path: path, Segments: segments,
 					Provenance: provenance(coordinate, ""),
 				})
 			}
@@ -151,7 +156,7 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		})
 		model.Vocabulary.InterfaceFields = append(model.Vocabulary.InterfaceFields, FieldModel{
 			Coordinate: coordinate, Owner: owner, Kind: field.TargetKind, InterfaceType: field.TargetType,
-			Path: path, Segments: segments,
+			Description: strings.TrimSpace(field.Description), Path: path, Segments: segments,
 			Provenance: provenance(coordinate, ""),
 		})
 	}
@@ -159,6 +164,11 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 		coordinate := "field-domain:" + domain.TargetKind + ":" + domain.TargetType + ":" + domain.Field
 		segments, _ := parsePath(domain.Field)
 		values := normalizeValues(domain.Values)
+		for i := range values {
+			if text, ok := values[i].Value.(string); ok {
+				values[i].Description = strings.TrimSpace(domain.ValueDescriptions[text])
+			}
+		}
 		model.Vocabulary.ValueDomains = append(model.Vocabulary.ValueDomains, ValueDomainModel{
 			Coordinate: coordinate, Owner: owner, Kind: domain.TargetKind, InterfaceType: domain.TargetType,
 			Path: domain.Field, Segments: segments, Values: values,
@@ -172,6 +182,32 @@ func appendVocabulary(model *BindingModel, document ResolvedDocument, interfaces
 			})
 		}
 	}
+}
+
+// validateValueDescriptions requires every valueDescriptions key to name a
+// string value of the same fieldValues entry.
+func validateValueDescriptions(document ResolvedDocument) error {
+	for index, domain := range document.Definition.Spec.FieldValues {
+		defined := map[string]bool{}
+		for _, value := range domain.Values {
+			if text, ok := value.(string); ok {
+				defined[text] = true
+			}
+		}
+		keys := make([]string, 0, len(domain.ValueDescriptions))
+		for key := range domain.ValueDescriptions {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+		for _, key := range keys {
+			if !defined[key] {
+				return diagnostic("extension", "RCB1315", document.Definition.Metadata.ID,
+					fmt.Sprintf("/spec/fieldValues/%d/valueDescriptions/%s", index, escapeJSONPointer(key)),
+					fmt.Sprintf("valueDescriptions key %q is not one of the values of field %q", key, domain.Field))
+			}
+		}
+	}
+	return nil
 }
 
 func normalizeValues(values []any) []NormalizedValue {
@@ -355,7 +391,7 @@ func projectShape(schema, root map[string]any, coordinate, extensionDigest, poin
 				return Shape{}, diagnostic("schema", "RCB1314", coordinate, pointer+"/"+keyword, fmt.Sprintf("structure-changing sibling %q beside $ref is unsupported by binding-model v1alpha1", keyword))
 			}
 		}
-		return Shape{Kind: "ref", Ref: reference, Provenance: provenance, Constraints: extractConstraints(schema)}, nil
+		return Shape{Kind: "ref", Ref: reference, Provenance: provenance, Constraints: extractConstraints(schema), Description: schemaDescription(schema)}, nil
 	}
 	base, err := projectDirectShape(schema, root, coordinate, extensionDigest, pointer, active)
 	if err != nil {
@@ -393,8 +429,15 @@ func projectShape(schema, root map[string]any, coordinate, extensionDigest, poin
 		}
 	}
 	base.Constraints = extractConstraints(schema)
+	base.Description = schemaDescription(schema)
 	base.Provenance = provenance
 	return base, nil
+}
+
+// schemaDescription returns the JSON Schema "description" annotation, if any.
+func schemaDescription(schema map[string]any) string {
+	description, _ := schema["description"].(string)
+	return strings.TrimSpace(description)
 }
 
 func projectDirectShape(schema, root map[string]any, coordinate, extensionDigest, pointer string, active map[string]bool) (Shape, error) {
@@ -531,7 +574,7 @@ func mergeAlternativeShapes(shapes []Shape, provenance Provenance) (Shape, error
 			properties[property.Name] = append(properties[property.Name], property)
 		}
 	}
-	result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance}
+	result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance, Description: firstDescription(shapes...)}
 	for _, name := range sortedPropertyNames(properties) {
 		candidates := properties[name]
 		property := candidates[0]
@@ -541,6 +584,7 @@ func mergeAlternativeShapes(shapes []Shape, provenance Provenance) (Shape, error
 				variants = append(variants, candidate.Shape)
 			}
 			property.Shape = collapseEquivalentShapes(variants, provenance)
+			property.Shape.Description = firstDescription(append([]Shape{property.Shape}, variants...)...)
 		}
 		property.Required = required[name]
 		result.Properties = append(result.Properties, property)
@@ -583,7 +627,7 @@ func mergeBaseAndCombinator(base, combined Shape, provenance Provenance) (Shape,
 		for name := range stringSetFromSlice(combined.Required) {
 			required[name] = true
 		}
-		result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance}
+		result := Shape{Kind: "object", Required: sortedSet(required), Provenance: provenance, Description: firstDescription(base, combined)}
 		for _, name := range sortedPropertyNames(properties) {
 			candidates := properties[name]
 			property := candidates[0]
@@ -614,6 +658,8 @@ func mergeBaseAndCombinator(base, combined Shape, provenance Provenance) (Shape,
 		}
 		return result, nil
 	}
+	// Documentation follows the merge: keep the first description either side has.
+	base.Description = firstDescription(base, combined)
 	if shapesEqual(base, combined) {
 		return base, nil
 	}
@@ -667,10 +713,22 @@ func intersectValues(left, right []NormalizedValue) []NormalizedValue {
 	return result
 }
 
+// firstDescription returns the first non-empty description among shapes.
+func firstDescription(shapes ...Shape) string {
+	for _, shape := range shapes {
+		if shape.Description != "" {
+			return shape.Description
+		}
+	}
+	return ""
+}
+
 func collapseEquivalentShapes(shapes []Shape, provenance Provenance) Shape {
 	deduplicated := deduplicateShapes(shapes)
 	if len(deduplicated) == 1 {
-		return deduplicated[0]
+		result := deduplicated[0]
+		result.Description = firstDescription(shapes...)
+		return result
 	}
 	// Alternative string constants at one vocabulary path are one value
 	// domain. Branch-specific constraints remain in the exact schema.
@@ -763,11 +821,46 @@ func deduplicateShapes(shapes []Shape) []Shape {
 }
 
 func shapeStructuralKey(shape Shape) string {
-	copyShape := shape
+	copyShape := withoutDescriptions(shape)
 	copyShape.Provenance = Provenance{}
 	copyShape.Constraints = nil
 	encoded, _ := canonicalJSON(copyShape)
 	return string(encoded)
+}
+
+// withoutDescriptions copies a shape with every description removed, so two
+// shapes that differ only in documentation compare as structurally equal.
+func withoutDescriptions(shape Shape) Shape {
+	result := shape
+	result.Description = ""
+	if shape.Values != nil {
+		result.Values = make([]NormalizedValue, len(shape.Values))
+		for i, value := range shape.Values {
+			result.Values[i] = NormalizedValue{Value: value.Value}
+		}
+	}
+	if shape.Properties != nil {
+		result.Properties = make([]PropertyShape, len(shape.Properties))
+		for i, property := range shape.Properties {
+			property.Shape = withoutDescriptions(property.Shape)
+			result.Properties[i] = property
+		}
+	}
+	if shape.Items != nil {
+		items := withoutDescriptions(*shape.Items)
+		result.Items = &items
+	}
+	if shape.MapValues != nil {
+		values := withoutDescriptions(*shape.MapValues)
+		result.MapValues = &values
+	}
+	if shape.Variants != nil {
+		result.Variants = make([]Shape, len(shape.Variants))
+		for i, variant := range shape.Variants {
+			result.Variants[i] = withoutDescriptions(variant)
+		}
+	}
+	return result
 }
 
 func shapesEqual(left, right Shape) bool {
@@ -863,7 +956,13 @@ func expandShapeForMerge(shape Shape, schema NormalizedSchema, active map[string
 			}
 			activeCopy := cloneBoolMap(active)
 			activeCopy[shape.Ref] = true
-			return expandShapeForMerge(definition.Shape, schema, activeCopy)
+			expanded := expandShapeForMerge(definition.Shape, schema, activeCopy)
+			// A description written beside $ref documents this use of the
+			// definition and takes precedence over the definition's own text.
+			if shape.Description != "" {
+				expanded.Description = shape.Description
+			}
+			return expanded
 		}
 		return shape
 	}
@@ -1235,4 +1334,131 @@ func cloneBoolMap(source map[string]bool) map[string]bool {
 		result[key] = value
 	}
 	return result
+}
+
+// attachScopeDocumentation copies vocabulary documentation onto the scope and
+// schema projections that emitters read, so no emitter has to look descriptions up
+// by path:
+//
+//   - an interface type's description is placed before the schema description
+//     of the "interface" object;
+//   - a condition or interface field's description (its meaning) is placed
+//     before the JSON Schema description of that property (its rule);
+//   - each value of a field-value domain gets the matching valueDescriptions
+//     text.
+//
+// Descriptions never change structure; shapeStructuralKey ignores them.
+func attachScopeDocumentation(model *BindingModel) {
+	fieldDocs := map[string]string{}
+	for _, fields := range [][]FieldModel{model.Vocabulary.ConditionFields, model.Vocabulary.InterfaceFields} {
+		for _, field := range fields {
+			if field.Description != "" {
+				fieldDocs[docKey(field.Kind, field.InterfaceType, field.Path)] = field.Description
+			}
+		}
+	}
+	for _, interfaceModel := range model.Vocabulary.Interfaces {
+		if interfaceModel.Description != "" {
+			fieldDocs[docKey(interfaceModel.Kind, interfaceModel.Type, "interface")] = interfaceModel.Description
+		}
+	}
+	valueDocs := map[string]map[string]string{}
+	for _, domain := range model.Vocabulary.ValueDomains {
+		for _, value := range domain.Values {
+			text, ok := value.Value.(string)
+			if !ok || value.Description == "" {
+				continue
+			}
+			key := docKey(domain.Kind, domain.InterfaceType, domain.Path)
+			if valueDocs[key] == nil {
+				valueDocs[key] = map[string]string{}
+			}
+			valueDocs[key][text] = value.Description
+		}
+	}
+	if len(fieldDocs) == 0 && len(valueDocs) == 0 {
+		return
+	}
+	for index, scope := range model.Scopes {
+		if scope.Projection == nil {
+			continue
+		}
+		documented := documentShape(*scope.Projection, scope.Kind, scope.InterfaceType, "", fieldDocs, valueDocs)
+		model.Scopes[index].Projection = &documented
+	}
+	// Some emitters plan types from each schema's own projection rather than
+	// the merged scope projection, so document those too.
+	for index, schema := range model.Schemas {
+		if schema.Kind == "" {
+			continue
+		}
+		model.Schemas[index].Projection = documentShape(schema.Projection, schema.Kind, schema.InterfaceType, "", fieldDocs, valueDocs)
+	}
+}
+
+func docKey(kind, interfaceType, path string) string {
+	return kind + "\x00" + interfaceType + "\x00" + path
+}
+
+// lookupDoc prefers documentation scoped to the interface type and falls back
+// to documentation that applies to every interface type of the kind.
+func lookupDoc[T any](docs map[string]T, kind, interfaceType, path string) (T, bool) {
+	if value, ok := docs[docKey(kind, interfaceType, path)]; ok {
+		return value, true
+	}
+	value, ok := docs[docKey(kind, "", path)]
+	return value, ok
+}
+
+func documentShape(shape Shape, kind, interfaceType, path string, fieldDocs map[string]string, valueDocs map[string]map[string]string) Shape {
+	result := shape
+	if values, ok := lookupDoc(valueDocs, kind, interfaceType, path); ok && shape.Values != nil {
+		result.Values = make([]NormalizedValue, len(shape.Values))
+		for i, value := range shape.Values {
+			result.Values[i] = value
+			if text, isString := value.Value.(string); isString && values[text] != "" {
+				result.Values[i].Description = values[text]
+			}
+		}
+	}
+	if shape.Properties != nil {
+		result.Properties = make([]PropertyShape, len(shape.Properties))
+		for i, property := range shape.Properties {
+			childPath := property.Name
+			if path != "" {
+				childPath = path + "." + property.Name
+			}
+			property.Shape = documentShape(property.Shape, kind, interfaceType, childPath, fieldDocs, valueDocs)
+			if meaning, ok := lookupDoc(fieldDocs, kind, interfaceType, childPath); ok {
+				property.Shape.Description = joinDescriptions(meaning, property.Shape.Description)
+			}
+			result.Properties[i] = property
+		}
+	}
+	if shape.Items != nil {
+		items := documentShape(*shape.Items, kind, interfaceType, path+"[]", fieldDocs, valueDocs)
+		result.Items = &items
+	}
+	if shape.MapValues != nil {
+		values := documentShape(*shape.MapValues, kind, interfaceType, path, fieldDocs, valueDocs)
+		result.MapValues = &values
+	}
+	if shape.Variants != nil {
+		result.Variants = make([]Shape, len(shape.Variants))
+		for i, variant := range shape.Variants {
+			result.Variants[i] = documentShape(variant, kind, interfaceType, path, fieldDocs, valueDocs)
+		}
+	}
+	return result
+}
+
+// joinDescriptions puts meaning first and the validation rule second.
+func joinDescriptions(parts ...string) string {
+	var kept []string
+	for _, part := range parts {
+		if part = strings.TrimSpace(part); part != "" {
+			kept = append(kept, part)
+		}
+	}
+	return strings.Join(kept, "\n\n")
 }
