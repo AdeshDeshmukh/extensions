@@ -74,8 +74,11 @@ def _pyproject(plan: EmissionPlan, model: dict[str, Any]) -> str:
         f"name = {json.dumps(target.distribution_name)}",
         f"version = {json.dumps(_version(target.version, target.package_key))}",
         f'requires-python = ">={target.minimum_python_version}"',
-        "dependencies = [",
     ]
+    if plan.package_description:
+        # PyPI shows the generated README as the project description.
+        lines.append('readme = "README.md"')
+    lines.append("dependencies = [")
     for dependency in dependencies:
         interval = _dependency_interval(dependency.version, dependency.extension)
         lines.append(f"    {json.dumps(dependency.distribution_name + interval)},")

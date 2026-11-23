@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import ast
+import re
+import sys
 from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -12,7 +14,13 @@ import yaml
 from runtimeconditions_binding_emitter.emitter import EmissionPlan, build_plan
 from runtimeconditions_binding_emitter.metadata import render_resources
 from runtimeconditions_binding_emitter.package import load_target
-from runtimeconditions_binding_emitter.source import _bindings_source, _init_source
+from runtimeconditions_binding_emitter.examples import render_examples
+from runtimeconditions_binding_emitter.source import (
+    _CURRENT_EXAMPLES,
+    _bindings_source,
+    _init_source,
+    readme_source,
+)
 from runtimeconditions_binding_emitter.verification import api_surface, verify_package
 
 TOOLING = Path(__file__).resolve().parents[3]
@@ -93,7 +101,38 @@ def test_docstrings_do_not_change_the_api() -> None:
         )
 
 
+def test_readme_examples_run_against_the_generated_package() -> None:
+    model, plan = _model_and_plan()
+    examples = render_examples(plan, model)
+    readme = readme_source(plan, model, examples)
+    assert readme is not None
+    blocks = re.findall(r"```python\n(.*?)```", readme, flags=re.S)
+    assert len(blocks) >= 5, readme
+    _CURRENT_EXAMPLES.update(examples)
+    try:
+        bindings = _bindings_source(plan, model)
+    finally:
+        _CURRENT_EXAMPLES.clear()
+    # The same code is in the declaration function's docstring.
+    assert "cache(KeyValue(engine=KeyValueEngine.REDIS))" in bindings
+    with TemporaryDirectory() as temporary:
+        package = Path(temporary) / plan.target.import_package
+        package.mkdir()
+        (package / "__init__.py").write_text(_init_source(plan, model), encoding="utf-8")
+        (package / "bindings.py").write_text(bindings, encoding="utf-8")
+        sys.path.insert(0, temporary)
+        try:
+            for block in blocks:
+                # Running the example constructs every dataclass and enum it names.
+                exec(compile(block, "README example", "exec"), {})
+        finally:
+            sys.path.remove(temporary)
+            for name in [key for key in sys.modules if key.startswith(plan.target.import_package)]:
+                del sys.modules[name]
+
+
 if __name__ == "__main__":
     test_descriptions_become_docstrings()
     test_docstrings_do_not_change_the_api()
+    test_readme_examples_run_against_the_generated_package()
     print("ok")
