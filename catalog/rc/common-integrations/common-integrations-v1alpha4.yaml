@@ -1,0 +1,411 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+  version: v1alpha4
+  description: 'Common integrations a workload depends on: network APIs (HTTP and SMTP), databases (relational
+    and document) and key/value caches. Start here when a workload needs one of these, and use more specific
+    extensions when they exist.'
+spec:
+  kinds:
+  - name: api
+    description: |-
+      The workload calls another service through a network API, such as an HTTP API or an SMTP mail server.
+
+      Example: a workload that reads todos from an HTTP API described by an OpenAPI document.
+
+      ```condition
+      kind: api
+      interface:
+        type: http
+        spec:
+          format: openapi
+          uri: catalog://api/default/todos-api
+          version: 1.0.0
+        operations:
+          - method: GET
+            path: /todos/{id}
+      ```
+
+      Example: a workload that sends email through an SMTP server.
+
+      ```condition
+      kind: api
+      interface:
+        type: smtp
+        operations: [send]
+      ```
+  - name: datastore
+    description: |-
+      The workload stores and reads persistent data in a database.
+
+      Example: a workload that needs a PostgreSQL database.
+
+      ```condition
+      kind: datastore
+      interface:
+        type: relational
+        engine: postgres
+      ```
+  - name: cache
+    description: |-
+      The workload keeps frequently used data in a cache for fast access.
+
+      Example: a workload that needs Redis.
+
+      ```condition
+      kind: cache
+      interface:
+        type: key_value
+        engine: redis
+      ```
+
+      Example: a workload that accepts any key/value cache.
+
+      ```condition
+      kind: cache
+      interface:
+        type: key_value
+      ```
+  interfaceTypes:
+  - name: http
+    targetKind: api
+    description: The API is reached over HTTP. It is described by an API document, by the operations the
+      workload calls, or by both.
+  - name: relational
+    targetKind: datastore
+    description: A relational (SQL) database, such as PostgreSQL or MySQL.
+  - name: document
+    targetKind: datastore
+    description: A document database that stores JSON-like documents, such as MongoDB.
+  - name: key_value
+    targetKind: cache
+    description: A key/value store, such as Redis or Memcached.
+  - name: smtp
+    targetKind: api
+    description: An SMTP server that the workload uses to send email.
+  interfaceFields:
+  - name: spec
+    targetKind: api
+    targetType: http
+    description: A machine-readable description of the API that the workload depends on.
+  - name: operations
+    targetKind: api
+    targetType: http
+    description: The HTTP operations the workload calls. A platform can use them to allow only these calls.
+  - name: engine
+    targetKind: datastore
+    targetType: relational
+    description: The relational database engine the workload needs.
+  - name: engine
+    targetKind: datastore
+    targetType: document
+    description: The document database engine the workload needs.
+  - name: engine
+    targetKind: cache
+    targetType: key_value
+    description: The cache engine the workload needs.
+  - name: operations
+    targetKind: api
+    targetType: smtp
+    description: The SMTP operations the workload performs.
+  fieldValues:
+  - field: interface.spec.format
+    targetKind: api
+    targetType: http
+    values:
+    - openapi
+    valueDescriptions:
+      openapi: An OpenAPI document.
+  - field: interface.operations[].method
+    targetKind: api
+    targetType: http
+    values:
+    - GET
+    - HEAD
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - OPTIONS
+    - TRACE
+    valueDescriptions:
+      GET: Read a resource.
+      HEAD: Read only the headers of a resource.
+      POST: Create a resource or submit data.
+      PUT: Replace a resource.
+      PATCH: Change part of a resource.
+      DELETE: Delete a resource.
+      OPTIONS: Ask which methods a resource supports.
+      TRACE: Echo the request back, for diagnostics.
+  - field: interface.engine
+    targetKind: datastore
+    targetType: relational
+    values:
+    - postgres
+    - mysql
+    - mariadb
+    - sqlserver
+    - oracle
+    - sqlite
+    valueDescriptions:
+      postgres: PostgreSQL.
+      mysql: MySQL.
+      mariadb: MariaDB.
+      sqlserver: Microsoft SQL Server.
+      oracle: Oracle Database.
+      sqlite: SQLite, an embedded file-based database.
+  - field: interface.engine
+    targetKind: datastore
+    targetType: document
+    values:
+    - mongodb
+    - couchbase
+    valueDescriptions:
+      mongodb: MongoDB.
+      couchbase: Couchbase.
+  - field: interface.engine
+    targetKind: cache
+    targetType: key_value
+    values:
+    - redis
+    - memcached
+    valueDescriptions:
+      redis: Redis, an in-memory key/value store.
+      memcached: Memcached, a simple in-memory cache.
+  - field: interface.operations[]
+    targetKind: api
+    targetType: smtp
+    values:
+    - send
+    valueDescriptions:
+      send: Submit an email for delivery.
+  schemas:
+  - id: api-http-interface
+    appliesToKind: api
+    appliesToInterfaceType: http
+    description: Validates HTTP API integration conditions.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      required:
+      - kind
+      - interface
+      properties:
+        kind:
+          const: api
+        interface:
+          type: object
+          required:
+          - type
+          properties:
+            type:
+              const: http
+            spec:
+              type: object
+              required:
+              - format
+              - uri
+              properties:
+                format:
+                  const: openapi
+                  description: Format of the API document. Must be openapi.
+                uri:
+                  type: string
+                  minLength: 1
+                  description: Where the API document can be found, for example catalog://api/default/todos-api.
+                    Must not be empty.
+                version:
+                  type: string
+                  pattern: ^(?:=?[0-9]+\.[0-9]+\.[0-9]+|[<>]=?[0-9]+\.[0-9]+\.[0-9]+|\^[0-9]+\.[0-9]+\.[0-9]+|~[0-9]+\.[0-9]+\.[0-9]+)$
+                  description: The API version the workload is written against. Must be an exact version
+                    (1.2.0 or =1.2.0), a comparison (>1.2.0, >=1.2.0, <2.0.0, <=2.0.0), a caret range
+                    (^1.2.0) or a tilde range (~1.2.0).
+              additionalProperties: false
+              description: Requires format and uri. No other properties are allowed.
+            operations:
+              type: array
+              minItems: 1
+              items:
+                type: object
+                required:
+                - method
+                - path
+                properties:
+                  method:
+                    enum:
+                    - GET
+                    - HEAD
+                    - POST
+                    - PUT
+                    - PATCH
+                    - DELETE
+                    - OPTIONS
+                    - TRACE
+                    description: HTTP method of the operation. Must be one of the defined methods.
+                  path:
+                    type: string
+                    minLength: 1
+                    description: Request path of the operation, for example /todos/{id}, with path parameters
+                      in braces. Must not be empty.
+                  requestBodySchema:
+                    $ref: '#/$defs/simpleSchema'
+                    description: Shape of the request body that the workload sends.
+                  responseSchema:
+                    $ref: '#/$defs/simpleSchema'
+                    description: Shape of the response body that the workload expects back.
+                additionalProperties: false
+                description: One HTTP operation. Requires method and path; no other properties are allowed.
+              description: List at least one operation.
+          anyOf:
+          - required:
+            - spec
+          - required:
+            - operations
+          additionalProperties: true
+          description: Give spec, operations, or both.
+      additionalProperties: true
+      $defs:
+        simpleSchema:
+          oneOf:
+          - type: string
+            enum:
+            - string
+            - number
+            - integer
+            - boolean
+            - 'null'
+          - type: object
+            additionalProperties:
+              $ref: '#/$defs/simpleSchema'
+          - type: array
+            minItems: 1
+            maxItems: 1
+            items:
+              $ref: '#/$defs/simpleSchema'
+          description: 'A simple data shape. Must be one of: the name of a scalar type (string, number,
+            integer, boolean or null); an object whose values are simple schemas; or a list with exactly
+            one simple schema, which describes every item.'
+  - id: datastore-relational-interface
+    appliesToKind: datastore
+    appliesToInterfaceType: relational
+    description: Validates relational datastore integration conditions.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      required:
+      - kind
+      - interface
+      properties:
+        kind:
+          const: datastore
+        interface:
+          type: object
+          required:
+          - type
+          properties:
+            type:
+              const: relational
+            engine:
+              enum:
+              - postgres
+              - mysql
+              - mariadb
+              - sqlserver
+              - oracle
+              - sqlite
+              description: Optional. When present, must be one of the defined engine values. Leave it
+                out if any engine of this type works.
+          additionalProperties: true
+          description: Optional engine. Other properties are allowed.
+      additionalProperties: true
+  - id: datastore-document-interface
+    appliesToKind: datastore
+    appliesToInterfaceType: document
+    description: Validates document datastore integration conditions.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      required:
+      - kind
+      - interface
+      properties:
+        kind:
+          const: datastore
+        interface:
+          type: object
+          required:
+          - type
+          properties:
+            type:
+              const: document
+            engine:
+              enum:
+              - mongodb
+              - couchbase
+              description: Optional. When present, must be one of the defined engine values. Leave it
+                out if any engine of this type works.
+          additionalProperties: true
+          description: Optional engine. Other properties are allowed.
+      additionalProperties: true
+  - id: cache-key-value-interface
+    appliesToKind: cache
+    appliesToInterfaceType: key_value
+    description: Validates key/value cache integration conditions.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      required:
+      - kind
+      - interface
+      properties:
+        kind:
+          const: cache
+        interface:
+          type: object
+          required:
+          - type
+          properties:
+            type:
+              const: key_value
+            engine:
+              enum:
+              - redis
+              - memcached
+              description: Optional. When present, must be one of the defined engine values. Leave it
+                out if any engine of this type works.
+          additionalProperties: true
+          description: Optional engine. Other properties are allowed.
+      additionalProperties: true
+  - id: api-smtp-interface
+    appliesToKind: api
+    appliesToInterfaceType: smtp
+    description: Validates SMTP email submission requirements.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      required:
+      - kind
+      - interface
+      properties:
+        kind:
+          const: api
+        interface:
+          type: object
+          required:
+          - type
+          - operations
+          properties:
+            type:
+              const: smtp
+            operations:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              items:
+                enum:
+                - send
+              description: List at least one operation, without repeats.
+          additionalProperties: true
+          description: Requires operations.
+      additionalProperties: true

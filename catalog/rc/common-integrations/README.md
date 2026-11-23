@@ -10,6 +10,8 @@ The current machine-readable definition is [common-integrations-v1alpha2.yaml](c
 
 [common-integrations-v1alpha3.yaml](common-integrations-v1alpha3.yaml) has the same vocabulary as v1alpha2 and adds documentation: a description of the extension and of every kind, interface type, field and allowed value, and JSON Schema descriptions of the validation rules. The generated language bindings show this text as Godoc, Javadoc, Python docstrings and JSDoc. The published bindings move to v1alpha3 in their next release.
 
+[common-integrations-v1alpha4.yaml](common-integrations-v1alpha4.yaml) has the same vocabulary again and adds example Conditions to the documentation. The generated bindings show each example as code in their docs and package README.
+
 This extension is not part of the core Runtime Conditions Profile vocabulary. Profiles that use this extension MUST declare it in the top-level `extensions` list.
 
 ---
