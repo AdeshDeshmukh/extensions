@@ -13,3 +13,4 @@ conditions:
       type: device
       count: 1
       minMemoryMiB: 16384
+      vendor: nvidia

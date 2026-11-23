@@ -16,11 +16,19 @@ spec:
     - name: minMemoryMiB
       targetKind: rc.gpu
       targetType: device
+    - name: vendor
+      targetKind: rc.gpu
+      targetType: device
+  fieldValues:
+    - field: interface.vendor
+      targetKind: rc.gpu
+      targetType: device
+      values: [nvidia, amd, intel]
   schemas:
     - id: rc-gpu-device
       appliesToKind: rc.gpu
       appliesToInterfaceType: device
-      description: Requires whole GPU devices with optional minimum memory per device.
+      description: Requires whole GPU devices with optional minimum memory and vendor constraints.
       schema:
         $schema: https://json-schema.org/draft/2020-12/schema
         type: object
@@ -29,21 +37,31 @@ spec:
           name:
             type: string
             minLength: 1
+            description: A nonempty name for this GPU requirement.
           optional:
             type: boolean
+            description: Whether this requirement may be left unfulfilled.
           kind:
             const: rc.gpu
+            description: Identifies a GPU requirement.
           interface:
             type: object
             required: [type, count]
             properties:
               type:
                 const: device
+                description: Requests whole GPU devices.
               count:
                 type: integer
                 minimum: 1
+                description: Minimum number of whole GPU devices; must be at least one.
               minMemoryMiB:
                 type: integer
                 minimum: 1
+                description: Minimum memory per GPU in mebibytes; must be at least one when provided.
+              vendor:
+                enum: [nvidia, amd, intel]
+                description: Required GPU hardware vendor when the workload needs one of these vendors.
             additionalProperties: false
+            description: GPU device requirements for scheduling and availability checks.
         additionalProperties: false

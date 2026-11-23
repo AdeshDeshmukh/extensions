@@ -38,10 +38,9 @@ class GPURequirementTest(unittest.TestCase):
         self.assertEqual(len(profile["conditions"]), 1)
         condition = profile["conditions"][0]
         self.assertEqual(condition["kind"], "rc.gpu")
-        self.assertEqual(
-            condition["interface"],
-            {"type": "device", "count": 1, "minMemoryMiB": 16384},
-        )
+        self.assertEqual(condition["interface"], {
+            "type": "device", "count": 1, "minMemoryMiB": 16384, "vendor": "nvidia",
+        })
         self.assertEqual(list(self.validator.iter_errors(condition)), [])
 
     def test_schema_requires_positive_whole_gpu_count(self):
@@ -54,14 +53,24 @@ class GPURequirementTest(unittest.TestCase):
         missing_count = {"kind": "rc.gpu", "interface": {"type": "device"}}
         self.assertTrue(list(self.validator.iter_errors(missing_count)))
 
-    def test_schema_rejects_invalid_memory_and_unknown_fields(self):
+    def test_schema_accepts_an_optional_vendor_requirement(self):
+        base = {"kind": "rc.gpu", "interface": {"type": "device", "count": 1}}
+        self.assertEqual(list(self.validator.iter_errors(base)), [])
+        for vendor in ("nvidia", "amd", "intel"):
+            with self.subTest(vendor=vendor):
+                condition = {**base, "interface": {**base["interface"], "vendor": vendor}}
+                self.assertEqual(list(self.validator.iter_errors(condition)), [])
+
+    def test_schema_rejects_invalid_memory_vendor_and_unknown_fields(self):
         base = {"kind": "rc.gpu", "interface": {"type": "device", "count": 1}}
         for value in (0, -10, 1.5, "16384"):
             with self.subTest(memory=value):
                 invalid = {**base, "interface": {**base["interface"], "minMemoryMiB": value}}
                 self.assertTrue(list(self.validator.iter_errors(invalid)))
-        unknown_vendor = {**base, "interface": {**base["interface"], "vendor": "nvidia"}}
+        unknown_vendor = {**base, "interface": {**base["interface"], "vendor": "other"}}
         self.assertTrue(list(self.validator.iter_errors(unknown_vendor)))
+        unknown_field = {**base, "interface": {**base["interface"], "driver": "12"}}
+        self.assertTrue(list(self.validator.iter_errors(unknown_field)))
 
 
 if __name__ == "__main__":
