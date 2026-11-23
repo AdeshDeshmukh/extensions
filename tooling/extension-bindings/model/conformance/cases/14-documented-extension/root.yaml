@@ -9,12 +9,64 @@ metadata:
 spec:
   kinds:
   - name: api
-    description: The workload calls another service through a network API, such as an HTTP API or an SMTP
-      mail server.
+    description: |-
+      The workload calls another service through a network API, such as an HTTP API or an SMTP mail server.
+
+      Example: a workload that reads todos from an HTTP API described by an OpenAPI document.
+
+      ```condition
+      kind: api
+      interface:
+        type: http
+        spec:
+          format: openapi
+          uri: catalog://api/default/todos-api
+          version: 1.0.0
+        operations:
+          - method: GET
+            path: /todos/{id}
+      ```
+
+      Example: a workload that sends email through an SMTP server.
+
+      ```condition
+      kind: api
+      interface:
+        type: smtp
+        operations: [send]
+      ```
   - name: datastore
-    description: The workload stores and reads persistent data in a database.
+    description: |-
+      The workload stores and reads persistent data in a database.
+
+      Example: a workload that needs a PostgreSQL database.
+
+      ```condition
+      kind: datastore
+      interface:
+        type: relational
+        engine: postgres
+      ```
   - name: cache
-    description: The workload keeps frequently used data in a cache for fast access.
+    description: |-
+      The workload keeps frequently used data in a cache for fast access.
+
+      Example: a workload that needs Redis.
+
+      ```condition
+      kind: cache
+      interface:
+        type: key_value
+        engine: redis
+      ```
+
+      Example: a workload that accepts any key/value cache.
+
+      ```condition
+      kind: cache
+      interface:
+        type: key_value
+      ```
   interfaceTypes:
   - name: http
     targetKind: api

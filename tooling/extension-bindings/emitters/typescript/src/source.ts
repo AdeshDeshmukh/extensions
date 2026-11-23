@@ -7,6 +7,7 @@ import type { Model } from "./model.js";
 import type { EmissionPlan, TypePlan } from "./plan.js";
 import { header, renderResources } from "./metadata.js";
 import { JSON_VALUE_ALIAS_RHS } from "./plan.js";
+import { dedent, renderExamples, splitDocumentation, type RenderedExample } from "./examples.js";
 import { readTemplate } from "./templates.js";
 
 function sourceHeader(model: Model): string {
@@ -28,34 +29,61 @@ export function exportedNames(plan: EmissionPlan): string[] {
   return [...names].sort(compare);
 }
 
-// docComment renders extension documentation as JSDoc. Descriptions come from
-// the extension's vocabulary and JSON Schema; text without one renders nothing.
-// Comments never change the recorded API surface (see verification.ts).
-export function docComment(text: string | undefined, indent = ""): string[] {
-  const paragraphs = (text ?? "")
-    .trim()
+// Examples rendered for the package being emitted. renderSources sets this
+// synchronously around bindingsSource, so concurrent emissions cannot mix it.
+let currentExamples: ReadonlyMap<string, RenderedExample> = new Map();
+
+function proseLines(text: string, indent: string): string[] {
+  const width = 96 - indent.length;
+  const lines: string[] = [];
+  text
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.split(/\s+/).filter(Boolean))
-    .filter((words) => words.length > 0);
-  if (paragraphs.length === 0) return [];
-  const width = 96 - indent.length;
-  const lines = [`${indent}/**`];
-  paragraphs.forEach((words, index) => {
-    if (index > 0) lines.push(`${indent} *`);
-    let line = "";
-    for (const word of words) {
-      const escaped = word.replace(/\*\//g, "*\\/");
-      if (line !== "" && line.length + 1 + escaped.length > width) {
-        lines.push(`${indent} * ${line}`);
-        line = escaped;
-      } else {
-        line = line === "" ? escaped : `${line} ${escaped}`;
+    .filter((words) => words.length > 0)
+    .forEach((words, index) => {
+      if (index > 0) lines.push(`${indent} *`);
+      let line = "";
+      for (const word of words) {
+        const escaped = word.replace(/\*\//g, "*\\/");
+        if (line !== "" && line.length + 1 + escaped.length > width) {
+          lines.push(`${indent} * ${line}`);
+          line = escaped;
+        } else {
+          line = line === "" ? escaped : `${line} ${escaped}`;
+        }
       }
-    }
-    if (line !== "") lines.push(`${indent} * ${line}`);
-  });
-  lines.push(`${indent} */`);
+      if (line !== "") lines.push(`${indent} * ${line}`);
+    });
   return lines;
+}
+
+function codeLines(language: string, code: string, indent: string): string[] {
+  return [
+    `${indent} * \`\`\`${language}`,
+    ...code.split("\n").map((line) => `${indent} * ${line.replace(/\*\//g, "*\\/")}`.trimEnd()),
+    `${indent} * \`\`\``,
+  ];
+}
+
+// docComment renders extension documentation as JSDoc. Descriptions come from
+// the extension's vocabulary and JSON Schema; text without one renders nothing.
+// Example Conditions become TypeScript code blocks. Comments never change the
+// recorded API surface (see verification.ts).
+export function docComment(text: string | undefined, indent = ""): string[] {
+  const body: string[] = [];
+  for (const segment of splitDocumentation((text ?? "").trim())) {
+    const lines =
+      segment.condition === undefined
+        ? proseLines(segment.text!, indent)
+        : currentExamples.has(segment.source!)
+          ? codeLines("ts", currentExamples.get(segment.source!)!.code, indent)
+          : codeLines("yaml", dedent(segment.source!).trim(), indent);
+    if (lines.length === 0) continue;
+    if (body.length > 0) body.push(`${indent} *`);
+    body.push(...lines);
+  }
+  if (body.length === 0) return [];
+  return [`${indent}/**`, ...body, `${indent} */`];
 }
 
 function renderObject(item: TypePlan): string[] {
@@ -205,9 +233,17 @@ export async function renderSources(
   ) {
     fail("model", "RCT1003", "model", "emission plan does not match supplied model");
   }
+  const examples = await renderExamples(plan, model, FORMAT_OPTIONS);
+  currentExamples = examples;
+  let bindings: string;
+  try {
+    bindings = bindingsSource(plan, model);
+  } finally {
+    currentExamples = new Map();
+  }
   const sources = {
     "src/index.ts": indexSource(model),
-    "src/bindings.ts": bindingsSource(plan, model),
+    "src/bindings.ts": bindings,
   };
   const formatted: Record<string, string> = {};
   for (const [path, source] of Object.entries(sources)) {
@@ -222,7 +258,73 @@ export async function renderSources(
       );
     }
   }
+  const readme = readmeSource(plan, model, examples);
+  if (readme !== null) formatted["README.md"] = readme;
   return formatted;
+}
+
+function markdown(
+  text: string,
+  plan: EmissionPlan,
+  examples: ReadonlyMap<string, RenderedExample>,
+): string[] {
+  const lines: string[] = [];
+  for (const segment of splitDocumentation(text.trim())) {
+    if (lines.length > 0) lines.push("");
+    if (segment.condition === undefined) {
+      lines.push(segment.text!);
+      continue;
+    }
+    const example = examples.get(segment.source!);
+    if (example !== undefined) {
+      lines.push(
+        "```ts",
+        `import { ${example.imports.join(", ")} } from ${JSON.stringify(plan.target.packageName)};`,
+        "",
+        example.code,
+        "```",
+        "",
+        "In a Profile, this declares:",
+        "",
+      );
+    }
+    lines.push("```yaml", dedent(segment.source!).trim(), "```");
+  }
+  return lines;
+}
+
+// readmeSource writes the package README from the extension's documentation.
+// Undocumented extensions get none, so their packages keep the same files.
+function readmeSource(
+  plan: EmissionPlan,
+  model: Model,
+  examples: ReadonlyMap<string, RenderedExample>,
+): string | null {
+  if (!plan.packageDescription) return null;
+  const lines = [
+    `<!-- ${header(model)} -->`,
+    "",
+    `# ${plan.target.packageName}`,
+    "",
+    ...markdown(plan.packageDescription, plan, examples),
+    "",
+    "```sh",
+    `npm install ${plan.target.packageName}`,
+    "```",
+    "",
+    `Runtime Conditions extension: ${plan.target.rootExtension}`,
+  ];
+  for (const declaration of [...plan.declarations].sort((a, b) => compare(a.function, b.function))) {
+    lines.push("", `## ${declaration.function}`, "");
+    lines.push(`\`${declaration.function}\` declares a \`${declaration.kind}\` Condition.`);
+    if (declaration.description) lines.push("", ...markdown(declaration.description, plan, examples));
+  }
+  lines.push(
+    "",
+    "Every class, field and enum member is documented in the package's type declarations.",
+    "",
+  );
+  return lines.join("\n");
 }
 
 export async function renderPackage(

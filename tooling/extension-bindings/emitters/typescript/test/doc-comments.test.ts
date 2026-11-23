@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 import { apiSurface } from "../src/verification.js";
-import { buildCase, temporaryDirectory } from "./support.js";
+import { buildCase, runTsc, temporaryDirectory } from "./support.js";
 import { readFileSync } from "node:fs";
 
 const plain = `export class Declaration {}
@@ -110,6 +110,30 @@ test("extension descriptions become JSDoc in the generated bindings", async () =
     }
     // Field docs also appear inside the constructor's fields type, where editors show them.
     assert.match(source, /constructor\(\s*fields: \{[^}]*\/\*\*[^}]*The cache engine the workload needs\./s);
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("every README example compiles against the generated package", async () => {
+  const workspace = temporaryDirectory();
+  try {
+    const built = await buildCase("14-documented-extension", workspace);
+    const readme = readFileSync(join(built.directory, "README.md"), "utf-8");
+    const examples = [...readme.matchAll(/```ts\n([\s\S]*?)```/g)].map((match) => match[1]!);
+    assert.ok(examples.length >= 5, `expected the fixture's examples, found ${examples.length}`);
+    examples.forEach((example, index) => {
+      const source = example.replace(
+        `from ${JSON.stringify(built.plan.target.packageName)};`,
+        'from "./bindings.js";',
+      );
+      writeFileSync(join(built.directory, `src/_example_${index}.ts`), source);
+    });
+    const compiled = runTsc(built.directory, true);
+    assert.equal(compiled.status, 0, compiled.output);
+    // The same code is in the JSDoc of the declaration functions.
+    const bindings = readFileSync(join(built.directory, "src/bindings.ts"), "utf-8");
+    assert.ok(bindings.includes(" * cache(new KeyValue({ engine: KeyValueEngine.Redis }));"));
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }
