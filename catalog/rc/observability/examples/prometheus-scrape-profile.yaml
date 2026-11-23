@@ -1,0 +1,16 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsProfile
+metadata:
+  name: checkout-metrics
+workload:
+  uri: https://example.com/checkout
+extensions:
+  - https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml:0.1.0
+conditions:
+  - name: application-metrics
+    kind: rc.observability
+    interface:
+      type: prometheus_scrape
+      port: 9464
+      path: /metrics
+      scheme: http
