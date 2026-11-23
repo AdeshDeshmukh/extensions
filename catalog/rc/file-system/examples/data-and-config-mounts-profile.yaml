@@ -32,7 +32,6 @@ conditions:
     interface:
       type: mount
       access: read_only
-    configuration:
-      env:
-        - property: path
-          name: CREDENTIALS_DIR
+    env:
+      - property: path
+        name: CREDENTIALS_DIR
