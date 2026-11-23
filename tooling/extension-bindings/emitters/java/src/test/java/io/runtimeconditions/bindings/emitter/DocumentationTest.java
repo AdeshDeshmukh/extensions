@@ -53,6 +53,58 @@ class DocumentationTest {
         }
     }
 
+    @Test
+    void readmeExamplesCompileAgainstTheGeneratedPackage() throws IOException {
+        Path workspace = temporaryDirectory();
+        try {
+            Built built = buildCase(CASE, workspace, null);
+            Path sources = built.directory().resolve(Source.sourceRoot(built.plan()));
+            String readme = Files.readString(built.directory().resolve("README.md"));
+            java.util.regex.Matcher matcher =
+                    java.util.regex.Pattern.compile("```java\n(.*?)```", java.util.regex.Pattern.DOTALL).matcher(readme);
+            List<Path> files = new ArrayList<>();
+            try (Stream<Path> walk = Files.walk(sources)) {
+                walk.filter(path -> path.toString().endsWith(".java")).sorted().forEach(files::add);
+            }
+            Path examples = workspace.resolve("examples/examples");
+            Files.createDirectories(examples);
+            int index = 0;
+            while (matcher.find()) {
+                StringBuilder imports = new StringBuilder();
+                StringBuilder statements = new StringBuilder();
+                for (String line : matcher.group(1).split("\n")) {
+                    (line.startsWith("import ") ? imports : statements).append(line).append('\n');
+                }
+                Path file = examples.resolve("Example" + index + ".java");
+                Files.writeString(file, "package examples;\n\n" + imports + "\nclass Example" + index
+                        + " {\n    static Object run() {\n        return " + statements.toString().strip().replaceAll(";$", "")
+                        + ";\n    }\n}\n");
+                files.add(file);
+                index += 1;
+            }
+            assertTrue(index >= 5, "expected the fixture's examples, found " + index + "\n" + readme);
+            javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            StringWriter errors = new StringWriter();
+            try (StandardJavaFileManager manager = compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8)) {
+                boolean ok = compiler.getTask(
+                                errors,
+                                manager,
+                                null,
+                                List.of("-d", workspace.resolve("classes").toString()),
+                                null,
+                                manager.getJavaFileObjectsFromPaths(files))
+                        .call();
+                assertTrue(ok, errors.toString());
+            }
+            // The same code is in the Javadoc of the Bindings method.
+            String bindings = Files.readString(sources.resolve("Bindings.java"));
+            assertTrue(bindings.contains("<pre>{@code"), bindings);
+            assertTrue(bindings.contains("Bindings.cache(new KeyValue(KeyValueEngine.REDIS));"), bindings);
+        } finally {
+            delete(workspace);
+        }
+    }
+
     /** Runs the JDK javadoc tool with HTML and syntax checks and returns its errors. */
     private static String runJavadoc(Path sources, Path output) throws IOException {
         DocumentationTool tool = ToolProvider.getSystemDocumentationTool();

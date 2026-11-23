@@ -8,6 +8,7 @@ import io.runtimeconditions.bindings.emitter.Plan.EmissionPlan;
 import io.runtimeconditions.bindings.emitter.Plan.FieldPlan;
 import io.runtimeconditions.bindings.emitter.Plan.Kind;
 import io.runtimeconditions.bindings.emitter.Plan.TypePlan;
+import io.runtimeconditions.bindings.emitter.Target.PackageTarget;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
@@ -76,14 +77,33 @@ public final class Source {
      * extension's vocabulary and JSON Schema; empty text renders nothing. Text is
      * HTML-escaped so values such as {@code >=1.2.0} stay valid Javadoc.
      */
+    // Examples rendered for the package being emitted; renderSources sets them.
+    private static final ThreadLocal<Map<String, Examples.Rendered>> CURRENT_EXAMPLES =
+            ThreadLocal.withInitial(Map::of);
+
     static List<String> javadoc(String text, List<String[]> params, String indent) {
         List<String> body = new ArrayList<>();
-        List<String> paragraphs = paragraphs(text);
-        for (int index = 0; index < paragraphs.size(); index += 1) {
-            if (index > 0) {
+        for (Examples.Segment segment : Examples.split(text == null ? "" : text.strip())) {
+            if (segment.condition() == null) {
+                for (String paragraph : paragraphs(segment.text())) {
+                    if (!body.isEmpty()) {
+                        body.add("");
+                    }
+                    body.addAll(wrap((body.isEmpty() ? "" : "<p>") + paragraph, indent, ""));
+                }
+                continue;
+            }
+            // An example Condition becomes Java code, or Profile YAML if it cannot.
+            Examples.Rendered rendered = CURRENT_EXAMPLES.get().get(segment.source());
+            String code = rendered != null ? rendered.code() : Examples.dedent(segment.source()).strip();
+            if (!body.isEmpty()) {
                 body.add("");
             }
-            body.addAll(wrap((index > 0 ? "<p>" : "") + paragraphs.get(index), indent, ""));
+            body.add("<pre>{@code");
+            for (String line : code.split("\n")) {
+                body.add(line.replace("*/", "*\\/"));
+            }
+            body.add("}</pre>");
         }
         boolean first = true;
         for (String[] param : params) {
@@ -375,22 +395,103 @@ public final class Source {
             throw fail("model", "RCJ1003", "model", "emission plan does not match supplied model");
         }
         Map<String, String> sources = new TreeMap<>();
-        if (!plan.declarations().isEmpty()) {
-            sources.put(sourcePath(plan, Plan.DECLARATION_CLASS), renderDeclaration(plan, model));
-            sources.put(sourcePath(plan, Plan.FUNCTIONS_CLASS), renderFunctions(plan, model));
-        }
-        for (DeclarationPlan declaration : plan.declarations()) {
-            sources.put(sourcePath(plan, declaration.protocol()), renderProtocol(plan, model, declaration));
-        }
-        for (TypePlan item : plan.types()) {
-            sources.put(sourcePath(plan, item.name()), renderType(plan, model, item));
+        CURRENT_EXAMPLES.set(Examples.render(plan, model));
+        try {
+            if (!plan.declarations().isEmpty()) {
+                sources.put(sourcePath(plan, Plan.DECLARATION_CLASS), renderDeclaration(plan, model));
+                sources.put(sourcePath(plan, Plan.FUNCTIONS_CLASS), renderFunctions(plan, model));
+            }
+            for (DeclarationPlan declaration : plan.declarations()) {
+                sources.put(sourcePath(plan, declaration.protocol()), renderProtocol(plan, model, declaration));
+            }
+            for (TypePlan item : plan.types()) {
+                sources.put(sourcePath(plan, item.name()), renderType(plan, model, item));
+            }
+        } finally {
+            CURRENT_EXAMPLES.remove();
         }
         return sources;
+    }
+
+    private static List<String> markdown(String text, EmissionPlan plan, Map<String, Examples.Rendered> examples) {
+        List<String> lines = new ArrayList<>();
+        for (Examples.Segment segment : Examples.split(text.strip())) {
+            if (!lines.isEmpty()) {
+                lines.add("");
+            }
+            if (segment.condition() == null) {
+                lines.add(segment.text());
+                continue;
+            }
+            Examples.Rendered rendered = examples.get(segment.source());
+            if (rendered != null) {
+                lines.add("```java");
+                for (String name : rendered.imports()) {
+                    lines.add("import " + (name.contains(".") ? name : plan.target().javaPackage() + "." + name) + ";");
+                }
+                lines.add("");
+                lines.add(rendered.code());
+                lines.add("```");
+                lines.add("");
+                lines.add("In a Profile, this declares:");
+                lines.add("");
+            }
+            lines.add("```yaml");
+            lines.add(Examples.dedent(segment.source()).strip());
+            lines.add("```");
+        }
+        return lines;
+    }
+
+    /** The package README from the extension's documentation, or null when undocumented. */
+    static String readme(EmissionPlan plan, JsonNode model) {
+        if (plan.packageDescription() == null || plan.packageDescription().isBlank()) {
+            return null;
+        }
+        Map<String, Examples.Rendered> examples = Examples.render(plan, model);
+        PackageTarget target = plan.target();
+        List<String> lines = new ArrayList<>();
+        lines.add("<!-- " + Metadata.header(model) + " -->");
+        lines.add("");
+        lines.add("# " + target.groupId() + ":" + target.artifactId());
+        lines.add("");
+        lines.addAll(markdown(plan.packageDescription(), plan, examples));
+        lines.add("");
+        lines.add("```xml");
+        lines.add("<dependency>");
+        lines.add("  <groupId>" + target.groupId() + "</groupId>");
+        lines.add("  <artifactId>" + target.artifactId() + "</artifactId>");
+        lines.add("  <version>" + target.version() + "</version>");
+        lines.add("</dependency>");
+        lines.add("```");
+        lines.add("");
+        lines.add("Runtime Conditions extension: " + target.rootExtension());
+        List<DeclarationPlan> ordered = new ArrayList<>(plan.declarations());
+        ordered.sort(Comparator.comparing(DeclarationPlan::function));
+        for (DeclarationPlan declaration : ordered) {
+            lines.add("");
+            lines.add("## " + Plan.FUNCTIONS_CLASS + "." + declaration.function());
+            lines.add("");
+            lines.add("`" + Plan.FUNCTIONS_CLASS + "." + declaration.function() + "` declares a `" + declaration.kind() + "` Condition.");
+            if (declaration.description() != null && !declaration.description().isBlank()) {
+                lines.add("");
+                lines.addAll(markdown(declaration.description(), plan, examples));
+            }
+        }
+        lines.add("");
+        lines.add("Every record, component and enum constant is documented in the Javadoc.");
+        lines.add("");
+        return String.join("\n", lines);
     }
 
     public static Map<String, String> renderPackage(EmissionPlan plan, JsonNode model) {
         Map<String, String> files = new TreeMap<>(renderSources(plan, model));
         files.putAll(Metadata.renderResources(plan, model));
+        // Only documented extensions get a README, so other packages are unchanged.
+        String readme = readme(plan, model);
+        if (readme != null) {
+            files.put("README.md", readme);
+        }
         return files;
     }
 
