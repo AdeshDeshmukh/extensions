@@ -26,7 +26,9 @@ class GPURequirementTest(unittest.TestCase):
     def test_release_identity_and_delivery_target(self):
         self.assertEqual(self.definition["metadata"]["id"], EXTENSION_ID)
         self.assertEqual(self.definition["metadata"]["version"], "0.1.0")
-        self.assertEqual(self.definition["spec"]["kinds"], [{"name": "rc.gpu"}])
+        self.assertEqual(
+            [kind["name"] for kind in self.definition["spec"]["kinds"]], ["rc.gpu"]
+        )
         packages = yaml.safe_load(
             (REPOSITORY / "tooling/extension-bindings/packages.yaml").read_text(encoding="utf-8")
         )

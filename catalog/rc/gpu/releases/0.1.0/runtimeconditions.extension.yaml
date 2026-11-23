@@ -3,27 +3,37 @@ kind: RuntimeConditionsExtensionDefinition
 metadata:
   id: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
   version: 0.1.0
+  description: Requests whole GPU devices with optional per-device memory and vendor constraints.
 spec:
   kinds:
     - name: rc.gpu
+      description: GPU hardware that a workload requires.
   interfaceTypes:
     - name: device
       targetKind: rc.gpu
+      description: Whole GPU devices available to the workload.
   interfaceFields:
     - name: count
       targetKind: rc.gpu
       targetType: device
+      description: Minimum number of whole GPU devices required.
     - name: minMemoryMiB
       targetKind: rc.gpu
       targetType: device
+      description: Minimum memory each GPU must provide, in mebibytes.
     - name: vendor
       targetKind: rc.gpu
       targetType: device
+      description: Hardware vendor each GPU must match when specified.
   fieldValues:
     - field: interface.vendor
       targetKind: rc.gpu
       targetType: device
       values: [nvidia, amd, intel]
+      valueDescriptions:
+        nvidia: NVIDIA GPU hardware.
+        amd: AMD GPU hardware.
+        intel: Intel GPU hardware.
   schemas:
     - id: rc-gpu-device
       appliesToKind: rc.gpu
