@@ -387,6 +387,11 @@ final class Examples {
         }
     }
 
+    /** The declaration-field type of an interface or condition field root, if this package defines one. */
+    static TypePlan rootType(EmissionPlan plan, JsonNode model, String kind, String interfaceType, String sourceName) {
+        return new Renderer(plan, model, new TreeSet<>()).root(kind, interfaceType, sourceName);
+    }
+
     /** A root-owned, documented condition field and the type that sets it. */
     record FieldDoc(String name, String kind, String interfaceType, String path, String description) {}
 

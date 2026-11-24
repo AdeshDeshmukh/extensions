@@ -234,6 +234,17 @@ class Renderer {
   }
 }
 
+/** The declaration-field type of an interface or condition field root, if this package defines one. */
+export function rootType(
+  plan: EmissionPlan,
+  model: Model,
+  kind: string,
+  interfaceType: string,
+  sourceName: string,
+): TypePlan | undefined {
+  return new Renderer(plan, new Map()).root(model, kind, interfaceType, sourceName);
+}
+
 /** A root-owned, documented condition field and the type that sets it. */
 export interface ConditionFieldDoc {
   readonly name: string;

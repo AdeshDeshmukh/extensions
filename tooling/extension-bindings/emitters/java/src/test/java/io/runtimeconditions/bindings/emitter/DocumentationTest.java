@@ -87,6 +87,16 @@ class DocumentationTest {
                 index += 1;
             }
             assertTrue(index >= 5, "expected the fixture's examples, found " + index + "\n" + readme);
+            // A collapsible reference lists every interface with its fields, types and allowed values.
+            for (String expected : List.of(
+                    "## Conditions",
+                    "<summary><b>cache</b> · <code>key_value</code>: A key/value store, such as Redis or Memcached.</summary>",
+                    "`KeyValue` is the `interface` of a `cache` Condition.",
+                    "| `engine` | `KeyValueEngine` | no | The cache engine the workload needs.",
+                    "<br>Values:<br>`memcached`: Memcached, a simple in-memory cache.<br>`redis`: Redis, an in-memory key/value store. |",
+                    "| `operations[].method` | `Method` | yes |")) {
+                assertTrue(readme.contains(expected), expected + "\n" + readme);
+            }
             javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             StringWriter errors = new StringWriter();
             try (StandardJavaFileManager manager = compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8)) {
@@ -142,7 +152,9 @@ class DocumentationTest {
                     "import " + dependency.plan().target().javaPackage() + ".Bindings;",
                     "import " + plan.target().javaPackage() + ".KeyValueConfiguration;",
                     "Bindings.cache(",
-                    "In a Profile, this declares:")) {
+                    "In a Profile, this declares:",
+                    "<summary><code>configuration</code> on <b>cache</b> · <code>key_value</code>: How the platform passes the cache address to the workload, as environment variables.</summary>",
+                    "| `env[].name` | `String` | yes |")) {
                 assertTrue(readme.contains(expected), expected + "\n" + readme);
             }
             java.util.regex.Matcher matcher =

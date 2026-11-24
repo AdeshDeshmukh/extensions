@@ -361,6 +361,9 @@ func (ir *packageIR) renderReadme() []byte {
 	ir.writeMarkdown(&buffer, summary)
 	fmt.Fprintf(&buffer, "\n```sh\ngo get %s@%s\n```\n\n", ir.target.ModulePath, ir.target.Version)
 	fmt.Fprintf(&buffer, "Runtime Conditions extension: %s\n", ir.model.RootExtension.ID)
+	if reference := ir.conditionsReference(); reference != "" {
+		buffer.WriteString("\n" + reference)
+	}
 	declarations := append([]*declarationIR(nil), ir.declarations...)
 	sort.Slice(declarations, func(i, j int) bool { return declarations[i].function.name < declarations[j].function.name })
 	for _, declaration := range declarations {

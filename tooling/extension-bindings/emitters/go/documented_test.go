@@ -277,9 +277,16 @@ func TestExamplesCompile(t *testing.T) {
 		"go get " + target.ModulePath + "@" + target.Version,
 		"```go\ncommon.Cache(",
 		"In a Profile, this declares:\n\n```yaml\nkind: cache",
+		// A collapsible reference lists every interface with its fields, types and allowed values.
+		"## Conditions",
+		"<summary><b>cache</b> · <code>key_value</code>: A key/value store, such as Redis or Memcached.</summary>",
+		"`common.KeyValue` is the `interface` of a `cache` Condition.",
+		"| `Engine` | `*KeyValueEngine` | no | The cache engine the workload needs.",
+		"<br>Values:<br>`memcached`: Memcached, a simple in-memory cache.<br>`redis`: Redis, an in-memory key/value store. |",
+		"| `Operations[].Method` | `Method` | yes |",
 	} {
 		if !strings.Contains(string(readme), want) {
-			t.Errorf("README is missing %q", want)
+			t.Errorf("README is missing %q\n%s", want, readme)
 		}
 	}
 }
@@ -348,6 +355,8 @@ func TestDependentExamplesCompile(t *testing.T) {
 		"```go\ndocumentedextension.Cache(\n\tdocumentedextension.KeyValue{",
 		"documenteddependent.KeyValueConfiguration{",
 		"In a Profile, this declares:\n\n```yaml\nkind: cache",
+		"<summary><code>configuration</code> on <b>cache</b> · <code>key_value</code>: How the platform passes the cache address to the workload, as environment variables.</summary>",
+		"| `Env[].Name` | `string` | yes |",
 	} {
 		if !strings.Contains(string(readme), want) {
 			t.Errorf("README is missing %q\n%s", want, readme)

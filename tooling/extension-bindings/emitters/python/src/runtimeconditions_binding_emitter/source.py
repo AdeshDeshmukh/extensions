@@ -22,6 +22,7 @@ from .examples import (
     split_documentation,
 )
 from .metadata import EMITTER_NAME, EMITTER_VERSION, render_resources
+from .reference import conditions_reference
 from .package import fail
 
 
@@ -154,6 +155,9 @@ def readme_source(plan: EmissionPlan, model: dict[str, Any], examples: dict[str,
         "",
         f"Runtime Conditions extension: {plan.target.root_extension}",
     ]
+    reference = conditions_reference(plan, model)
+    if reference:
+        lines.extend(("", *reference))
     for declaration in sorted(plan.declarations, key=lambda item: item.function):
         lines.extend(("", f"## {declaration.function}", "", f"`{declaration.function}` declares a `{declaration.kind}` Condition."))
         if declaration.description:

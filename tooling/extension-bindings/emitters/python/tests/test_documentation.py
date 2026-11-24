@@ -110,6 +110,16 @@ def test_readme_examples_run_against_the_generated_package() -> None:
     assert readme is not None
     blocks = re.findall(r"```python\n(.*?)```", readme, flags=re.S)
     assert len(blocks) >= 5, readme
+    # A collapsible reference lists every interface with its fields, types and allowed values.
+    for expected in (
+        "## Conditions",
+        "<summary><b>cache</b> · <code>key_value</code>: A key/value store, such as Redis or Memcached.</summary>",
+        "`KeyValue` is the `interface` of a `cache` Condition.",
+        "| `engine` | `KeyValueEngine \\| None` | no | The cache engine the workload needs.",
+        "<br>Values:<br>`memcached`: Memcached, a simple in-memory cache.<br>`redis`: Redis, an in-memory key/value store. |",
+        "| `operations[].method` | `Method` | yes |",
+    ):
+        assert expected in readme, f"{expected}\n{readme}"
     _CURRENT_EXAMPLES.update(examples)
     try:
         bindings = _bindings_source(plan, model)
@@ -172,6 +182,8 @@ def test_dependent_readme_examples_call_the_dependency_and_run_against_both_pack
         "from rc_documented import KeyValue, KeyValueEngine, cache",
         "from rc_documented_dependent import KeyValueConfiguration, KeyValueConfigurationEnvItem",
         "In a Profile, this declares:",
+        "<summary><code>configuration</code> on <b>cache</b> · <code>key_value</code>: How the platform passes the cache address to the workload, as environment variables.</summary>",
+        "| `env[].name` | `str` | yes |",
     ):
         assert expected in readme, f"{expected}\n{readme}"
     blocks = re.findall(r"```python\n(.*?)```", readme, flags=re.S)

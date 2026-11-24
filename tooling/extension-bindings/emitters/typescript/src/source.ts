@@ -10,11 +10,13 @@ import { JSON_VALUE_ALIAS_RHS } from "./plan.js";
 import {
   conditionFieldDocs,
   dedent,
+  summary,
   renderExamples,
   splitDocumentation,
   type ConditionFieldDoc,
   type RenderedExample,
 } from "./examples.js";
+import { conditionsReference } from "./reference.js";
 import { readTemplate } from "./templates.js";
 
 function sourceHeader(model: Model): string {
@@ -93,6 +95,26 @@ export function docComment(text: string | undefined, indent = ""): string[] {
   return [`${indent}/**`, ...body, `${indent} */`];
 }
 
+// constructorDoc documents every field as a nested @param, so an editor's hover on
+// `new Type(` explains the fields without opening the class.
+function constructorDoc(item: TypePlan): string[] {
+  if (!item.fields.some((field) => field.description)) return [];
+  const flat = (text: string): string =>
+    splitDocumentation(text)
+      .filter((segment) => segment.condition === undefined)
+      .map((segment) => segment.text!)
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+  const lines = ["  /**", ...proseLines(summary(item.description) || `Creates a ${item.name}.`, "  "), "   *"];
+  lines.push(...proseLines(`@param fields - The values of the fields of ${item.name}.`, "  "));
+  for (const field of item.fields) {
+    if (field.description) lines.push(...proseLines(`@param fields.${field.name} - ${flat(field.description)}`, "  "));
+  }
+  lines.push("   */");
+  return lines;
+}
+
 function renderObject(item: TypePlan): string[] {
   const lines: string[] = [];
   const implement = item.marker !== null ? ` implements ${item.marker.protocol}` : "";
@@ -117,7 +139,8 @@ function renderObject(item: TypePlan): string[] {
           .map((field) => `readonly ${field.name}${field.required ? "" : "?"}: ${field.annotation}`)
           .join("; ")} `;
     const optional = item.fields.every((field) => !field.required) ? " = {}" : "";
-    lines.push("", `  constructor(fields: {${parameter}}${optional}) {`);
+    lines.push("", ...constructorDoc(item));
+    lines.push(`  constructor(fields: {${parameter}}${optional}) {`);
     for (const field of item.fields) lines.push(`    this.${field.name} = fields.${field.name};`);
     lines.push("  }");
   }
@@ -321,6 +344,8 @@ function readmeSource(
     "",
     `Runtime Conditions extension: ${plan.target.rootExtension}`,
   ];
+  const reference = conditionsReference(plan, model);
+  if (reference.length > 0) lines.push("", ...reference);
   for (const declaration of [...plan.declarations].sort((a, b) => compare(a.function, b.function))) {
     lines.push("", `## ${declaration.function}`, "");
     lines.push(`\`${declaration.function}\` declares a \`${declaration.kind}\` Condition.`);

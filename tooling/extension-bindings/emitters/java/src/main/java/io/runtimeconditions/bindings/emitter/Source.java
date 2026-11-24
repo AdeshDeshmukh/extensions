@@ -466,6 +466,11 @@ public final class Source {
         lines.add("```");
         lines.add("");
         lines.add("Runtime Conditions extension: " + target.rootExtension());
+        List<String> reference = Reference.conditions(plan, model);
+        if (!reference.isEmpty()) {
+            lines.add("");
+            lines.addAll(reference);
+        }
         List<DeclarationPlan> ordered = new ArrayList<>(plan.declarations());
         ordered.sort(Comparator.comparing(DeclarationPlan::function));
         for (DeclarationPlan declaration : ordered) {

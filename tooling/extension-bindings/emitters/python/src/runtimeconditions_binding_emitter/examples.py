@@ -270,6 +270,13 @@ class _Renderer:
         return _Call(declaration.function, tuple(arguments))
 
 
+def root_type(
+    plan: EmissionPlan, model: dict[str, Any], kind: str, interface_type: str, source_name: str
+) -> TypePlan | None:
+    """The declaration-field type of an interface or condition field root, if this package defines one."""
+    return _Renderer(plan, {}).root(model, kind, interface_type, source_name)
+
+
 @dataclass(frozen=True)
 class ConditionFieldDoc:
     name: str

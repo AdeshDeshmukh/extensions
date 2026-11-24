@@ -116,6 +116,8 @@ test("extension descriptions become JSDoc in the generated bindings", async () =
     const manifest = JSON.parse(readFileSync(join(built.directory, "package.json"), "utf-8"));
     assert.match(manifest.description, /^Common integrations a workload depends on: network APIs \(HTTP and SMTP\)/);
     assert.deepEqual(Object.keys(manifest).slice(0, 4), ["//", "name", "version", "description"]);
+    // The constructor documents each field as a nested @param, which an editor shows on hover over `new`.
+    assert.match(source, /\* @param fields\.engine - The cache engine the workload needs\./);
     // Field docs also appear inside the constructor's fields type, where editors show them.
     assert.match(source, /constructor\(\s*fields: \{[^}]*\/\*\*[^}]*The cache engine the workload needs\./s);
   } finally {
@@ -139,6 +141,17 @@ test("every README example compiles against the generated package", async () => 
     });
     const compiled = runTsc(built.directory, true);
     assert.equal(compiled.status, 0, compiled.output);
+    // A collapsible reference lists every interface with its fields, types and allowed values.
+    for (const expected of [
+      "## Conditions",
+      "<summary><b>cache</b> · <code>key_value</code>: A key/value store, such as Redis or Memcached.</summary>",
+      "`KeyValue` is the `interface` of a `cache` Condition.",
+      "| `engine` | `KeyValueEngine` | no | The cache engine the workload needs.",
+      "<br>Values:<br>`memcached`: Memcached, a simple in-memory cache.<br>`redis`: Redis, an in-memory key/value store. |",
+      "| `operations[].method` | `Method` | yes |",
+    ]) {
+      assert.ok(readme.includes(expected), `README is missing ${JSON.stringify(expected)}\n${readme}`);
+    }
     // The same code is in the JSDoc of the declaration functions.
     const bindings = readFileSync(join(built.directory, "src/bindings.ts"), "utf-8");
     assert.ok(bindings.includes(" * cache(new KeyValue({ engine: KeyValueEngine.Redis }));"));
@@ -196,6 +209,8 @@ test("a dependent package's README examples call the dependency and compile agai
       `import { KeyValue, KeyValueEngine, cache } from ${JSON.stringify(dependencyName)};`,
       `import { KeyValueConfiguration, KeyValueConfigurationEnvItem } from ${JSON.stringify(plan.target.packageName)};`,
       "In a Profile, this declares:",
+      "<summary><code>configuration</code> on <b>cache</b> · <code>key_value</code>: How the platform passes the cache address to the workload, as environment variables.</summary>",
+      "| `env[].name` | `string` | yes |",
     ]) {
       assert.ok(readme.includes(expected), `README is missing ${JSON.stringify(expected)}\n${readme}`);
     }
