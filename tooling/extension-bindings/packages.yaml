@@ -39,20 +39,20 @@ packages:
         publicationMode: registry
         registryId: maven-central
   common-integrations:
-    rootExtension: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
         coordinate: runtimeconditions.io/x/rc/common
         name: common
-        version: 0.3.0
+        version: 0.4.0
         sourceDirectory: bindings/common-integrations/go
         languageVersion: 1.25.0
         publicationMode: github-tag
       python:
         coordinate: runtimeconditions-common-integrations
         name: runtimeconditions_common_integrations
-        version: 0.2.0
+        version: 0.3.0
         sourceDirectory: bindings/common-integrations/python
         languageVersion: 3.12.10
         publicationMode: registry
@@ -60,7 +60,7 @@ packages:
       typescript:
         coordinate: '@runtimeconditions/common-integrations'
         name: '@runtimeconditions/common-integrations'
-        version: 0.3.0
+        version: 0.4.0
         sourceDirectory: bindings/common-integrations/typescript
         languageVersion: 20.19.6
         publicationMode: registry
@@ -68,26 +68,26 @@ packages:
       java:
         coordinate: io.runtimeconditions.bindings:runtimeconditions-common-integrations
         name: io.runtimeconditions.bindings.commonintegrations
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/common-integrations/java
         languageVersion: 21.0.12
         publicationMode: registry
         registryId: maven-central
   env-configuration:
-    rootExtension: https://runtimeconditions.io/extensions/rc/env-configuration/v1alpha2/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/env-configuration/v1alpha4/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
         coordinate: runtimeconditions.io/x/rc/env
         name: env
-        version: 0.3.0
+        version: 0.4.0
         sourceDirectory: bindings/env-configuration/go
         languageVersion: 1.25.0
         publicationMode: github-tag
       python:
         coordinate: runtimeconditions-env-configuration
         name: runtimeconditions_env_configuration
-        version: 0.2.0
+        version: 0.3.0
         sourceDirectory: bindings/env-configuration/python
         languageVersion: 3.12.10
         publicationMode: registry
@@ -95,7 +95,7 @@ packages:
       typescript:
         coordinate: '@runtimeconditions/env-configuration'
         name: '@runtimeconditions/env-configuration'
-        version: 0.3.0
+        version: 0.4.0
         sourceDirectory: bindings/env-configuration/typescript
         languageVersion: 20.19.6
         publicationMode: registry
@@ -103,7 +103,7 @@ packages:
       java:
         coordinate: io.runtimeconditions.bindings:runtimeconditions-env-configuration
         name: io.runtimeconditions.bindings.envconfiguration
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/env-configuration/java
         languageVersion: 21.0.12
         publicationMode: registry
