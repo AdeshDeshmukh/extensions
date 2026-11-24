@@ -108,6 +108,41 @@ packages:
         languageVersion: 21.0.12
         publicationMode: registry
         registryId: maven-central
+  file-system:
+    rootExtension: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+    coreProfileSchemaVersion: 0.4.0
+    languages:
+      go:
+        coordinate: runtimeconditions.io/x/rc/filesystem
+        name: filesystem
+        version: 0.1.0
+        sourceDirectory: bindings/file-system/go
+        languageVersion: 1.25.0
+        publicationMode: github-tag
+      python:
+        coordinate: runtimeconditions-file-system
+        name: runtimeconditions_file_system
+        version: 0.1.0
+        sourceDirectory: bindings/file-system/python
+        languageVersion: 3.12.10
+        publicationMode: registry
+        registryId: pypi
+      typescript:
+        coordinate: '@runtimeconditions/file-system'
+        name: '@runtimeconditions/file-system'
+        version: 0.1.0
+        sourceDirectory: bindings/file-system/typescript
+        languageVersion: 20.19.6
+        publicationMode: registry
+        registryId: npm
+      java:
+        coordinate: io.runtimeconditions.bindings:runtimeconditions-file-system
+        name: io.runtimeconditions.bindings.filesystem
+        version: 0.1.0
+        sourceDirectory: bindings/file-system/java
+        languageVersion: 21.0.12
+        publicationMode: registry
+        registryId: maven-central
   google-analytics:
     rootExtension: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0

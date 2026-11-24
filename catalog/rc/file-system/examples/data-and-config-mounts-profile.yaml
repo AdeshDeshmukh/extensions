@@ -1,0 +1,37 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsProfile
+
+metadata:
+  name: media-library
+
+workload:
+  uri: https://github.com/example-org/media-library
+
+extensions:
+  - https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml:0.1.0
+
+conditions:
+  - name: library-data
+    kind: rc.file_system
+    interface:
+      type: mount
+      path: /var/lib/media-library
+      access: read_write
+      persistence: persistent
+      minimumSize: 10Gi
+
+  - name: settings
+    kind: rc.file_system
+    interface:
+      type: mount
+      path: /etc/media-library
+      access: read_only
+
+  - name: credentials
+    kind: rc.file_system
+    interface:
+      type: mount
+      access: read_only
+    env:
+      - property: path
+        name: CREDENTIALS_DIR
