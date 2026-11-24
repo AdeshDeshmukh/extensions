@@ -28,30 +28,119 @@ spec:
     - api
     appliesToInterfaceTypes:
     - http
-    description: How the platform passes the address and credentials of the HTTP API to the workload,
-      as environment variables.
+    description: |-
+      How the platform passes the address and credentials of the HTTP API to the workload, as environment
+      variables.
+
+      Example: a workload that reads the todos API base URL and an access token from its environment.
+
+      ```condition
+      kind: api
+      interface:
+        type: http
+        spec:
+          format: openapi
+          uri: catalog://api/default/todos-api
+      configuration:
+        env:
+        - property: baseUrl
+          name: TODOS_API_URL
+          required: true
+        - property: token
+          name: TODOS_API_TOKEN
+          sensitive: true
+      ```
   - name: configuration
     appliesToKinds:
     - datastore
     appliesToInterfaceTypes:
     - relational
     - document
-    description: How the platform passes the connection details of the database to the workload, as environment
+    description: |-
+      How the platform passes the connection details of the database to the workload, as environment
       variables.
+
+      Example: a workload that accepts either one PostgreSQL connection URL or separate host, port, user,
+      password and database variables. The platform provides one of the two sets.
+
+      ```condition
+      kind: datastore
+      interface:
+        type: relational
+        engine: postgres
+      configuration:
+        alternatives:
+        - env:
+          - property: url
+            name: DATABASE_URL
+            sensitive: true
+        - env:
+          - property: hostname
+            name: DB_HOST
+          - property: port
+            name: DB_PORT
+          - property: username
+            name: DB_USER
+          - property: password
+            name: DB_PASSWORD
+            sensitive: true
+          - property: database
+            name: DB_NAME
+      ```
   - name: configuration
     appliesToKinds:
     - cache
     appliesToInterfaceTypes:
     - key_value
-    description: How the platform passes the connection details of the cache to the workload, as environment
-      variables.
+    description: |-
+      How the platform passes the connection details of the cache to the workload, as environment variables.
+
+      Example: a workload that needs a Redis cache and cannot start without its URL.
+
+      ```condition
+      kind: cache
+      interface:
+        type: key_value
+        engine: redis
+      configuration:
+        env:
+        - property: url
+          name: REDIS_URL
+          required: true
+      ```
   - name: configuration
     appliesToKinds:
     - api
     appliesToInterfaceTypes:
     - smtp
-    description: How the platform passes the SMTP server details and email addresses to the workload,
-      as environment variables.
+    description: |-
+      How the platform passes the SMTP server details and email addresses to the workload, as environment
+      variables.
+
+      Example: a workload that sends email through an SMTP server and reads the server, login and sender
+      address from its environment.
+
+      ```condition
+      kind: api
+      interface:
+        type: smtp
+        operations:
+        - send
+      configuration:
+        env:
+        - property: hostname
+          name: SMTP_HOST
+          required: true
+        - property: port
+          name: SMTP_PORT
+        - property: username
+          name: SMTP_USER
+        - property: password
+          name: SMTP_PASSWORD
+          sensitive: true
+        - property: fromAddress
+          name: MAIL_FROM
+      ```
   fieldValues:
   - field: configuration.env[].property
     targetKind: api
