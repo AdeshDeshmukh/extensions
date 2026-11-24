@@ -67,6 +67,16 @@ final class Examples {
         return builder.toString();
     }
 
+    /** The first paragraph of a description, on one line, for registry summaries. */
+    static String summary(String text) {
+        for (Segment segment : split(text)) {
+            if (segment.condition() == null && segment.text() != null && !segment.text().isBlank()) {
+                return segment.text().split("\\n\\s*\\n", 2)[0].strip().replaceAll("\\s+", " ");
+            }
+        }
+        return "";
+    }
+
     /** Splits a description into prose and example Conditions. */
     static List<Segment> split(String text) {
         List<Segment> segments = new ArrayList<>();

@@ -4,6 +4,7 @@ import ts from "typescript";
 import { stringify } from "yaml";
 
 import { fail } from "./diagnostics.js";
+import { summary } from "./examples.js";
 import type { Model } from "./model.js";
 import type { EmissionPlan, TypeExpr } from "./plan.js";
 import type { PackageDependency } from "./target.js";
@@ -57,6 +58,13 @@ function packageJson(plan: EmissionPlan, model: Model): string {
     dependencies,
     typescriptVersion: TYPESCRIPT_VERSION,
   });
+  const description = summary(plan.packageDescription);
+  if (description) {
+    // npm shows the description in search results and on the package page.
+    const { name, version, ...rest } = filled as Record<string, unknown>;
+    const ordered = { "//": rest["//"], name, version, description, ...rest };
+    return JSON.stringify(ordered, null, 2) + "\n";
+  }
   return JSON.stringify(filled, null, 2) + "\n";
 }
 

@@ -75,6 +75,12 @@ public final class Metadata {
         return "[" + value + "," + next + ")";
     }
 
+    /** Maven Central shows the pom description; use the extension summary when there is one. */
+    private static String description(EmissionPlan plan, PackageTarget target) {
+        String summary = Examples.summary(plan.packageDescription());
+        return summary.isEmpty() ? "Runtime Conditions Java bindings: " + target.artifactId() : summary;
+    }
+
     private static String xml(String value) {
         return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
@@ -121,6 +127,7 @@ public final class Metadata {
                         "repositoryUrl", xml(target.repositoryUrl()),
                         "scmConnection", xml(repository),
                         "minimumJavaVersion", target.minimumJavaVersion(),
+                        "description", xml(description(plan, target)),
                         "dependencies", block));
     }
 

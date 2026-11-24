@@ -791,6 +791,13 @@ def test_package_metadata_and_manifest_are_deterministic(case: str) -> None:
     assert metadata["project"].get("readme") == (
         "README.md" if plan.package_description else None
     )
+    # The extension summary is the one-line PyPI summary.
+    if plan.package_description:
+        assert metadata["project"]["description"].startswith(
+            "Common integrations a workload depends on: network APIs"
+        )
+    else:
+        assert "description" not in metadata["project"]
     assert (
         str(Version(metadata["project"]["version"])) == metadata["project"]["version"]
     )

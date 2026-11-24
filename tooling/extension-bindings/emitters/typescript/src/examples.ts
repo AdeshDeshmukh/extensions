@@ -214,6 +214,13 @@ class Renderer {
 }
 
 /** Renders every example Condition in the model's descriptions, keyed by source. */
+/** The first paragraph of a description, on one line, for registry summaries. */
+export function summary(text: string): string {
+  const prose = splitDocumentation(text).find((segment) => segment.condition === undefined && segment.text);
+  const paragraph = (prose?.text ?? "").split(/\n\s*\n/)[0] ?? "";
+  return paragraph.replace(/\s+/g, " ").trim();
+}
+
 export async function renderExamples(
   plan: EmissionPlan,
   model: Model,

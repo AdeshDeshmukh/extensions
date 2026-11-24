@@ -108,6 +108,10 @@ test("extension descriptions become JSDoc in the generated bindings", async () =
     ]) {
       assert.ok(source.includes(expected), `generated bindings are missing ${JSON.stringify(expected)}`);
     }
+    // npm shows the package.json description: the extension summary on one line.
+    const manifest = JSON.parse(readFileSync(join(built.directory, "package.json"), "utf-8"));
+    assert.match(manifest.description, /^Common integrations a workload depends on: network APIs \(HTTP and SMTP\)/);
+    assert.deepEqual(Object.keys(manifest).slice(0, 4), ["//", "name", "version", "description"]);
     // Field docs also appear inside the constructor's fields type, where editors show them.
     assert.match(source, /constructor\(\s*fields: \{[^}]*\/\*\*[^}]*The cache engine the workload needs\./s);
   } finally {

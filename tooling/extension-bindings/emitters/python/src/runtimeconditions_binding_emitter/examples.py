@@ -80,6 +80,12 @@ def split_documentation(text: str) -> list[DocSegment]:
     return segments
 
 
+def summary(text: str) -> str:
+    """The first paragraph of a description, on one line, for registry summaries."""
+    prose = next((item.text for item in split_documentation(text) if item.condition is None and item.text), "")
+    return " ".join(re.split(r"\n\s*\n", prose)[0].split())
+
+
 class _ExampleError(Exception):
     pass
 

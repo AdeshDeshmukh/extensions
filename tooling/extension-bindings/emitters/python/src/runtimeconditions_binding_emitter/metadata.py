@@ -9,6 +9,7 @@ from typing import Any, cast
 import yaml
 
 from .emitter import EmissionPlan, TypeExpr
+from .examples import summary
 from .package import SHA_PATTERN, VERSION_PATTERN, fail
 
 EMITTER_NAME = "runtimeconditions-binding-emitter"
@@ -76,7 +77,8 @@ def _pyproject(plan: EmissionPlan, model: dict[str, Any]) -> str:
         f'requires-python = ">={target.minimum_python_version}"',
     ]
     if plan.package_description:
-        # PyPI shows the generated README as the project description.
+        # PyPI shows the summary in search results and the README on the project page.
+        lines.append(f"description = {json.dumps(summary(plan.package_description), ensure_ascii=False)}")
         lines.append('readme = "README.md"')
     lines.append("dependencies = [")
     for dependency in dependencies:

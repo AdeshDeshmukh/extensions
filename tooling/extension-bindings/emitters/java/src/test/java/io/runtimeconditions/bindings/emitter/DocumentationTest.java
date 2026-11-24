@@ -47,6 +47,10 @@ class DocumentationTest {
             // Comparison operators in a JSON Schema rule are HTML-escaped.
             assertTrue(spec.contains("&gt;=1.2.0"), spec);
 
+            // Maven Central shows the pom description: the extension summary.
+            String pom = Files.readString(built.directory().resolve("pom.xml"));
+            assertTrue(pom.contains("<description>Common integrations a workload depends on: network APIs"), pom);
+
             assertEquals("", runJavadoc(sources, workspace.resolve("javadoc")));
         } finally {
             delete(workspace);
