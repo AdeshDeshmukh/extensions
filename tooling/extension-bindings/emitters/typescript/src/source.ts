@@ -7,7 +7,14 @@ import type { Model } from "./model.js";
 import type { EmissionPlan, TypePlan } from "./plan.js";
 import { header, renderResources } from "./metadata.js";
 import { JSON_VALUE_ALIAS_RHS } from "./plan.js";
-import { dedent, renderExamples, splitDocumentation, type RenderedExample } from "./examples.js";
+import {
+  conditionFieldDocs,
+  dedent,
+  renderExamples,
+  splitDocumentation,
+  type ConditionFieldDoc,
+  type RenderedExample,
+} from "./examples.js";
 import { readTemplate } from "./templates.js";
 
 function sourceHeader(model: Model): string {
@@ -279,7 +286,7 @@ function markdown(
     if (example !== undefined) {
       lines.push(
         "```ts",
-        `import { ${example.imports.join(", ")} } from ${JSON.stringify(plan.target.packageName)};`,
+        ...example.imports.map(([pkg, names]) => `import { ${names.join(", ")} } from ${JSON.stringify(pkg)};`),
         "",
         example.code,
         "```",
@@ -318,6 +325,19 @@ function readmeSource(
     lines.push("", `## ${declaration.function}`, "");
     lines.push(`\`${declaration.function}\` declares a \`${declaration.kind}\` Condition.`);
     if (declaration.description) lines.push("", ...markdown(declaration.description, plan, examples));
+  }
+  // Fields this package adds to Conditions; fields sharing one description share a section.
+  const groups = new Map<string, ConditionFieldDoc[]>();
+  for (const field of conditionFieldDocs(plan, model)) {
+    groups.set(field.description, [...(groups.get(field.description) ?? []), field]);
+  }
+  for (const [description, fields] of groups) {
+    lines.push("", `## ${fields.map((field) => field.name).join(", ")}`, "");
+    for (const field of fields) {
+      const scope = field.interfaceType ? ` with interface type \`${field.interfaceType}\`` : "";
+      lines.push(`\`${field.name}\` sets the \`${field.path}\` field of \`${field.kind}\` Conditions${scope}.`);
+    }
+    lines.push("", ...markdown(description, plan, examples));
   }
   lines.push(
     "",

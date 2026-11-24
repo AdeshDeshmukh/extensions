@@ -106,6 +106,9 @@ type packageIR struct {
 	domains            map[string]normalizer.ValueDomainModel
 	rootBindings       []rootBindingIR
 	sampleError        error
+	// dependencyIRs caches the planned packages of direct dependencies, used to
+	// render examples that call a dependency's declaration function.
+	dependencyIRs map[string]*packageIR
 }
 
 func Emit(model normalizer.BindingModel, target PackageTarget, output string) error {

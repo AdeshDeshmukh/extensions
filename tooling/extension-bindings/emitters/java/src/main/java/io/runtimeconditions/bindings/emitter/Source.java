@@ -478,6 +478,26 @@ public final class Source {
                 lines.addAll(markdown(declaration.description(), plan, examples));
             }
         }
+        // Fields this package adds to Conditions; fields sharing one description share a section.
+        Map<String, List<Examples.FieldDoc>> groups = new java.util.LinkedHashMap<>();
+        for (Examples.FieldDoc field : Examples.conditionFields(plan, model)) {
+            groups.computeIfAbsent(field.description(), key -> new ArrayList<>()).add(field);
+        }
+        for (Map.Entry<String, List<Examples.FieldDoc>> group : groups.entrySet()) {
+            List<String> names = new ArrayList<>();
+            for (Examples.FieldDoc field : group.getValue()) {
+                names.add(field.name());
+            }
+            lines.add("");
+            lines.add("## " + String.join(", ", names));
+            lines.add("");
+            for (Examples.FieldDoc field : group.getValue()) {
+                String scope = field.interfaceType().isEmpty() ? "" : " with interface type `" + field.interfaceType() + "`";
+                lines.add("`" + field.name() + "` sets the `" + field.path() + "` field of `" + field.kind() + "` Conditions" + scope + ".");
+            }
+            lines.add("");
+            lines.addAll(markdown(group.getKey(), plan, examples));
+        }
         lines.add("");
         lines.add("Every record, component and enum constant is documented in the Javadoc.");
         lines.add("");

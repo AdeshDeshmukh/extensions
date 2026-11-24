@@ -11,9 +11,10 @@ from tempfile import TemporaryDirectory
 
 import yaml
 
+from runtimeconditions_binding_emitter.dependencies import dependency_plan
 from runtimeconditions_binding_emitter.emitter import EmissionPlan, build_plan
 from runtimeconditions_binding_emitter.metadata import render_resources
-from runtimeconditions_binding_emitter.package import load_target
+from runtimeconditions_binding_emitter.package import PackageDependency, load_target
 from runtimeconditions_binding_emitter.examples import render_examples
 from runtimeconditions_binding_emitter.source import (
     _CURRENT_EXAMPLES,
@@ -25,6 +26,7 @@ from runtimeconditions_binding_emitter.verification import api_surface, verify_p
 
 TOOLING = Path(__file__).resolve().parents[3]
 MODEL = TOOLING / "model/conformance/expected/14-documented-extension/runtimeconditions.binding-model.yaml"
+DEPENDENT_MODEL = TOOLING / "model/conformance/expected/15-documented-dependent/runtimeconditions.binding-model.yaml"
 TARGET = TOOLING / "emitters/python/testdata/package-target.yaml"
 
 
@@ -131,8 +133,78 @@ def test_readme_examples_run_against_the_generated_package() -> None:
                 del sys.modules[name]
 
 
+def _exported(plan: EmissionPlan) -> list[str]:
+    return sorted([f"type {item.name}" for item in plan.types] + [f"def {item.function}" for item in plan.declarations])
+
+
+def test_dependent_readme_examples_call_the_dependency_and_run_against_both_packages() -> None:
+    # The dependency is case 14's extension, so its own package is case 14's.
+    dependency_model_value, dependency = _model_and_plan()
+    dependency = replace(
+        dependency,
+        target=replace(dependency.target, import_package="rc_documented", distribution_name="rc-documented"),
+    )
+    dependency = build_plan(dependency_model_value, dependency.target)
+    model = yaml.safe_load(DEPENDENT_MODEL.read_text(encoding="utf-8"))
+    target = replace(
+        load_target(TARGET),
+        package_key="rc-documented-dependent",
+        root_extension=model["rootExtension"]["id"],
+        distribution_name="rc-documented-dependent",
+        import_package="rc_documented_dependent",
+        emitter_sha256="0" * 64,
+        dependencies=(
+            PackageDependency(dependency.target.root_extension, "rc-documented", "rc_documented", "1.0.0"),
+        ),
+    )
+    plan = build_plan(model, target)
+    # Names planned from the dependent model match the dependency package's own.
+    derived = dependency_plan(plan, model, dependency.target.root_extension)
+    assert derived is not None
+    assert _exported(derived) == _exported(dependency)
+
+    examples = render_examples(plan, model)
+    readme = readme_source(plan, model, examples)
+    assert readme is not None
+    for expected in (
+        "## KeyValueConfiguration",
+        "`KeyValueConfiguration` sets the `configuration` field of `cache` Conditions with interface type `key_value`.",
+        "from rc_documented import KeyValue, KeyValueEngine, cache",
+        "from rc_documented_dependent import KeyValueConfiguration, KeyValueConfigurationEnvItem",
+        "In a Profile, this declares:",
+    ):
+        assert expected in readme, f"{expected}\n{readme}"
+    blocks = re.findall(r"```python\n(.*?)```", readme, flags=re.S)
+    assert len(blocks) >= 2, readme
+    _CURRENT_EXAMPLES.update(examples)
+    try:
+        bindings = _bindings_source(plan, model)
+    finally:
+        _CURRENT_EXAMPLES.clear()
+    # The condition field's docstring shows the same code.
+    assert "cache(\n" in bindings or "cache(KeyValue(" in bindings, bindings
+    with TemporaryDirectory() as temporary:
+        for package_plan, package_model, source in (
+            (dependency, dependency_model_value, _bindings_source(dependency, dependency_model_value)),
+            (plan, model, bindings),
+        ):
+            package = Path(temporary) / package_plan.target.import_package
+            package.mkdir()
+            (package / "__init__.py").write_text(_init_source(package_plan, package_model), encoding="utf-8")
+            (package / "bindings.py").write_text(source, encoding="utf-8")
+        sys.path.insert(0, temporary)
+        try:
+            for block in blocks:
+                exec(compile(block, "README example", "exec"), {})
+        finally:
+            sys.path.remove(temporary)
+            for name in [key for key in sys.modules if key.startswith("rc_documented")]:
+                del sys.modules[name]
+
+
 if __name__ == "__main__":
     test_descriptions_become_docstrings()
     test_docstrings_do_not_change_the_api()
     test_readme_examples_run_against_the_generated_package()
+    test_dependent_readme_examples_call_the_dependency_and_run_against_both_packages()
     print("ok")

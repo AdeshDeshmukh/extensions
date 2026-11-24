@@ -37,6 +37,7 @@ var positiveGoCases = []string{
 	"11-source-name-preservation",
 	"13-dependency-schema-only",
 	"14-documented-extension",
+	"15-documented-dependent",
 }
 
 type conformanceModule struct {
@@ -545,6 +546,11 @@ func generateConformanceModules(t *testing.T, name, workspace string) []generate
 				rootID:     "https://runtimeconditions.io/conformance/transitive-middle:1.0.0",
 			},
 		)
+	case "15-documented-dependent":
+		specs = append(specs, conformanceModule{
+			targetFile: "14-documented-extension.yaml",
+			rootID:     "https://runtimeconditions.io/conformance/documented-extension:1.0.0",
+		})
 	case "13-dependency-schema-only":
 		specs = append(specs, conformanceModule{
 			targetFile: "13-dependency-schema-only-dependency.yaml",

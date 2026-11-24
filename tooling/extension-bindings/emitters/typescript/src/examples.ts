@@ -1,14 +1,17 @@
 import * as prettier from "prettier";
 import { parse } from "yaml";
 
+import { dependencyPlan } from "./dependencies.js";
 import type { Model } from "./model.js";
 import type { EmissionPlan, TypeExpr, TypePlan } from "./plan.js";
 
 // Descriptions may contain example Conditions in ```condition fences, a
 // first-party documentation convention checked by the normalizer. The
 // TypeScript emitter renders each example as the declaration call that produces
-// it, in JSDoc and in the package README. An example that this package cannot
-// express on its own is shown as Profile YAML instead.
+// it, in JSDoc and in the package README. An example for a dependency's kind,
+// such as an env-configuration field on a common-integrations cache, calls the
+// dependency's declaration function (see dependencies.ts). An example that
+// cannot be rendered is shown as Profile YAML instead.
 
 export const CONDITION_FENCE = "condition";
 
@@ -20,7 +23,8 @@ export interface DocSegment {
 
 export interface RenderedExample {
   readonly code: string;
-  readonly imports: readonly string[];
+  /** Names to import, per package, in package order. */
+  readonly imports: readonly (readonly [string, readonly string[]])[];
 }
 
 export function dedent(text: string): string {
@@ -79,11 +83,18 @@ function identifier(name: string): string {
 }
 
 class Renderer {
-  readonly imports = new Set<string>();
   private readonly types: ReadonlyMap<string, TypePlan>;
 
-  constructor(private readonly plan: EmissionPlan) {
+  constructor(
+    readonly plan: EmissionPlan,
+    private readonly imports: Map<string, Set<string>>,
+  ) {
     this.types = new Map(plan.types.map((item) => [item.name, item]));
+  }
+
+  private use(name: string): void {
+    const pkg = this.plan.target.packageName;
+    this.imports.set(pkg, (this.imports.get(pkg) ?? new Set()).add(name));
   }
 
   value(expression: TypeExpr, value: unknown): string {
@@ -142,7 +153,7 @@ class Renderer {
     if (type.kind === "enum") {
       const member = type.members.find(([, memberValue]) => memberValue === value);
       if (member === undefined) throw new ExampleError(`${JSON.stringify(value)} is not a ${name}`);
-      this.imports.add(name);
+      this.use(name);
       return `${name}.${member[0]}`;
     }
     if (type.kind === "alias") return this.value(type.expression!, value);
@@ -160,7 +171,7 @@ class Renderer {
     const entries = type.fields
       .filter((field) => field.sourceName in object)
       .map((field) => `${field.name}: ${this.value(field.typeExpr, object[field.sourceName])}`);
-    this.imports.add(type.name);
+    this.use(type.name);
     return entries.length > 0 ? `new ${type.name}({ ${entries.join(", ")} })` : `new ${type.name}()`;
   }
 
@@ -185,32 +196,73 @@ class Renderer {
     return candidates[0];
   }
 
-  condition(model: Model, condition: Record<string, unknown>): string {
+  /**
+   * Renders a Condition as a declaration call. Values come from this package first, then from
+   * the dependency package that declares the kind, when one is given.
+   */
+  condition(model: Model, condition: Record<string, unknown>, dependency?: Renderer): string {
     const kind = condition["kind"];
-    const declaration = this.plan.declarations.find((item) => item.kind === kind);
+    let declarer: Renderer = this;
+    let declaration = this.plan.declarations.find((item) => item.kind === kind);
+    if (declaration === undefined && dependency !== undefined) {
+      declarer = dependency;
+      declaration = dependency.plan.declarations.find((item) => item.kind === kind);
+    }
     if (declaration === undefined) throw new ExampleError(`kind ${String(kind)} is not declared here`);
+    const sources = declarer === this ? [this] : [this, declarer];
+    const render = (interfaceType: string, key: string, value: unknown, label: string): string => {
+      for (const source of sources) {
+        const type = source.root(model, kind as string, interfaceType, key);
+        if (type === undefined) continue;
+        const single = type.fields.length === 1 && type.fields[0]!.sourceName === "value";
+        return single && (typeof value !== "object" || value === null)
+          ? source.object(type, { value })
+          : source.object(type, value);
+      }
+      throw new ExampleError(`${label} ${key} is not defined here`);
+    };
     const fieldArguments: string[] = [];
     const iface = condition["interface"] as Record<string, unknown> | undefined;
     const interfaceType = typeof iface?.["type"] === "string" ? (iface["type"] as string) : "";
-    if (iface !== undefined) {
-      const type = this.root(model, kind as string, interfaceType, interfaceType);
-      if (type === undefined) throw new ExampleError(`interface ${interfaceType} is not defined here`);
-      fieldArguments.push(this.object(type, iface));
-    }
+    if (iface !== undefined) fieldArguments.push(render(interfaceType, interfaceType, iface, "interface"));
     for (const key of Object.keys(condition).sort()) {
       if (key === "kind" || key === "interface" || key === "name") continue;
-      const type = this.root(model, kind as string, interfaceType, key);
-      if (type === undefined) throw new ExampleError(`condition field ${key} is not defined here`);
-      const single = type.fields.length === 1 && type.fields[0]!.sourceName === "value";
-      fieldArguments.push(
-        single && (typeof condition[key] !== "object" || condition[key] === null)
-          ? this.object(type, { value: condition[key] })
-          : this.object(type, condition[key]),
-      );
+      fieldArguments.push(render(interfaceType, key, condition[key], "condition field"));
     }
-    this.imports.add(declaration.function);
+    declarer.use(declaration.function);
     return `${declaration.function}(${fieldArguments.join(", ")});`;
   }
+}
+
+/** A root-owned, documented condition field and the type that sets it. */
+export interface ConditionFieldDoc {
+  readonly name: string;
+  readonly kind: string;
+  readonly interfaceType: string;
+  readonly path: string;
+  readonly description: string;
+}
+
+/** The documented condition fields of the root extension, in type-name order. */
+export function conditionFieldDocs(plan: EmissionPlan, model: Model): ConditionFieldDoc[] {
+  const root = model["rootExtension"].id;
+  const renderer = new Renderer(plan, new Map());
+  const docs: ConditionFieldDoc[] = [];
+  for (const field of model["vocabulary"]?.["conditionFields"] ?? []) {
+    if (field.owner !== root || !field.description) continue;
+    const segments = field.segments ?? [];
+    const sourceName = segments.length > 0 ? segments[segments.length - 1].name : field.path;
+    const type = renderer.root(model, field.kind, field.interfaceType ?? "", sourceName);
+    if (type === undefined) continue;
+    docs.push({
+      name: type.name,
+      kind: field.kind,
+      interfaceType: field.interfaceType ?? "",
+      path: field.path,
+      description: field.description,
+    });
+  }
+  return docs.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
 /** Renders every example Condition in the model's descriptions, keyed by source. */
@@ -234,14 +286,32 @@ export async function renderExamples(
   for (const item of model["vocabulary"]?.["ownedDeclarations"] ?? []) {
     if (item.description) texts.push(item.description);
   }
+  for (const item of model["vocabulary"]?.["conditionFields"] ?? []) {
+    if (item.owner === root && item.description) texts.push(item.description);
+  }
+  const dependencies = new Map<string, EmissionPlan | undefined>();
+  const dependencyFor = (kind: unknown): EmissionPlan | undefined => {
+    const imported = plan.importedDeclarations.find((item) => item.kind === kind);
+    if (imported === undefined) return undefined;
+    if (!dependencies.has(imported.owner)) {
+      dependencies.set(imported.owner, dependencyPlan(plan, model, imported.owner));
+    }
+    return dependencies.get(imported.owner);
+  };
   const rendered = new Map<string, RenderedExample>();
   for (const text of texts) {
     for (const segment of splitDocumentation(text)) {
       if (segment.condition === undefined || rendered.has(segment.source!)) continue;
-      const renderer = new Renderer(plan);
+      const imports = new Map<string, Set<string>>();
+      const renderer = new Renderer(plan, imports);
+      const provider = dependencyFor(segment.condition["kind"]);
       let code: string;
       try {
-        code = renderer.condition(model, segment.condition);
+        code = renderer.condition(
+          model,
+          segment.condition,
+          provider === undefined ? undefined : new Renderer(provider, imports),
+        );
       } catch (error) {
         if (error instanceof ExampleError) continue;
         throw error;
@@ -249,7 +319,7 @@ export async function renderExamples(
       const formatted = await prettier.format(code, { ...formatOptions, parser: "typescript" });
       rendered.set(segment.source!, {
         code: formatted.trim(),
-        imports: [...renderer.imports].sort(),
+        imports: [...imports.keys()].sort().map((pkg) => [pkg, [...imports.get(pkg)!].sort()] as const),
       });
     }
   }

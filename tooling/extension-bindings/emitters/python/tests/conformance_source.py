@@ -213,6 +213,7 @@ def _conformance_source(plan: EmissionPlan, model: dict[str, Any]) -> str:
             if item.is_declaration_field
             and item.marker
             and item.marker.owner == imported_declaration.owner
+            and item.marker.protocol == imported_declaration.protocol
         ]
         if not fields:
             lines.append(

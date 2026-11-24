@@ -3,7 +3,9 @@
 Descriptions may contain example Conditions in condition fences, a first-party
 documentation convention checked by the normalizer. The Python emitter renders
 each example as the declaration call that produces it, in docstrings and in the
-package README. An example this package cannot express on its own is shown as
+package README. An example for a dependency's kind, such as an env-configuration
+field on a common-integrations cache, calls the dependency's declaration
+function (see dependencies.py). An example that cannot be rendered is shown as
 Profile YAML instead.
 """
 
@@ -32,7 +34,8 @@ class DocSegment:
 @dataclass(frozen=True)
 class RenderedExample:
     code: str
-    imports: tuple[str, ...]
+    # Names to import, per import package, in package order.
+    imports: tuple[tuple[str, tuple[str, ...]], ...]
 
 
 def dedent(text: str) -> str:
@@ -130,15 +133,19 @@ def _layout(node: Any, indent: int) -> str:
             for key, value in node.arguments
         ]
         return f"{node.name}(\n" + "\n".join(parts) + "\n" + " " * indent + ")"
-    parts = [f"{pad}{key}{_layout(value, indent + 4 + len(key))}," for key, value in node.items]
-    return f"{node.opening}\n" + "\n".join(parts) + "\n" + " " * indent + node.closing
+    collection: _Collection = node
+    parts = [f"{pad}{key}{_layout(value, indent + 4 + len(key))}," for key, value in collection.items]
+    return f"{collection.opening}\n" + "\n".join(parts) + "\n" + " " * indent + collection.closing
 
 
 class _Renderer:
-    def __init__(self, plan: EmissionPlan) -> None:
+    def __init__(self, plan: EmissionPlan, imports: dict[str, set[str]]) -> None:
         self.plan = plan
         self.types = {item.name: item for item in plan.types}
-        self.imports: set[str] = set()
+        self.imports = imports
+
+    def use(self, name: str) -> None:
+        self.imports.setdefault(self.plan.target.import_package, set()).add(name)
 
     def value(self, expression: TypeExpr, value: Any) -> Any:
         kind = expression.kind
@@ -183,7 +190,7 @@ class _Renderer:
         if type_plan.kind == "enum":
             for member, member_value in type_plan.members:
                 if member_value == value:
-                    self.imports.add(name)
+                    self.use(name)
                     return _Atom(f"{name}.{member}")
             raise _ExampleError(f"{value!r} is not a {name}")
         if type_plan.kind == "alias":
@@ -198,7 +205,7 @@ class _Renderer:
         unknown = sorted(set(value) - known)
         if unknown:
             raise _ExampleError(f"{type_plan.name} has no field {unknown[0]}")
-        self.imports.add(type_plan.name)
+        self.use(type_plan.name)
         return _Call(
             type_plan.name,
             tuple(
@@ -223,48 +230,115 @@ class _Renderer:
                 candidates.append((schema.get("interfaceType") != interface_type, item.name, item))
         return sorted(candidates, key=lambda entry: entry[:2])[0][2] if candidates else None
 
-    def condition(self, model: dict[str, Any], condition: dict[str, Any]) -> Any:
+    def condition(
+        self, model: dict[str, Any], condition: dict[str, Any], dependency: _Renderer | None = None
+    ) -> Any:
+        """Render a Condition as a declaration call.
+
+        Values come from this package first, then from the dependency package
+        that declares the kind, when one is given.
+        """
         kind = condition.get("kind")
+        declarer: _Renderer = self
         declaration = next((item for item in self.plan.declarations if item.kind == kind), None)
+        if declaration is None and dependency is not None:
+            declarer = dependency
+            declaration = next((item for item in dependency.plan.declarations if item.kind == kind), None)
         if declaration is None:
             raise _ExampleError(f"kind {kind!r} is not declared here")
+        sources = [self] if declarer is self else [self, declarer]
+
+        def render(interface_type: str, key: str, value: Any, label: str) -> Any:
+            for source in sources:
+                type_plan = source.root(model, str(kind), interface_type, key)
+                if type_plan is None:
+                    continue
+                single = len(type_plan.fields) == 1 and type_plan.fields[0].source_name == "value"
+                return source.object(type_plan, {"value": value} if single and not isinstance(value, dict) else value)
+            raise _ExampleError(f"{label} {key!r} is not defined here")
+
         arguments: list[tuple[str, Any]] = []
         interface = condition.get("interface")
         interface_type = interface.get("type", "") if isinstance(interface, dict) else ""
         if interface is not None:
-            type_plan = self.root(model, str(kind), interface_type, interface_type)
-            if type_plan is None:
-                raise _ExampleError(f"interface {interface_type!r} is not defined here")
-            arguments.append(("", self.object(type_plan, interface)))
+            arguments.append(("", render(interface_type, interface_type, interface, "interface")))
         for key in sorted(condition):
             if key in {"kind", "interface", "name"}:
                 continue
-            type_plan = self.root(model, str(kind), interface_type, key)
-            if type_plan is None:
-                raise _ExampleError(f"condition field {key!r} is not defined here")
-            single = len(type_plan.fields) == 1 and type_plan.fields[0].source_name == "value"
-            item = condition[key]
-            arguments.append(("", self.object(type_plan, {"value": item} if single and not isinstance(item, dict) else item)))
-        self.imports.add(declaration.function)
+            arguments.append(("", render(interface_type, key, condition[key], "condition field")))
+        declarer.use(declaration.function)
         return _Call(declaration.function, tuple(arguments))
+
+
+@dataclass(frozen=True)
+class ConditionFieldDoc:
+    name: str
+    kind: str
+    interface_type: str
+    path: str
+    description: str
+
+
+def condition_field_docs(plan: EmissionPlan, model: dict[str, Any]) -> list[ConditionFieldDoc]:
+    """The root extension's documented condition fields, in type-name order."""
+    root = model["rootExtension"]["id"]
+    renderer = _Renderer(plan, {})
+    docs: list[ConditionFieldDoc] = []
+    for field in model.get("vocabulary", {}).get("conditionFields", []):
+        if field.get("owner") != root or not field.get("description"):
+            continue
+        segments = field.get("segments") or []
+        source_name = segments[-1]["name"] if segments else field["path"]
+        type_plan = renderer.root(model, field["kind"], field.get("interfaceType", ""), source_name)
+        if type_plan is None:
+            continue
+        docs.append(
+            ConditionFieldDoc(
+                type_plan.name, field["kind"], field.get("interfaceType", ""), field["path"], field["description"]
+            )
+        )
+    return sorted(docs, key=lambda item: item.name)
 
 
 def render_examples(plan: EmissionPlan, model: dict[str, Any]) -> dict[str, RenderedExample]:
     """Render every example Condition in the model's descriptions, keyed by source."""
+    from .dependencies import dependency_plan
+
     root = model["rootExtension"]["id"]
+    vocabulary = model.get("vocabulary", {})
     texts = [item.get("description", "") for item in model.get("extensions", []) if item["id"] == root]
-    texts += [item.get("description", "") for item in model.get("vocabulary", {}).get("ownedDeclarations", [])]
+    texts += [item.get("description", "") for item in vocabulary.get("ownedDeclarations", [])]
+    texts += [
+        item.get("description", "") for item in vocabulary.get("conditionFields", []) if item.get("owner") == root
+    ]
+    dependencies: dict[str, EmissionPlan | None] = {}
+
+    def dependency_for(kind: Any) -> EmissionPlan | None:
+        imported = next((item for item in plan.imported_declarations if item.kind == kind), None)
+        if imported is None:
+            return None
+        if imported.owner not in dependencies:
+            dependencies[imported.owner] = dependency_plan(plan, model, imported.owner)
+        return dependencies[imported.owner]
+
     rendered: dict[str, RenderedExample] = {}
     for text in texts:
         for segment in split_documentation(text or ""):
             if segment.condition is None or segment.source in rendered:
                 continue
-            renderer = _Renderer(plan)
+            imports: dict[str, set[str]] = {}
+            renderer = _Renderer(plan, imports)
+            provider = dependency_for(segment.condition.get("kind"))
             try:
-                node = renderer.condition(model, segment.condition)
+                node = renderer.condition(
+                    model, segment.condition, None if provider is None else _Renderer(provider, imports)
+                )
             except _ExampleError:
                 continue
-            rendered[segment.source] = RenderedExample(_layout(node, 0), tuple(sorted(renderer.imports)))
+            rendered[segment.source] = RenderedExample(
+                _layout(node, 0),
+                tuple((package, tuple(sorted(names))) for package, names in sorted(imports.items())),
+            )
     return rendered
 
 

@@ -109,6 +109,104 @@ class DocumentationTest {
         }
     }
 
+    @Test
+    void dependentReadmeExamplesCallTheDependencyAndCompileAgainstBothPackages() throws IOException {
+        Path workspace = temporaryDirectory();
+        try {
+            // The dependency is case 14's extension, so its own package is case 14's.
+            Built dependency = buildCase(CASE, workspace, null);
+            String name = "15-documented-dependent";
+            com.fasterxml.jackson.databind.node.ObjectNode model = Model.load(TestSupport.modelPath(name));
+            Target.PackageTarget base = TestSupport.targetFor(name, model, java.util.Map.of());
+            Target.PackageTarget target = new Target.PackageTarget(
+                    base.packageKey(), base.rootExtension(), base.groupId(), base.artifactId(), base.javaPackage(),
+                    base.version(), base.sourceDirectory(), base.minimumJavaVersion(), base.publicationMode(),
+                    base.repositoryUrl(), base.registryId(),
+                    List.of(new Target.Dependency(
+                            dependency.plan().target().rootExtension(), dependency.plan().target().groupId(),
+                            dependency.plan().target().artifactId(), dependency.plan().target().javaPackage(), "1.0.0")),
+                    base.emitterSha256());
+            Plan.EmissionPlan plan = Plan.build(model, target);
+
+            // Names planned from the dependent model match the dependency package's own.
+            Plan.EmissionPlan derived = Dependencies.plan(plan, model, dependency.plan().target().rootExtension());
+            assertTrue(derived != null, "the dependency package could not be planned from the dependent model");
+            assertEquals(exported(dependency.plan()), exported(derived));
+
+            Path directory = workspace.resolve("pkg").resolve(name);
+            Source.emitPackage(plan, model, directory);
+            String readme = Files.readString(directory.resolve("README.md"));
+            for (String expected : List.of(
+                    "## KeyValueConfiguration",
+                    "`KeyValueConfiguration` sets the `configuration` field of `cache` Conditions with interface type `key_value`.",
+                    "import " + dependency.plan().target().javaPackage() + ".Bindings;",
+                    "import " + plan.target().javaPackage() + ".KeyValueConfiguration;",
+                    "Bindings.cache(",
+                    "In a Profile, this declares:")) {
+                assertTrue(readme.contains(expected), expected + "\n" + readme);
+            }
+            java.util.regex.Matcher matcher =
+                    java.util.regex.Pattern.compile("```java\n(.*?)```", java.util.regex.Pattern.DOTALL).matcher(readme);
+            List<Path> files = new ArrayList<>();
+            for (Path root : List.of(
+                    dependency.directory().resolve(Source.sourceRoot(dependency.plan())),
+                    directory.resolve(Source.sourceRoot(plan)))) {
+                try (Stream<Path> walk = Files.walk(root)) {
+                    walk.filter(path -> path.toString().endsWith(".java")).sorted().forEach(files::add);
+                }
+            }
+            Path examples = workspace.resolve("examples/examples");
+            Files.createDirectories(examples);
+            int index = 0;
+            while (matcher.find()) {
+                StringBuilder imports = new StringBuilder();
+                StringBuilder statements = new StringBuilder();
+                for (String line : matcher.group(1).split("\n")) {
+                    (line.startsWith("import ") ? imports : statements).append(line).append('\n');
+                }
+                Path file = examples.resolve("Example" + index + ".java");
+                Files.writeString(file, "package examples;\n\n" + imports + "\nclass Example" + index
+                        + " {\n    static Object run() {\n        return " + statements.toString().strip().replaceAll(";$", "")
+                        + ";\n    }\n}\n");
+                files.add(file);
+                index += 1;
+            }
+            assertTrue(index >= 2, "expected the fixture's examples, found " + index + "\n" + readme);
+            javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            StringWriter errors = new StringWriter();
+            try (StandardJavaFileManager manager = compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8)) {
+                boolean ok = compiler.getTask(
+                                errors,
+                                manager,
+                                null,
+                                List.of("-d", workspace.resolve("classes").toString()),
+                                null,
+                                manager.getJavaFileObjectsFromPaths(files))
+                        .call();
+                assertTrue(ok, errors.toString());
+            }
+            // The condition field's Javadoc shows the same code.
+            String configuration = Files.readString(
+                    directory.resolve(Source.sourceRoot(plan)).resolve("KeyValueConfiguration.java"));
+            assertTrue(configuration.contains("<pre>{@code"), configuration);
+            assertTrue(configuration.contains("Bindings.cache("), configuration);
+        } finally {
+            delete(workspace);
+        }
+    }
+
+    private static List<String> exported(Plan.EmissionPlan plan) {
+        List<String> names = new ArrayList<>();
+        for (Plan.TypePlan type : plan.types()) {
+            names.add("type " + type.name());
+        }
+        for (Plan.DeclarationPlan declaration : plan.declarations()) {
+            names.add("function " + declaration.function());
+        }
+        names.sort(null);
+        return names;
+    }
+
     /** Runs the JDK javadoc tool with HTML and syntax checks and returns its errors. */
     private static String runJavadoc(Path sources, Path output) throws IOException {
         DocumentationTool tool = ToolProvider.getSystemDocumentationTool();

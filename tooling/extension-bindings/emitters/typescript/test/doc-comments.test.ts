@@ -4,9 +4,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
+import { dependencyPlan } from "../src/dependencies.js";
+import { loadModel } from "../src/model.js";
+import { buildPlan, type EmissionPlan } from "../src/plan.js";
+import { emitPackage } from "../src/source.js";
 import { apiSurface } from "../src/verification.js";
-import { buildCase, runTsc, temporaryDirectory } from "./support.js";
-import { readFileSync } from "node:fs";
+import { buildCase, modelPath, runTsc, targetFor, temporaryDirectory } from "./support.js";
+import { readFileSync, symlinkSync } from "node:fs";
 
 const plain = `export class Declaration {}
 export interface ApiField {
@@ -138,6 +142,66 @@ test("every README example compiles against the generated package", async () => 
     // The same code is in the JSDoc of the declaration functions.
     const bindings = readFileSync(join(built.directory, "src/bindings.ts"), "utf-8");
     assert.ok(bindings.includes(" * cache(new KeyValue({ engine: KeyValueEngine.Redis }));"));
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+function exportedNames(plan: EmissionPlan): string[] {
+  return [
+    ...plan.types.map((item) => `type ${item.name}`),
+    ...plan.declarations.map((item) => `function ${item.function}`),
+  ].sort();
+}
+
+test("a dependent package's README examples call the dependency and compile against both packages", async () => {
+  const workspace = temporaryDirectory();
+  try {
+    // The dependency is case 14's extension, so its own package is case 14's.
+    const dependency = await buildCase("14-documented-extension", workspace);
+    const built = runTsc(dependency.directory, false);
+    assert.equal(built.status, 0, built.output);
+    const dependencyName = dependency.plan.target.packageName;
+    mkdirSync(join(workspace, "node_modules", "@rc"), { recursive: true });
+    symlinkSync(dependency.directory, join(workspace, "node_modules", dependencyName));
+
+    const name = "15-documented-dependent";
+    const model = loadModel(modelPath(name));
+    const plan = buildPlan(
+      model,
+      targetFor(name, model, new Map([[dependency.plan.target.rootExtension, dependencyName]])),
+    );
+    // Names planned from the dependent model match the dependency package's own.
+    const derived = dependencyPlan(plan, model, dependency.plan.target.rootExtension);
+    assert.ok(derived, "the dependency package could not be planned from the dependent model");
+    assert.deepEqual(exportedNames(derived), exportedNames(dependency.plan));
+
+    const directory = join(workspace, "pkg", name);
+    await emitPackage(plan, model, directory);
+    const readme = readFileSync(join(directory, "README.md"), "utf-8");
+    const examples = [...readme.matchAll(/```ts\n([\s\S]*?)```/g)].map((match) => match[1]!);
+    assert.ok(examples.length >= 2, `expected the fixture's examples, found ${examples.length}\n${readme}`);
+    examples.forEach((example, index) => {
+      writeFileSync(
+        join(directory, `src/_example_${index}.ts`),
+        example.replace(`from ${JSON.stringify(plan.target.packageName)};`, 'from "./bindings.js";'),
+      );
+    });
+    const compiled = runTsc(directory, true);
+    assert.equal(compiled.status, 0, compiled.output);
+
+    for (const expected of [
+      "## KeyValueConfiguration",
+      "`KeyValueConfiguration` sets the `configuration` field of `cache` Conditions with interface type `key_value`.",
+      `import { KeyValue, KeyValueEngine, cache } from ${JSON.stringify(dependencyName)};`,
+      `import { KeyValueConfiguration, KeyValueConfigurationEnvItem } from ${JSON.stringify(plan.target.packageName)};`,
+      "In a Profile, this declares:",
+    ]) {
+      assert.ok(readme.includes(expected), `README is missing ${JSON.stringify(expected)}\n${readme}`);
+    }
+    // The condition field's JSDoc shows the same code.
+    const bindings = readFileSync(join(directory, "src/bindings.ts"), "utf-8");
+    assert.ok(bindings.includes(" *   cache(") || bindings.includes(" * cache("), bindings);
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }

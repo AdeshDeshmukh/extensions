@@ -15,9 +15,10 @@ import (
 // Descriptions may contain example Conditions in ```condition fences (a
 // first-party documentation convention; see normalizer/examples.go). The Go
 // emitter renders each example as the Go declaration that produces it, in Godoc
-// and in the package README. An example that cannot be expressed with this
-// package alone, such as one that needs a dependency's types, is shown as the
-// Profile YAML instead.
+// and in the package README. An example for a dependency's kind, such as an
+// env-configuration field on a common-integrations cache, calls the dependency's
+// declaration function (see dependencies.go). An example that cannot be
+// rendered is shown as the Profile YAML instead.
 
 // writeDocs writes a description as Go comments: prose is wrapped, and each
 // example Condition becomes an indented Go code block. prefix, when set, starts
@@ -79,26 +80,41 @@ func (ir *packageIR) exampleCode(condition map[string]any) (string, bool) {
 }
 
 func (ir *packageIR) exampleExpression(condition map[string]any) (string, error) {
-	alias := ir.target.PackageName
 	kind, _ := condition["kind"].(string)
-	var declaration *declarationIR
-	for _, item := range ir.declarations {
-		if item.model.Kind == kind {
-			declaration = item
+	// Values come from this package first, then from the package that declares
+	// the kind when it is a direct dependency.
+	type source struct {
+		ir    *packageIR
+		alias string
+	}
+	sources := []source{{ir, ir.target.PackageName}}
+	declaration := ir.ownedDeclaration(kind)
+	declarationAlias := ir.target.PackageName
+	if declaration == nil {
+		if imported, ok := ir.declarationsByKind[kind]; ok {
+			if dependency, alias, found := ir.dependencyIR(imported.Owner); found {
+				declaration = dependency.ownedDeclaration(kind)
+				declarationAlias = alias
+				sources = append(sources, source{dependency, alias})
+			}
 		}
 	}
 	if declaration == nil {
-		return "", fmt.Errorf("kind %q is not declared by this package", kind)
+		return "", fmt.Errorf("kind %q is not declared by this package or a direct dependency", kind)
+	}
+	render := func(role, interfaceType, key string, value any) (string, error) {
+		for _, candidate := range sources {
+			if reference, found := candidate.ir.rootValue(role, kind, interfaceType, key); found {
+				return candidate.ir.valueExpression(reference, value, candidate.alias)
+			}
+		}
+		return "", fmt.Errorf("%s %q is not defined for kind %q", role, key, kind)
 	}
 	interfaceType := ""
 	var arguments []string
 	if value, ok := condition["interface"].(map[string]any); ok {
 		interfaceType, _ = value["type"].(string)
-		reference, found := ir.rootValue("interface", kind, interfaceType, "interface")
-		if !found {
-			return "", fmt.Errorf("interface type %q is not defined by this package", interfaceType)
-		}
-		expression, err := ir.valueExpression(reference, value, alias)
+		expression, err := render("interface", interfaceType, "interface", value)
 		if err != nil {
 			return "", err
 		}
@@ -115,21 +131,27 @@ func (ir *packageIR) exampleExpression(condition map[string]any) (string, error)
 			// The Condition name is not part of the declaration API.
 			continue
 		}
-		reference, found := ir.rootValue("condition-field", kind, interfaceType, key)
-		if !found {
-			return "", fmt.Errorf("condition field %q is not defined by this package", key)
-		}
-		expression, err := ir.valueExpression(reference, condition[key], alias)
+		expression, err := render("condition-field", interfaceType, key, condition[key])
 		if err != nil {
 			return "", err
 		}
 		arguments = append(arguments, expression)
 	}
-	call := alias + "." + declaration.function.name + "("
+	call := declarationAlias + "." + declaration.function.name + "("
 	if len(arguments) > 0 {
 		call += "\n" + strings.Join(arguments, ",\n") + ",\n"
 	}
 	return call + ")", nil
+}
+
+// ownedDeclaration returns this package's declaration of kind, or nil.
+func (ir *packageIR) ownedDeclaration(kind string) *declarationIR {
+	for _, item := range ir.declarations {
+		if item.model.Kind == kind {
+			return item
+		}
+	}
+	return nil
 }
 
 // rootValue finds the generated type of an interface or condition field root.
@@ -349,8 +371,59 @@ func (ir *packageIR) renderReadme() []byte {
 			ir.writeMarkdown(&buffer, declaration.model.Description)
 		}
 	}
+	for _, group := range ir.conditionFieldGroups() {
+		fmt.Fprintf(&buffer, "\n## %s\n\n", strings.Join(group.names, ", "))
+		for index, name := range group.names {
+			field := group.fields[index]
+			target := "`" + field.Kind + "` Conditions"
+			if field.InterfaceType != "" {
+				target += " with interface type `" + field.InterfaceType + "`"
+			}
+			fmt.Fprintf(&buffer, "`%s.%s` sets the `%s` field of %s.\n", ir.target.PackageName, name, field.Path, target)
+		}
+		buffer.WriteString("\n")
+		ir.writeMarkdown(&buffer, group.description)
+	}
 	buffer.WriteString("\nThe full API, with every type, field and constant documented, is in the Go package documentation.\n")
 	return buffer.Bytes()
+}
+
+type conditionFieldGroup struct {
+	description string
+	names       []string
+	fields      []normalizer.FieldModel
+}
+
+// conditionFieldGroups returns this package's documented condition fields,
+// grouping fields that share one description, such as a field that applies to
+// two interface types, in the order of their generated type names.
+func (ir *packageIR) conditionFieldGroups() []conditionFieldGroup {
+	type entry struct {
+		name  string
+		field normalizer.FieldModel
+	}
+	var entries []entry
+	for _, field := range ir.model.Vocabulary.ConditionFields {
+		typeValue, ok := ir.types["condition-field:"+field.Coordinate]
+		if field.Owner != ir.model.RootExtension.ID || field.Description == "" || !ok {
+			continue
+		}
+		entries = append(entries, entry{typeValue.request.name, field})
+	}
+	sort.Slice(entries, func(i, j int) bool { return entries[i].name < entries[j].name })
+	var groups []conditionFieldGroup
+	index := map[string]int{}
+	for _, item := range entries {
+		position, ok := index[item.field.Description]
+		if !ok {
+			position = len(groups)
+			index[item.field.Description] = position
+			groups = append(groups, conditionFieldGroup{description: item.field.Description})
+		}
+		groups[position].names = append(groups[position].names, item.name)
+		groups[position].fields = append(groups[position].fields, item.field)
+	}
+	return groups
 }
 
 // writeMarkdown writes prose as it is and each example as Go code followed by

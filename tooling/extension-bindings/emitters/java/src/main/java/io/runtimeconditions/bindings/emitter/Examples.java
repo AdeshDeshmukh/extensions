@@ -25,8 +25,10 @@ import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
  *
  * <p>Descriptions may contain example Conditions in {@code condition} fences, a first-party
  * documentation convention checked by the normalizer. The Java emitter renders each example as the
- * {@code Bindings} call that produces it, in Javadoc and in the package README. An example this
- * package cannot express on its own is shown as Profile YAML instead.
+ * {@code Bindings} call that produces it, in Javadoc and in the package README. An example for a
+ * dependency's kind, such as an env-configuration field on a common-integrations cache, calls the
+ * dependency's {@code Bindings} (see {@link Dependencies}). An example that cannot be rendered is
+ * shown as Profile YAML instead.
  */
 final class Examples {
     static final String CONDITION_FENCE = "condition";
@@ -165,14 +167,20 @@ final class Examples {
         private final EmissionPlan plan;
         private final JsonNode model;
         private final Map<String, TypePlan> types = new HashMap<>();
-        final Set<String> imports = new TreeSet<>();
+        /** Fully qualified names to import, shared with a dependency's renderer. */
+        final Set<String> imports;
 
-        Renderer(EmissionPlan plan, JsonNode model) {
+        Renderer(EmissionPlan plan, JsonNode model, Set<String> imports) {
             this.plan = plan;
             this.model = model;
+            this.imports = imports;
             for (TypePlan type : plan.types()) {
                 types.put(type.name(), type);
             }
+        }
+
+        private void use(String name) {
+            imports.add(plan.target().javaPackage() + "." + name);
         }
 
         Node value(TypeExpr expression, JsonNode value) throws ExampleException {
@@ -237,7 +245,7 @@ final class Examples {
             if (type == null) {
                 throw new ExampleException("unknown type " + name);
             }
-            imports.add(name);
+            use(name);
             if (type.kind() == Kind.ENUM) {
                 for (Plan.Member member : type.members()) {
                     if (value.isTextual() && member.value().equals(value.asText())) {
@@ -278,7 +286,7 @@ final class Examples {
                     throw new ExampleException(type.name() + " has no field " + name);
                 }
             }
-            imports.add(type.name());
+            use(type.name());
             // Records take every component in order; an absent optional one is null.
             List<Node> arguments = new ArrayList<>();
             for (FieldPlan field : type.fields()) {
@@ -313,26 +321,27 @@ final class Examples {
             return best;
         }
 
-        Node condition(JsonNode condition) throws ExampleException {
+        /**
+         * Renders a Condition as a declaration call. Values come from this package first, then from
+         * the dependency package that declares the kind, when one is given.
+         */
+        Node condition(JsonNode condition, Renderer dependency) throws ExampleException {
             String kind = condition.path("kind").asText();
-            DeclarationPlan declaration = null;
-            for (DeclarationPlan item : plan.declarations()) {
-                if (item.kind().equals(kind)) {
-                    declaration = item;
-                }
+            Renderer declarer = this;
+            DeclarationPlan declaration = declaration(plan, kind);
+            if (declaration == null && dependency != null) {
+                declarer = dependency;
+                declaration = declaration(dependency.plan, kind);
             }
             if (declaration == null) {
                 throw new ExampleException("kind " + kind + " is not declared here");
             }
+            List<Renderer> sources = declarer == this ? List.of(this) : List.of(this, declarer);
             List<Node> arguments = new ArrayList<>();
             JsonNode iface = condition.get("interface");
             String interfaceType = iface != null ? iface.path("type").asText("") : "";
             if (iface != null) {
-                TypePlan type = root(kind, interfaceType, interfaceType);
-                if (type == null) {
-                    throw new ExampleException("interface " + interfaceType + " is not defined here");
-                }
-                arguments.add(object(type, iface));
+                arguments.add(field(sources, kind, interfaceType, interfaceType, iface, "interface"));
             }
             List<String> keys = new ArrayList<>();
             condition.fieldNames().forEachRemaining(keys::add);
@@ -341,22 +350,69 @@ final class Examples {
                 if (key.equals("kind") || key.equals("interface") || key.equals("name")) {
                     continue;
                 }
-                TypePlan type = root(kind, interfaceType, key);
-                if (type == null) {
-                    throw new ExampleException("condition field " + key + " is not defined here");
+                arguments.add(field(sources, kind, interfaceType, key, condition.get(key), "condition field"));
+            }
+            declarer.use(Plan.FUNCTIONS_CLASS);
+            return new Node(Plan.FUNCTIONS_CLASS + "." + declaration.function() + "(", arguments, ")");
+        }
+
+        private static DeclarationPlan declaration(EmissionPlan plan, String kind) {
+            DeclarationPlan found = null;
+            for (DeclarationPlan item : plan.declarations()) {
+                if (item.kind().equals(kind)) {
+                    found = item;
                 }
-                JsonNode item = condition.get(key);
+            }
+            return found;
+        }
+
+        private static Node field(
+                List<Renderer> sources, String kind, String interfaceType, String key, JsonNode value, String label)
+                throws ExampleException {
+            for (Renderer source : sources) {
+                TypePlan type = source.root(kind, interfaceType, key);
+                if (type == null) {
+                    continue;
+                }
+                JsonNode item = value;
                 boolean single = type.fields().size() == 1 && type.fields().get(0).sourceName().equals("value");
                 if (single && !item.isObject()) {
                     ObjectNode wrapper = Json.MAPPER.createObjectNode();
                     wrapper.set("value", item);
                     item = wrapper;
                 }
-                arguments.add(object(type, item));
+                return source.object(type, item);
             }
-            imports.add(Plan.FUNCTIONS_CLASS);
-            return new Node(Plan.FUNCTIONS_CLASS + "." + declaration.function() + "(", arguments, ")");
+            throw new ExampleException(label + " " + key + " is not defined here");
         }
+    }
+
+    /** A root-owned, documented condition field and the type that sets it. */
+    record FieldDoc(String name, String kind, String interfaceType, String path, String description) {}
+
+    /** The root extension's documented condition fields, in type-name order. */
+    static List<FieldDoc> conditionFields(EmissionPlan plan, JsonNode model) {
+        String root = model.path("rootExtension").path("id").asText();
+        Renderer renderer = new Renderer(plan, model, new TreeSet<>());
+        List<FieldDoc> docs = new ArrayList<>();
+        for (JsonNode field : Json.list(model.path("vocabulary").path("conditionFields"))) {
+            String description = field.path("description").asText("");
+            if (!field.path("owner").asText().equals(root) || description.isBlank()) {
+                continue;
+            }
+            List<JsonNode> segments = Json.list(field.path("segments"));
+            String sourceName = segments.isEmpty()
+                    ? field.path("path").asText()
+                    : segments.get(segments.size() - 1).path("name").asText();
+            String interfaceType = field.path("interfaceType").asText("");
+            TypePlan type = renderer.root(field.path("kind").asText(), interfaceType, sourceName);
+            if (type != null) {
+                docs.add(new FieldDoc(
+                        type.name(), field.path("kind").asText(), interfaceType, field.path("path").asText(), description));
+            }
+        }
+        docs.sort(java.util.Comparator.comparing(FieldDoc::name));
+        return docs;
     }
 
     /** Renders every example Condition in the model's descriptions, keyed by source. */
@@ -371,16 +427,40 @@ final class Examples {
         for (JsonNode owned : Json.list(model.path("vocabulary").path("ownedDeclarations"))) {
             texts.add(owned.path("description").asText(""));
         }
+        for (JsonNode field : Json.list(model.path("vocabulary").path("conditionFields"))) {
+            if (field.path("owner").asText().equals(root)) {
+                texts.add(field.path("description").asText(""));
+            }
+        }
+        Map<String, EmissionPlan> dependencies = new HashMap<>();
         Map<String, Rendered> rendered = new LinkedHashMap<>();
         for (String text : texts) {
             for (Segment segment : split(text)) {
                 if (segment.condition() == null || rendered.containsKey(segment.source())) {
                     continue;
                 }
-                Renderer renderer = new Renderer(plan, model);
+                Set<String> imports = new TreeSet<>();
+                Renderer renderer = new Renderer(plan, model, imports);
+                Renderer provider = null;
+                String kind = segment.condition().path("kind").asText();
+                for (Plan.ImportedDeclarationPlan imported : plan.importedDeclarations()) {
+                    if (imported.kind().equals(kind)) {
+                        EmissionPlan dependency = dependencies.computeIfAbsent(
+                                imported.owner(), owner -> Dependencies.plan(plan, model, owner));
+                        if (dependency != null) {
+                            provider = new Renderer(dependency, model, imports);
+                        }
+                    }
+                }
                 try {
-                    String code = renderer.condition(segment.condition()).layout(0) + ";";
-                    rendered.put(segment.source(), new Rendered(code, renderer.imports));
+                    String code = renderer.condition(segment.condition(), provider).layout(0) + ";";
+                    Set<String> simple = new TreeSet<>();
+                    for (String name : imports) {
+                        if (!simple.add(name.substring(name.lastIndexOf('.') + 1))) {
+                            throw new ExampleException("two imports share the simple name of " + name);
+                        }
+                    }
+                    rendered.put(segment.source(), new Rendered(code, imports));
                 } catch (ExampleException skipped) {
                     // Shown as Profile YAML instead.
                 }

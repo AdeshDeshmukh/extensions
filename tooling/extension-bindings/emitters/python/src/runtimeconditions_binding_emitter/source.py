@@ -13,7 +13,14 @@ from pathlib import Path
 from typing import Any
 
 from .emitter import EmissionPlan
-from .examples import RenderedExample, dedent, render_examples, split_documentation
+from .examples import (
+    ConditionFieldDoc,
+    RenderedExample,
+    condition_field_docs,
+    dedent,
+    render_examples,
+    split_documentation,
+)
 from .metadata import EMITTER_NAME, EMITTER_VERSION, render_resources
 from .package import fail
 
@@ -117,7 +124,7 @@ def _markdown(text: str, plan: EmissionPlan, examples: dict[str, RenderedExample
             lines.extend(
                 (
                     "```python",
-                    f"from {plan.target.import_package} import {', '.join(example.imports)}",
+                    *(f"from {package} import {', '.join(names)}" for package, names in example.imports),
                     "",
                     example.code,
                     "```",
@@ -151,6 +158,16 @@ def readme_source(plan: EmissionPlan, model: dict[str, Any], examples: dict[str,
         lines.extend(("", f"## {declaration.function}", "", f"`{declaration.function}` declares a `{declaration.kind}` Condition."))
         if declaration.description:
             lines.extend(("", *_markdown(declaration.description, plan, examples)))
+    # Fields this package adds to Conditions; fields sharing one description share a section.
+    groups: dict[str, list[ConditionFieldDoc]] = {}
+    for field in condition_field_docs(plan, model):
+        groups.setdefault(field.description, []).append(field)
+    for description, fields in groups.items():
+        lines.extend(("", f"## {', '.join(field.name for field in fields)}", ""))
+        for field in fields:
+            scope = f" with interface type `{field.interface_type}`" if field.interface_type else ""
+            lines.append(f"`{field.name}` sets the `{field.path}` field of `{field.kind}` Conditions{scope}.")
+        lines.extend(("", *_markdown(description, plan, examples)))
     lines.extend(("", "Every class, field and enum member is documented in the package's docstrings.", ""))
     return "\n".join(lines)
 
