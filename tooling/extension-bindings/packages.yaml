@@ -283,6 +283,41 @@ packages:
         languageVersion: 21.0.12
         publicationMode: registry
         registryId: maven-central
+  observability:
+    rootExtension: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+    coreProfileSchemaVersion: 0.4.0
+    languages:
+      go:
+        coordinate: runtimeconditions.io/x/rc/observability
+        name: observability
+        version: 0.1.0
+        sourceDirectory: bindings/observability/go
+        languageVersion: 1.25.0
+        publicationMode: github-tag
+      python:
+        coordinate: runtimeconditions-observability
+        name: runtimeconditions_observability
+        version: 0.1.0
+        sourceDirectory: bindings/observability/python
+        languageVersion: 3.12.10
+        publicationMode: registry
+        registryId: pypi
+      typescript:
+        coordinate: '@runtimeconditions/observability'
+        name: '@runtimeconditions/observability'
+        version: 0.1.0
+        sourceDirectory: bindings/observability/typescript
+        languageVersion: 20.19.6
+        publicationMode: registry
+        registryId: npm
+      java:
+        coordinate: io.runtimeconditions.bindings:runtimeconditions-observability
+        name: io.runtimeconditions.bindings.observability
+        version: 0.1.0
+        sourceDirectory: bindings/observability/java
+        languageVersion: 21.0.12
+        publicationMode: registry
+        registryId: maven-central
   source-control:
     rootExtension: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
