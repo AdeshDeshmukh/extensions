@@ -3,9 +3,22 @@ kind: RuntimeConditionsExtensionDefinition
 metadata:
   id: https://runtimeconditions.io/extensions/rc/env-configuration/v1alpha4/runtimeconditions.extension.yaml
   version: v1alpha4
-  description: Says which environment variables a workload reads to connect to the things it depends on.
-    The platform sets these variables when it fulfils a Condition, so the workload never hard-codes addresses
-    or secrets. Use it together with common-integrations.
+  description: |-
+    Tells the platform which environment variables a workload reads to reach its APIs, mail servers,
+    databases and caches. The platform fills them in, so addresses and secrets never live in the code.
+
+    Add a configuration field to a common-integrations Condition. Each entry pairs a variable the workload
+    reads, such as DATABASE_URL, with the detail it carries, such as url, hostname, port, username or
+    password. Mark an entry sensitive when it holds a secret, so the platform stores and passes it securely,
+    and required when the workload cannot start without it.
+
+    When the workload can connect in more than one way, list alternatives instead. For example, one full
+    DATABASE_URL, or separate host, port, user and password variables. Put them in order of preference; the
+    platform provides one of them.
+
+    Each integration accepts only the details that make sense for it: a database can take database, and an
+    HTTP API can take baseUrl or token. This extension builds on common-integrations, which defines the
+    integrations themselves.
 spec:
   dependencies:
   - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
