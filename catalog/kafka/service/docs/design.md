@@ -71,6 +71,7 @@ is outside this change. The package catalog registers the four existing
 language emitters. Generated packages remain owned by the merge workflow.
 
 Tests cover the fixed operation forms, literal identities, topic boundaries,
-duplicates, composition and all three examples. Normalization and binding
-generation must preserve the operation alternatives. Compiling bindings and
-validating profiles do not prove live broker access or SDK inference.
+duplicates, composition and all three examples. Generated bindings merge the
+operation forms into one type with optional `topic` and `groupId` fields; the
+schema rejects invalid combinations when the profile is validated. Compiling
+bindings and validating profiles do not prove live broker access or SDK inference.
