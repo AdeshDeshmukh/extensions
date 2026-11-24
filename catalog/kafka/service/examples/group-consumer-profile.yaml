@@ -1,0 +1,20 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsProfile
+metadata:
+  name: order-worker
+workload:
+  uri: https://example.com/order-worker
+extensions:
+  - https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml:0.1.0
+conditions:
+  - name: order-events
+    kind: kafka.service
+    interface:
+      type: service
+      operations:
+        - resource: topic
+          action: read
+          topic: orders
+        - resource: group
+          action: read
+          groupId: order-workers

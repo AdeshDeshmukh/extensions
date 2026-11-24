@@ -25,6 +25,7 @@ Per the [spec](https://github.com/runtimeconditions/spec/blob/main/docs/sixth-dr
 | Amazon S3 | `https://runtimeconditions.io/extensions/aws/s3/0.1.0/runtimeconditions.extension.yaml` | [`catalog/aws/s3/`](catalog/aws/s3/) |
 | Kubernetes API | `https://runtimeconditions.io/extensions/kubernetes/api/0.1.0/runtimeconditions.extension.yaml` | [`catalog/kubernetes/api/`](catalog/kubernetes/api/) |
 | NATS | `https://runtimeconditions.io/extensions/nats/service/0.1.0/runtimeconditions.extension.yaml` | [`catalog/nats/service/`](catalog/nats/service/) |
+| Kafka | `https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml` | [`catalog/kafka/service/`](catalog/kafka/service/) |
 | Google Analytics | `https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml` | [`catalog/google/analytics/`](catalog/google/analytics/) |
 | GPU Requirement | `https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/gpu/`](catalog/rc/gpu/) |
 | Observability | `https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/observability/`](catalog/rc/observability/) |
