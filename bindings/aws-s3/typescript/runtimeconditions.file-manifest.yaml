@@ -1,10 +1,10 @@
 apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
-    package.json: c5319ca8bf4be90903e4780f51f4e377d88642111facbd25b803613827d9d377
-    runtimeconditions/runtimeconditions.binding-model.yaml: 25d0b6f18d35d6e675408d79c1b127ba1fcb49d729300ddf225ff43b0f4be78a
-    runtimeconditions/runtimeconditions.bindings.yaml: dfeb92979bcab6882f1e63915f012e3f0f6fa6c003c300c9b12121574aa0515a
+    package.json: 0a2166b0e8377db0f10e057e539f033f3f19e1277bb9b1aa86ec6981f58d5a48
+    runtimeconditions/runtimeconditions.binding-model.yaml: ba27e2cba88e2ddcc546bccadd9d94cb0a74b7e690e11a561492127894b5a319
+    runtimeconditions/runtimeconditions.bindings.yaml: fee4f10d85f7d6f069c6eb3422d718afd3a74cf60ea3547103f7594194f988d3
     runtimeconditions/runtimeconditions.extension.yaml: 777820d35404d8137ab96e3891d6c6d3c8b491d75accf94c7fdd6e89f6b4ce7b
-    src/bindings.ts: 3f2829d45f6ee64cc8b22de780f53d17a9826fabc76611fc452c04ebf4e410fb
-    src/index.ts: 992090d730ba7034d0328f8446fe01bc15b5170738e45eb47df73186f8a8c476
-    tsconfig.json: bdd52712233f630bf151eabc19c8d2d01d49455e081dacabe2c1f027b4f17ce1
+    src/bindings.ts: c170b74bf874dc4e8d96009be5f8f6baf62d32773760f2915175cdb834df66f6
+    src/index.ts: 7914efa9c4258f57f09bb9f86109a1afec780d3d4a2808d00140f86c13add39c
+    tsconfig.json: 62f94efb891e70940e8da0ade036dc42a63cb12dc5db61bf311068fc9862f67f

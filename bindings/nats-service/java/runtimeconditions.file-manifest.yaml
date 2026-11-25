@@ -1,26 +1,26 @@
 apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
-    pom.xml: 2f412534a0e9ef6273e7532ca6a4ee946c61455c6c010db564ab93b7abaec488
-    src/main/java/io/runtimeconditions/bindings/natsservice/Action.java: 570c99b07e51bd392468784ded9862e13d3329b1c3311aae4e8bbf413272e7c1
-    src/main/java/io/runtimeconditions/bindings/natsservice/Alternatives.java: ef3d94d9ffc954ee430b87d7ce612acb799204b9aca94a9fbcb4037cc7dcc897
-    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItem.java: 51755a3eb1c649832dbea39522030221b0b41cf3e1c695ce6d033c9b3e0fdc51
-    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItemEnv.java: ae4793f9e5ec19d2543ff4df7cc707d616847d29adbd40b6112842498590a045
-    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItemEnvItem.java: 0443118ab43db6a08a642ed1d461b1c7b3fb22a0a3e7cfb13870d72b132e6b75
-    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItemEnvItemProperty.java: ffbf931776eed96f8a5cb568219de64ad29174977e77f6fabf73d2ff973c14fa
-    src/main/java/io/runtimeconditions/bindings/natsservice/Bindings.java: eb1254ea6d2a3230aabed193f278f216246bf933e7682fff8c2f43e27c1f6a43
-    src/main/java/io/runtimeconditions/bindings/natsservice/Configuration.java: bc1eacfcab3ecea2aea46113383817f0ad0b0e80de922d8f19c386b6f687539f
-    src/main/java/io/runtimeconditions/bindings/natsservice/ConfigurationEnv.java: 3a902698c38ef5b68fb30a93f790d992fa0b7fb9cb5b315e3c938ff71544d139
-    src/main/java/io/runtimeconditions/bindings/natsservice/ConfigurationEnvItem.java: 88e23ef67390e30a54fc8a75c5c1d5d1dc508623f6280d4239cd7caf1cd38869
-    src/main/java/io/runtimeconditions/bindings/natsservice/ConfigurationEnvItemProperty.java: b49ec6853984a74ac70e2554d44c9a5cdd9818ad7ca02dd5c0c9ae81c8e45680
-    src/main/java/io/runtimeconditions/bindings/natsservice/Declaration.java: 86e07271ec04ba1dc8ff6147d64c43d66c6529f5218faaa05186e959343c2e65
-    src/main/java/io/runtimeconditions/bindings/natsservice/NatsServiceField.java: d6e017e7f710453421c8ecaa259e4544cd4ef3de60ec60a2feda6c9f00893033
-    src/main/java/io/runtimeconditions/bindings/natsservice/Operations.java: fc27f1a1adafce673590056bba7c848d0ab226117e3c112b4083378389f45164
-    src/main/java/io/runtimeconditions/bindings/natsservice/OperationsItem.java: 637e17825a3b56198bd3ba256ecc4b43a097b24e16d5a14dd091201d384ac70a
-    src/main/java/io/runtimeconditions/bindings/natsservice/Resource.java: ab25f7d6bb228d04119c4746ce9c992e750295cf3d34e85f215bdfed83696dd2
-    src/main/java/io/runtimeconditions/bindings/natsservice/Service.java: 6676d2a2e114c3fbbc0cd1485e1ddcaa62b8ba2f0a9310d581550d559e436118
-    src/main/java/io/runtimeconditions/bindings/natsservice/Subjects.java: f9c8bc57475912f825d2674ad533d952be504ee994cc29791124916144a95cea
-    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: 961e90a26efe9deb880ceb35c7e625e48f9db8dda2f1c1126eb921ab7265cdec
-    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 64ec5ff6df93ca9962f77a20d929152666322694f46bef1ebc2068fdaa547b6b
+    pom.xml: ecd1a152efe60a72754b083476cc3ecdcb29313d2e0fcd7f393fb393d63c7fa2
+    src/main/java/io/runtimeconditions/bindings/natsservice/Action.java: bff1f1a92afebe4c00d1cf398906d0e03f54508853a57950272b315aabd579b0
+    src/main/java/io/runtimeconditions/bindings/natsservice/Alternatives.java: 499ee168c60624c904879d9836c952edd10903f262e63472d96209626081aceb
+    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItem.java: 9fa230210a93d378f5b37a704d7b06ce6130fc5b89724914a3878f77f93ee34e
+    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItemEnv.java: 7aaee4d9a8621d2327bf48ba1bf21aa54b1b607fdb5e6920f82bc7d75d0bc7fd
+    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItemEnvItem.java: d83ee77677b37946cf9681af1bb4e146df48adb2e5d70e78d0445aa148cedf06
+    src/main/java/io/runtimeconditions/bindings/natsservice/AlternativesItemEnvItemProperty.java: 45a8fb0b5b2be11ccde120912da762e372c3526e4320a8bed1391411ccf3c61f
+    src/main/java/io/runtimeconditions/bindings/natsservice/Bindings.java: c51d9ab9fa40410bb5c1431ac9bffb1460c5624fd94d62d95419cfc306d87bcb
+    src/main/java/io/runtimeconditions/bindings/natsservice/Configuration.java: 48adfa9bcaaa8e8f5a117acfeee501fa4d932e316ea0ea49556887f92c5585da
+    src/main/java/io/runtimeconditions/bindings/natsservice/ConfigurationEnv.java: f4a4aaba2322aae63e018a02b9d73d940723cfde24559436231ce22786465e5c
+    src/main/java/io/runtimeconditions/bindings/natsservice/ConfigurationEnvItem.java: 948dfbdbd9e69dd4aeb629a79019627e9eb057322f9ec017de5318d03e2e770d
+    src/main/java/io/runtimeconditions/bindings/natsservice/ConfigurationEnvItemProperty.java: 446400fab6dfdcc52ffb1cf499512364939e3a26492ae297097b10b078b3a8b2
+    src/main/java/io/runtimeconditions/bindings/natsservice/Declaration.java: bd6aa138636d8e2d09267444885a63d5ffe253ae97fea68ec674eb97cbf45283
+    src/main/java/io/runtimeconditions/bindings/natsservice/NatsServiceField.java: 2706508cd6799c255c48ad66d742d87c452932f1ad074aa4a3d4a43d3449fcd1
+    src/main/java/io/runtimeconditions/bindings/natsservice/Operations.java: 92c2d8f9641b66a66c518e555eea180e08cba78d1a350a3b7caa17b9f3b0d653
+    src/main/java/io/runtimeconditions/bindings/natsservice/OperationsItem.java: 5c7ecdb712ff0df909d17b775f8621e897c62d883badd99fe70f9927c659a877
+    src/main/java/io/runtimeconditions/bindings/natsservice/Resource.java: 2f53ffeb6ada0dab6d55bae591eeb22d7204354b49b5ca2dd34848a696668000
+    src/main/java/io/runtimeconditions/bindings/natsservice/Service.java: 4791df160621816e471639110c364186c1538d07710ab50ef5e5f695e490280c
+    src/main/java/io/runtimeconditions/bindings/natsservice/Subjects.java: 5061c7c8f0c5cf194018b8f3f71a23c5dc73b31b1d63d002f7037d3125b004f0
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: bf4e2b00963f5d3fd5efe7bccc728c0f11f4adcb99af910bfe8460ac686ec82d
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 7a19e38296dee0fc9f7f01239eff4720e0f2ff10ab16a7196df9f6ff23b23e24
     src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: 59ef2d517207397d8a533d8b422932318ec4055047755140bceba58231ee82d0
-    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 8d59d3956f13a0b87bedff7f678c9a64fe2efef3665b634e6d28eb879d049b1c
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: d32fcb84ec2b1722ba1c36cbe0ec99804e1db9468f9bae9c187f92b17dd9dbe0

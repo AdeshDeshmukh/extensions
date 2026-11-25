@@ -1,0 +1,39 @@
+apiVersion: runtimeconditions.io/binding-release/v1alpha1
+dependencyLock:
+    extensions:
+        - id: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          version: 0.1.0
+          sourceSha256: cbaee4ef1c7e270845ee69eb4d35deb93751795c26e4fba97b4237079bcb15a1
+          semanticSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+          sourceBackend: catalog
+          sourceLocator: catalog:kafka/service/releases/0.1.0/runtimeconditions.extension.yaml
+kind: RuntimeConditionsBindingRelease
+model:
+    apiVersion: runtimeconditions.io/binding-model/v1alpha1
+    semanticSha256: 7c8ca8ec8ea0adf5fc0caf2a92d2f48d0ed44d19ab86dae75a4e9211f16549b5
+package:
+    coordinate: runtimeconditions-kafka-service
+    language: python
+    minimumPythonVersion: "3.12"
+    name: runtimeconditions_kafka_service
+    packageKey: kafka-service
+    publicationMode: registry
+    registryId: pypi
+    version: 0.1.0
+packageDependencies: []
+provenance:
+    mode: production
+    orchestrator:
+        name: rc
+        version: 0.1.0
+        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+    profiler:
+        name: python-rc-profiler
+        version: 0.4.0
+        sha256: 6382d2f2a48b79c1b9e90c4084062a30259e74942ec72264264f1a594826ced9
+    sourceDirectory: bindings/kafka-service/python
+    targetReleaseTag: bindings/kafka-service/python/v0.1.0
+rootExtension:
+    id: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+    version: 0.1.0
+    semanticSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2

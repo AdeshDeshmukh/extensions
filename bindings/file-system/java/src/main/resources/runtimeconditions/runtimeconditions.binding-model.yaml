@@ -1,0 +1,797 @@
+apiVersion: runtimeconditions.io/binding-model/v1alpha1
+kind: RuntimeConditionsBindingModel
+metadata:
+    semanticSha256: cc0194f13453df8c70297d93aec7f52a2f409844286adabf941cdae36a1f7a95
+    normalizer:
+        name: rc-binding-model
+        version: 0.1.0
+        sha256: de7ebd0d2df1f49f086808c1ce471ecf1db02030f83d491ad181352ed93356a7
+coreProfileSchema:
+    id: https://runtimeconditions.io/schemas/profile/0.4.0/runtimeconditions.profile.schema.yaml
+    version: 0.4.0
+    semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
+rootExtension:
+    id: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+    version: 0.1.0
+    semanticSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+extensions:
+    - id: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+      version: 0.1.0
+      semanticSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+vocabulary:
+    owners:
+        - coordinate: condition-field:rc.file_system:mount:env
+          category: condition-field
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: env
+        - coordinate: field-domain:rc.file_system:mount:env[].property:"path"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: env[].property
+          value: path
+        - coordinate: field-domain:rc.file_system:mount:interface.access:"read_only"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.access
+          value: read_only
+        - coordinate: field-domain:rc.file_system:mount:interface.access:"read_write"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.access
+          value: read_write
+        - coordinate: field-domain:rc.file_system:mount:interface.persistence:"ephemeral"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.persistence
+          value: ephemeral
+        - coordinate: field-domain:rc.file_system:mount:interface.persistence:"persistent"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.persistence
+          value: persistent
+        - coordinate: field-domain:rc.file_system:mount:interface.sharing:"exclusive"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.sharing
+          value: exclusive
+        - coordinate: field-domain:rc.file_system:mount:interface.sharing:"shared"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.sharing
+          value: shared
+        - coordinate: interface-field:rc.file_system:mount:access
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.access
+        - coordinate: interface-field:rc.file_system:mount:minimumSize
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.minimumSize
+        - coordinate: interface-field:rc.file_system:mount:path
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.path
+        - coordinate: interface-field:rc.file_system:mount:persistence
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.persistence
+        - coordinate: interface-field:rc.file_system:mount:sharing
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.sharing
+        - coordinate: interface:rc.file_system:mount
+          category: interface
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+        - coordinate: kind:rc.file_system
+          category: kind
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+    ownedDeclarations:
+        - coordinate: kind:rc.file_system
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: kind:rc.file_system
+    interfaces:
+        - coordinate: interface:rc.file_system:mount
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          type: mount
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: interface:rc.file_system:mount
+    conditionFields:
+        - coordinate: condition-field:rc.file_system:mount:env
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: env
+          segments:
+            - name: env
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: condition-field:rc.file_system:mount:env
+    interfaceFields:
+        - coordinate: interface-field:rc.file_system:mount:access
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.access
+          segments:
+            - name: interface
+            - name: access
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: interface-field:rc.file_system:mount:access
+        - coordinate: interface-field:rc.file_system:mount:minimumSize
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.minimumSize
+          segments:
+            - name: interface
+            - name: minimumSize
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: interface-field:rc.file_system:mount:minimumSize
+        - coordinate: interface-field:rc.file_system:mount:path
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.path
+          segments:
+            - name: interface
+            - name: path
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: interface-field:rc.file_system:mount:path
+        - coordinate: interface-field:rc.file_system:mount:persistence
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.persistence
+          segments:
+            - name: interface
+            - name: persistence
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: interface-field:rc.file_system:mount:persistence
+        - coordinate: interface-field:rc.file_system:mount:sharing
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.sharing
+          segments:
+            - name: interface
+            - name: sharing
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: interface-field:rc.file_system:mount:sharing
+    valueDomains:
+        - coordinate: field-domain:rc.file_system:mount:env[].property
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: env[].property
+          segments:
+            - name: env
+              array: true
+            - name: property
+          values:
+            - value: path
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: field-domain:rc.file_system:mount:env[].property
+        - coordinate: field-domain:rc.file_system:mount:interface.access
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.access
+          segments:
+            - name: interface
+            - name: access
+          values:
+            - value: read_only
+            - value: read_write
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: field-domain:rc.file_system:mount:interface.access
+        - coordinate: field-domain:rc.file_system:mount:interface.persistence
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.persistence
+          segments:
+            - name: interface
+            - name: persistence
+          values:
+            - value: ephemeral
+            - value: persistent
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: field-domain:rc.file_system:mount:interface.persistence
+        - coordinate: field-domain:rc.file_system:mount:interface.sharing
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.file_system
+          interfaceType: mount
+          path: interface.sharing
+          segments:
+            - name: interface
+            - name: sharing
+          values:
+            - value: exclusive
+            - value: shared
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: field-domain:rc.file_system:mount:interface.sharing
+scopes:
+    - coordinate: rc.file_system:mount
+      kind: rc.file_system
+      interfaceType: mount
+      applicableSchemas:
+        - https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: env
+              shape:
+                kind: array
+                items:
+                    kind: object
+                    required:
+                        - name
+                        - property
+                    properties:
+                        - name: name
+                          required: true
+                          shape:
+                            kind: scalar
+                            scalar: string
+                            constraints:
+                                pattern: ^[A-Za-z_][A-Za-z0-9_]*$
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/name
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/name
+                        - name: property
+                          required: true
+                          shape:
+                            kind: scalar
+                            scalar: string
+                            values:
+                                - value: path
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/property
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/property
+                        - name: required
+                          shape:
+                            kind: scalar
+                            scalar: boolean
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/required
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/required
+                        - name: sensitive
+                          shape:
+                            kind: scalar
+                            scalar: boolean
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/sensitive
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/sensitive
+                    provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/env/items
+                constraints:
+                    minItems: 1
+                    uniqueItems: true
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    jsonPointer: /properties/env
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                jsonPointer: /properties/env
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - access
+                properties:
+                    - name: access
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: read_only
+                            - value: read_write
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/access
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/access
+                    - name: minimumSize
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        constraints:
+                            pattern: ^[1-9][0-9]*(Mi|Gi|Ti)$
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/minimumSize
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/minimumSize
+                    - name: path
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        constraints:
+                            pattern: ^/.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/path
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/path
+                    - name: persistence
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: ephemeral
+                            - value: persistent
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/persistence
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/persistence
+                    - name: sharing
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: exclusive
+                            - value: shared
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/sharing
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/sharing
+                constraints:
+                    if:
+                        properties:
+                            access:
+                                const: read_write
+                        required:
+                            - access
+                    then:
+                        required:
+                            - persistence
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                jsonPointer: /properties/interface
+        constraints:
+            if:
+                not:
+                    required:
+                        - env
+            then:
+                properties:
+                    interface:
+                        required:
+                            - path
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+schemas:
+    - coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+      owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+      id: file-system-mount
+      kind: rc.file_system
+      interfaceType: mount
+      exact:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        additionalProperties: true
+        if:
+            not:
+                required:
+                    - env
+        properties:
+            env:
+                items:
+                    additionalProperties: false
+                    properties:
+                        name:
+                            pattern: ^[A-Za-z_][A-Za-z0-9_]*$
+                            type: string
+                        property:
+                            enum:
+                                - path
+                        required:
+                            type: boolean
+                        sensitive:
+                            type: boolean
+                    required:
+                        - name
+                        - property
+                    type: object
+                minItems: 1
+                type: array
+                uniqueItems: true
+            interface:
+                additionalProperties: false
+                if:
+                    properties:
+                        access:
+                            const: read_write
+                    required:
+                        - access
+                properties:
+                    access:
+                        enum:
+                            - read_only
+                            - read_write
+                    minimumSize:
+                        pattern: ^[1-9][0-9]*(Mi|Gi|Ti)$
+                        type: string
+                    path:
+                        pattern: ^/.
+                        type: string
+                    persistence:
+                        enum:
+                            - ephemeral
+                            - persistent
+                    sharing:
+                        enum:
+                            - exclusive
+                            - shared
+                    type:
+                        const: mount
+                required:
+                    - access
+                    - type
+                then:
+                    required:
+                        - persistence
+                type: object
+            kind:
+                const: rc.file_system
+        required:
+            - interface
+            - kind
+        then:
+            properties:
+                interface:
+                    required:
+                        - path
+        type: object
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: env
+              shape:
+                kind: array
+                items:
+                    kind: object
+                    required:
+                        - name
+                        - property
+                    properties:
+                        - name: name
+                          required: true
+                          shape:
+                            kind: scalar
+                            scalar: string
+                            constraints:
+                                pattern: ^[A-Za-z_][A-Za-z0-9_]*$
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/name
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/name
+                        - name: property
+                          required: true
+                          shape:
+                            kind: scalar
+                            scalar: string
+                            values:
+                                - value: path
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/property
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/property
+                        - name: required
+                          shape:
+                            kind: scalar
+                            scalar: boolean
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/required
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/required
+                        - name: sensitive
+                          shape:
+                            kind: scalar
+                            scalar: boolean
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                jsonPointer: /properties/env/items/properties/sensitive
+                          provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/env/items/properties/sensitive
+                    provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/env/items
+                constraints:
+                    minItems: 1
+                    uniqueItems: true
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    jsonPointer: /properties/env
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                jsonPointer: /properties/env
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - access
+                properties:
+                    - name: access
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: read_only
+                            - value: read_write
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/access
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/access
+                    - name: minimumSize
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        constraints:
+                            pattern: ^[1-9][0-9]*(Mi|Gi|Ti)$
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/minimumSize
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/minimumSize
+                    - name: path
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        constraints:
+                            pattern: ^/.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/path
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/path
+                    - name: persistence
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: ephemeral
+                            - value: persistent
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/persistence
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/persistence
+                    - name: sharing
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: exclusive
+                            - value: shared
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            jsonPointer: /properties/interface/properties/sharing
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        jsonPointer: /properties/interface/properties/sharing
+                constraints:
+                    if:
+                        properties:
+                            access:
+                                const: read_write
+                        required:
+                            - access
+                    then:
+                        required:
+                            - persistence
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                jsonPointer: /properties/interface
+        constraints:
+            if:
+                not:
+                    required:
+                        - env
+            then:
+                properties:
+                    interface:
+                        required:
+                            - path
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+      provenance:
+        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount

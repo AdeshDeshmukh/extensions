@@ -10,7 +10,7 @@ dependencyLock:
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: 0991f59d80107b720a75ec9727eafe65ccea91ca4ec2d74fabbf363e97dfed78
+    semanticSha256: 614f76d1e98e60e414d8408322b9a71bf704a8d4431a90f2ed5f574687c03838
 package:
     coordinate: runtimeconditions.io/x/aws/s3
     language: go
@@ -25,7 +25,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 08044437569c5b03586552b73b93657ca6aded8fc7a9f58fb961a094f3753ad2
+        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
     profiler:
         name: go-rc-profiler
         version: v0.4.0

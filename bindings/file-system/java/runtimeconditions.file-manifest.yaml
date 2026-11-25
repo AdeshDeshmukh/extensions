@@ -1,0 +1,19 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    pom.xml: 4d171ddc7e955a90366136c050fc59baed64e1eb6d93e4728d8f3559e0ae2a65
+    src/main/java/io/runtimeconditions/bindings/filesystem/Access.java: 33c7cd0a9e8b79c1ba4ea6f47f3c506087684ba680238d450d7fef9808215096
+    src/main/java/io/runtimeconditions/bindings/filesystem/Bindings.java: 3ae002174e59272c86c5cf4b44e43c341035f7b29813e820d758af7ae505d056
+    src/main/java/io/runtimeconditions/bindings/filesystem/Declaration.java: a706bebdef50a686f9639c427335c60033c77d8694344ed83aa9db7b620a7d28
+    src/main/java/io/runtimeconditions/bindings/filesystem/Env.java: dd1854bd68d72005be3de452067a298dac5bb3c3013af7fa873d6f61342d36e1
+    src/main/java/io/runtimeconditions/bindings/filesystem/EnvItem.java: f94c5c32e3eb8277298781aad6869eff565e4db7d3dc6615d29351ab9f7f0027
+    src/main/java/io/runtimeconditions/bindings/filesystem/EnvValue.java: a709c595fdc218b21b968c28d1c4a94b54e75baa53ca878f243432d9d555af53
+    src/main/java/io/runtimeconditions/bindings/filesystem/Mount.java: ec98ed8ffc029125139eca20c3c9d67d4c8aca6da42cbde37a19f2384ee22d49
+    src/main/java/io/runtimeconditions/bindings/filesystem/Persistence.java: ddbb5c8a4d79e75ae0368b44524820c0553d59880b5e39f8497d2ac79b5b1e2a
+    src/main/java/io/runtimeconditions/bindings/filesystem/Property.java: 05cf793c98b5fafd5c12fdc5b138fb083c8c46e6dba7dd0a46d845547d1f6fa3
+    src/main/java/io/runtimeconditions/bindings/filesystem/RcFileSystemField.java: 528f885aed26dc38d70f356ff5661e761969d840c1d6f800d9b801037c909330
+    src/main/java/io/runtimeconditions/bindings/filesystem/Sharing.java: f09c56efc8a8f6a188d3b552c70f703075eca92545cc65cef4b56da688ebd1bf
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: b2bfef890f36cea8d3cd248d139dec2f627c870c6a0772f15a73f46eff3f2c06
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: f382e55bca08633b07be41890096092b2cb52bece245d8bf87ea2d6557e81114
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: 9216eb22d6b43b0385996dfa4fb38de2853681006b19de490b9657e476f67e52
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: f7d2b39c36772017935a81e506046c1f9435b6c1ce64e68a2e1ff6f1a74d5355

@@ -1,0 +1,39 @@
+apiVersion: runtimeconditions.io/binding-release/v1alpha1
+dependencyLock:
+    extensions:
+        - id: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          version: 0.1.0
+          sourceSha256: 14f8215f252ea721a32f276f4cfd27228cc62c987e803fd2365d58d7458a4f77
+          semanticSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+          sourceBackend: catalog
+          sourceLocator: catalog:rc/gpu/releases/0.1.0/runtimeconditions.extension.yaml
+kind: RuntimeConditionsBindingRelease
+model:
+    apiVersion: runtimeconditions.io/binding-model/v1alpha1
+    semanticSha256: 9510f121327c0209360f6ab419f9cd1ab319a60a4c2701d5c672d03400abf676
+package:
+    coordinate: runtimeconditions-gpu
+    language: python
+    minimumPythonVersion: "3.12"
+    name: runtimeconditions_gpu
+    packageKey: gpu
+    publicationMode: registry
+    registryId: pypi
+    version: 0.1.0
+packageDependencies: []
+provenance:
+    mode: production
+    orchestrator:
+        name: rc
+        version: 0.1.0
+        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+    profiler:
+        name: python-rc-profiler
+        version: 0.4.0
+        sha256: 6382d2f2a48b79c1b9e90c4084062a30259e74942ec72264264f1a594826ced9
+    sourceDirectory: bindings/gpu/python
+    targetReleaseTag: bindings/gpu/python/v0.1.0
+rootExtension:
+    id: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+    version: 0.1.0
+    semanticSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03

@@ -1,0 +1,145 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+  version: 0.1.0
+
+spec:
+  kinds:
+    - name: rc.file_system
+
+  interfaceTypes:
+    - name: mount
+      targetKind: rc.file_system
+
+  conditionFields:
+    - name: env
+      appliesToKinds:
+        - rc.file_system
+      appliesToInterfaceTypes:
+        - mount
+
+  interfaceFields:
+    - name: path
+      targetKind: rc.file_system
+      targetType: mount
+    - name: access
+      targetKind: rc.file_system
+      targetType: mount
+    - name: persistence
+      targetKind: rc.file_system
+      targetType: mount
+    - name: sharing
+      targetKind: rc.file_system
+      targetType: mount
+    - name: minimumSize
+      targetKind: rc.file_system
+      targetType: mount
+
+  fieldValues:
+    - field: interface.access
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - read_only
+        - read_write
+    - field: interface.persistence
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - persistent
+        - ephemeral
+    - field: interface.sharing
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - shared
+        - exclusive
+    - field: env[].property
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - path
+
+  schemas:
+    - id: file-system-mount
+      appliesToKind: rc.file_system
+      appliesToInterfaceType: mount
+      description: Validates file system mount requirements.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required:
+          - kind
+          - interface
+        properties:
+          kind:
+            const: rc.file_system
+          interface:
+            type: object
+            required:
+              - type
+              - access
+            properties:
+              type:
+                const: mount
+              path:
+                type: string
+                pattern: '^/.'
+              access:
+                enum:
+                  - read_only
+                  - read_write
+              persistence:
+                enum:
+                  - persistent
+                  - ephemeral
+              sharing:
+                enum:
+                  - shared
+                  - exclusive
+              minimumSize:
+                type: string
+                pattern: '^[1-9][0-9]*(Mi|Gi|Ti)$'
+            if:
+              required:
+                - access
+              properties:
+                access:
+                  const: read_write
+            then:
+              required:
+                - persistence
+            additionalProperties: false
+          env:
+            type: array
+            minItems: 1
+            uniqueItems: true
+            items:
+              type: object
+              required:
+                - property
+                - name
+              properties:
+                property:
+                  enum:
+                    - path
+                name:
+                  type: string
+                  pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
+                sensitive:
+                  type: boolean
+                required:
+                  type: boolean
+              additionalProperties: false
+        if:
+          not:
+            required:
+              - env
+        then:
+          properties:
+            interface:
+              required:
+                - path
+        additionalProperties: true

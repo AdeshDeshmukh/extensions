@@ -1,0 +1,13 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    MANIFEST.in: d51e89c4c7c5e16c06d543c7aac32df945dd4f536e578b6ad089b68a6f489fca
+    README.md: b2f2542f045bf9bd54d0fbd12966a47186e81cf80d35c8b478735c6ee9f82651
+    pyproject.toml: 5418c7b695b317476021592154f4234975bd27de658cf72e6fa717e65653fa5a
+    src/runtimeconditions_kafka_service/__init__.py: 28eb291f5ef3919ad6f9f4a4db8f6e284d1f53f440ae8b6d8d63da2163378c90
+    src/runtimeconditions_kafka_service/bindings.py: 02807902dce8734fc6cd2a5305262545e4e85bbf1c530beee5ab139ad0a50d0c
+    src/runtimeconditions_kafka_service/py.typed: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    src/runtimeconditions_kafka_service/runtimeconditions.binding-model.yaml: 9544c9fd7cea6b87d5e443ea7545feab790e3a97d420b475b5dce67a9d997436
+    src/runtimeconditions_kafka_service/runtimeconditions.binding-release.yaml: 99a543af25a78204cd7909ff5be9b9764608670ecbb0f7a62097e529b50a6a66
+    src/runtimeconditions_kafka_service/runtimeconditions.bindings.yaml: d135c3ad23f0f3f99a12066cbfee2a1e5130d964dbd26e76832b8adca50402ef
+    src/runtimeconditions_kafka_service/runtimeconditions.extension.yaml: cbaee4ef1c7e270845ee69eb4d35deb93751795c26e4fba97b4237079bcb15a1

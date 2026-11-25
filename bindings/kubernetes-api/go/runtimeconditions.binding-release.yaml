@@ -10,7 +10,7 @@ dependencyLock:
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: 23f95dc54c20be85d617d3ab25c8791d632f0d9aea7ff5ef458283002004e510
+    semanticSha256: 45ab2438683a5ed99a55c6b17e58c717388ddafbf04f0d41b4d16440ad794fd8
 package:
     coordinate: runtimeconditions.io/x/kubernetes/api
     language: go
@@ -25,7 +25,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 08044437569c5b03586552b73b93657ca6aded8fc7a9f58fb961a094f3753ad2
+        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
     profiler:
         name: go-rc-profiler
         version: v0.4.0

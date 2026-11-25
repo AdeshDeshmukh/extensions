@@ -1,0 +1,39 @@
+apiVersion: runtimeconditions.io/binding-release/v1alpha1
+dependencyLock:
+    extensions:
+        - id: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          version: 0.1.0
+          sourceSha256: 0927ac5e79957cc86bcfbbd2cc31c5bc4a68573673594fa568219ad557ae7310
+          semanticSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+          sourceBackend: catalog
+          sourceLocator: catalog:rc/observability/releases/0.1.0/runtimeconditions.extension.yaml
+kind: RuntimeConditionsBindingRelease
+model:
+    apiVersion: runtimeconditions.io/binding-model/v1alpha1
+    semanticSha256: cc2d8036c64aec1c708b1fd4f05392c4bde260090eb899ea069e36775ab1e7df
+package:
+    coordinate: runtimeconditions-observability
+    language: python
+    minimumPythonVersion: "3.12"
+    name: runtimeconditions_observability
+    packageKey: observability
+    publicationMode: registry
+    registryId: pypi
+    version: 0.1.0
+packageDependencies: []
+provenance:
+    mode: production
+    orchestrator:
+        name: rc
+        version: 0.1.0
+        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+    profiler:
+        name: python-rc-profiler
+        version: 0.4.0
+        sha256: 6382d2f2a48b79c1b9e90c4084062a30259e74942ec72264264f1a594826ced9
+    sourceDirectory: bindings/observability/python
+    targetReleaseTag: bindings/observability/python/v0.1.0
+rootExtension:
+    id: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+    version: 0.1.0
+    semanticSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9

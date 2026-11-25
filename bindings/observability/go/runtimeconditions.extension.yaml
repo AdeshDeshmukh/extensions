@@ -1,0 +1,123 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+  version: 0.1.0
+  description: Declares telemetry a workload exports or exposes for collection.
+spec:
+  kinds:
+    - name: rc.observability
+      description: A workload telemetry endpoint that a platform must connect or scrape.
+  interfaceTypes:
+    - name: otlp_export
+      targetKind: rc.observability
+      description: The workload exports telemetry to an OTLP receiver.
+    - name: prometheus_scrape
+      targetKind: rc.observability
+      description: The workload exposes metrics for a Prometheus-compatible scraper.
+  interfaceFields:
+    - name: signals
+      targetKind: rc.observability
+      targetType: otlp_export
+      description: Telemetry signals the workload sends to the receiver.
+    - name: transport
+      targetKind: rc.observability
+      targetType: otlp_export
+      description: OTLP transport and encoding that the receiver must support.
+    - name: port
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      description: TCP port on which the workload exposes metrics.
+    - name: path
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      description: Absolute HTTP path from which a scraper reads metrics.
+    - name: scheme
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      description: HTTP scheme required to scrape the metrics endpoint.
+  fieldValues:
+    - field: interface.signals[]
+      targetKind: rc.observability
+      targetType: otlp_export
+      values: [traces, metrics, logs]
+      valueDescriptions:
+        traces: Distributed trace data.
+        metrics: Numeric measurements and aggregations.
+        logs: Log records.
+    - field: interface.transport
+      targetKind: rc.observability
+      targetType: otlp_export
+      values: [grpc, http/protobuf, http/json]
+      valueDescriptions:
+        grpc: OTLP over gRPC with Protocol Buffers.
+        http/protobuf: OTLP over HTTP with Protocol Buffers.
+        http/json: OTLP over HTTP with JSON encoding.
+    - field: interface.scheme
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      values: [http, https]
+      valueDescriptions:
+        http: Scrape over HTTP.
+        https: Scrape over HTTPS.
+  schemas:
+    - id: observability-otlp-export
+      appliesToKind: rc.observability
+      appliesToInterfaceType: otlp_export
+      description: Requires a nonempty set of supported OTLP signals and a transport protocol.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required: [kind, interface]
+        properties:
+          kind:
+            const: rc.observability
+          interface:
+            type: object
+            required: [type, signals, transport]
+            properties:
+              type:
+                const: otlp_export
+              signals:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                items:
+                  enum: [traces, metrics, logs]
+                description: Must contain one or more distinct trace, metric, or log signals.
+              transport:
+                enum: [grpc, http/protobuf, http/json]
+                description: Must be an OTLP transport and encoding supported by the receiver.
+            additionalProperties: true
+        additionalProperties: true
+    - id: observability-prometheus-scrape
+      appliesToKind: rc.observability
+      appliesToInterfaceType: prometheus_scrape
+      description: Requires an HTTP scheme, valid TCP port, and absolute metrics path.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required: [kind, interface]
+        properties:
+          kind:
+            const: rc.observability
+          interface:
+            type: object
+            required: [type, port, path, scheme]
+            properties:
+              type:
+                const: prometheus_scrape
+              port:
+                type: integer
+                minimum: 1
+                maximum: 65535
+                description: Must be a TCP port from 1 through 65535.
+              path:
+                type: string
+                pattern: '^/'
+                description: Must begin with a slash.
+              scheme:
+                enum: [http, https]
+                description: Must be HTTP or HTTPS.
+            additionalProperties: true
+        additionalProperties: true

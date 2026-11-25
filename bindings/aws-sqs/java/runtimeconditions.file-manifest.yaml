@@ -1,0 +1,43 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    README.md: cd1123a31c2afa5c1acc5c81b4a67b1ee143950a6289ed4d3114c92d5f08e710
+    pom.xml: 51a9c14dfb6891c908b06eb965643f75913d83cf35302cf3494c6cae9d7f5e5e
+    src/main/java/io/runtimeconditions/bindings/awssqs/AccessPolicy.java: d1ef19c4adb9bbae5b461db4a0a1ee53a33430921d0835668a7c435f75f79712
+    src/main/java/io/runtimeconditions/bindings/awssqs/AwsSqsField.java: 8dc98c06122d26e4336cf9920674d70f2606bafe3bef931ec2747dc248357c66
+    src/main/java/io/runtimeconditions/bindings/awssqs/Bindings.java: d1759d206996d6bb0b86209c2f199f168e3e2bf1dc9bf7826a108bfc2b935999
+    src/main/java/io/runtimeconditions/bindings/awssqs/ConditionRefs.java: 5cc1f9c93f05593b2a84fa91f1c9cba375d76567e2da54db82ef61bbd03d8509
+    src/main/java/io/runtimeconditions/bindings/awssqs/DeadLetterQueue.java: b932ce3556b25e8abb96e1e8a3567e1d9a08716dabb30a638541c041c4c97d08
+    src/main/java/io/runtimeconditions/bindings/awssqs/Declaration.java: 24a5611449a0e4d8314418515e1de9fdf6a1a5f1df582be5f11f10bf5ff6b7ce
+    src/main/java/io/runtimeconditions/bindings/awssqs/DeduplicationScope.java: d07b0c92352f35213c7f11dc020a6bb2a81b7d41146b1de2f16da45154095846
+    src/main/java/io/runtimeconditions/bindings/awssqs/Effect.java: eaf45b8c81f6a962015af198d14f0a5650a5be3fdf0a8873f2d3aa590ddc6b98
+    src/main/java/io/runtimeconditions/bindings/awssqs/Encryption.java: 2116c770804c6472565bb271ce82376dac66b70ed43d9a74ad48628f6157ec4d
+    src/main/java/io/runtimeconditions/bindings/awssqs/EncryptionMode.java: 0117771498a28dec6027bc19575020a870d934e0e22b1d8d5aebe4e477033bce
+    src/main/java/io/runtimeconditions/bindings/awssqs/FifoThroughputLimit.java: f3b04931535ce0c6799dd19dbfed62b9ad88f54f536e1d7453f7cf93d9af9ad3
+    src/main/java/io/runtimeconditions/bindings/awssqs/MessageMoveTask.java: a69dd71c2bb3e4d3bad6a16b8afd450e3b009552c303d69c0b67444d1593f0e6
+    src/main/java/io/runtimeconditions/bindings/awssqs/MessageMoveTaskOperations.java: ae7f04608ed0828582337759f887a1afdb680eabf521c6379272facfc4aca335
+    src/main/java/io/runtimeconditions/bindings/awssqs/MessageMoveTaskOperationsItem.java: d73a6dc7cab62b86aec8ea9b68e545ee075e02ad616e49174b1e9f7987b1b952
+    src/main/java/io/runtimeconditions/bindings/awssqs/MessageMoveTaskOperationsItemName.java: 2a6bee06ab7aba1349a129d5bfbe6d0b290b17d4dfddb7d836349d50a0a8d9be
+    src/main/java/io/runtimeconditions/bindings/awssqs/PrincipalRefs.java: bc159830c4958677ac02798da833a59295276d9c1e57d86ee8a306832540b774
+    src/main/java/io/runtimeconditions/bindings/awssqs/Queue.java: 7c65e1ff66ef2087c032be954247284b652e771b683f243e9c29a4d13f661487
+    src/main/java/io/runtimeconditions/bindings/awssqs/QueueOperations.java: 7ad640a9e6df7d98d50e64764e960b7182d4a9c3dfb3c1374633606fc5dbd1c8
+    src/main/java/io/runtimeconditions/bindings/awssqs/QueueOperationsItem.java: e9ea8bff209d6c2523814e827f6568ee5f8b56339ec43f91bd9fff3fcd344ff2
+    src/main/java/io/runtimeconditions/bindings/awssqs/QueueOperationsItemName.java: 7b2a7e00c626586b187b57b20d422299b8439c874c04fd0ba0056c8807930d4a
+    src/main/java/io/runtimeconditions/bindings/awssqs/QueueType.java: 31b7d224f22f331b1c3d8c4a29ab8718cfd9472fb27622e253cb03cf50b050de
+    src/main/java/io/runtimeconditions/bindings/awssqs/RedriveAllowPolicy.java: 225f0ffd4dc3bbfc2256a37265b05b747a5f279d1d08e1ddf732bd91755a57ad
+    src/main/java/io/runtimeconditions/bindings/awssqs/RedriveAllowPolicyMode.java: f5fb1679254f3f5b2f8a935cbffc069e04738e56a41a185fb7cbff4916d8f5e1
+    src/main/java/io/runtimeconditions/bindings/awssqs/Service.java: c8f0e62184a34059067a7dc2692744cdab0f4a300a400607f8519be6899be4b6
+    src/main/java/io/runtimeconditions/bindings/awssqs/ServiceOperations.java: 976ef631b018b037d9d15ef18d7dcde439a0765e00442c61b9a9ccaf2bc110d8
+    src/main/java/io/runtimeconditions/bindings/awssqs/ServiceOperationsItem.java: 7a09d013a897f3a54dbb8e319158e43ad875d8844517f839feee3841d24fcffd
+    src/main/java/io/runtimeconditions/bindings/awssqs/ServiceOperationsItemName.java: 786ea85089e25507e77f9f900f5271f2d31724dc8306dab0ac63ce3846b58424
+    src/main/java/io/runtimeconditions/bindings/awssqs/SourceQueueRefs.java: eb45bb1a6523e17d0b1aca5299851634024a6cb7f2ba052191802baddbc81c92
+    src/main/java/io/runtimeconditions/bindings/awssqs/Statements.java: 06f20eb4ff62f174537aac51bffac136cf35411b699976fb13cac18836f505c9
+    src/main/java/io/runtimeconditions/bindings/awssqs/StatementsItem.java: 236311e0e808b2d1d698c6707796f14eefc8b1fa8d7af5e824425a11d5ab0837
+    src/main/java/io/runtimeconditions/bindings/awssqs/StatementsItemOperations.java: 76ac7930d1eba26ec56cceb7e92311c02e88c0f80728591d26b8f8c8888e9263
+    src/main/java/io/runtimeconditions/bindings/awssqs/StatementsItemOperationsItem.java: e2d2bbed9907f119219b21d1ee77d268dc0c2967b36dc611a6aeb752d46299e3
+    src/main/java/io/runtimeconditions/bindings/awssqs/StatementsItemOperationsItemName.java: d40f85888b1c57e4f60e4ed60163ff58b0f42930f542668cdadfc89b2b4838ca
+    src/main/java/io/runtimeconditions/bindings/awssqs/Tags.java: 92481c9d25bd56a356fec119efbb3e35db8dfaea75a43f878afc5dd86df4020d
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: a7ca45a1b6be7bc52d9ec02e3fd8d17cf4ad455b534d4888bfefd31f17893f25
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: d6e0fd65aca4ed5892c3ff6e23de35f6e258989f804e0dace28b45f405cf4782
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: e4c468e813d2c42f52e7311555d78d77034843d4e85cf514c993e8aeb8fb3857
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: e34d53031f83f1824e83646e9ebef49a3fce8344f91390b1ff51cd0a4e022f50

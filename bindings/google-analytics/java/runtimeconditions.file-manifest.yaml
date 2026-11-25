@@ -1,18 +1,18 @@
 apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
-    pom.xml: fd4a2bd068afc0fd20b82bd4db17f28e6e2f0964f0c90bdea3ca9b49ea8a6e7e
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/Bindings.java: 9d803db2f2723ae90b22993c8dc5eb24ebba4c2671d5074d97f3f3b2c5410470
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/Configuration.java: 1e1c807f9542cea14e41c44620cc2d84a77d0689aa146c993837f082b7592f23
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/Declaration.java: 4f4e70b1a81dc0b4838b110c0e94acf4aefd9395399673c647d504b8f6e21e36
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/Env.java: 5cd189e1773da2db305b0898377286bd47f972f9b2b9f88747f62e01101eeb27
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/Events.java: 3107fe1cceb7478b2950b5ba29487e0505dfce4439ac8d8d54479123aca83689
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/EventsItem.java: 852f63e2c29bcfe20027575b1c415bf16b76c0a443c7c365240081214c93d3b2
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/GoogleAnalyticsField.java: 4f2b0ec4f23237371a0435e3ef17358f784cab7bda591f01a69d6d19245f5a37
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/Name.java: 0ce8e38983cfaf478a9ebc4186c3a1ea1fab52298012855a917fd3969b858fd6
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/Web.java: a0b1ace44bff175158f671897545f3339b5826f58f82a6c4dd78ee1c762335d2
-    src/main/java/io/runtimeconditions/bindings/googleanalytics/WebOptional.java: 032585fe303de4e77e4e8cf21eb5b088a890dbbeb23e84f9108502c2d0bb1d8e
-    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: a3852d8aeb4d1e0019e1d93980302e1be3f0afb4eb1245938ac1f75a8272f92f
-    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: ff678c51d60730902befc83c37ce67a37fd7a8cd5674ae30d67098f3a990eca8
+    pom.xml: 5806ac0aff38d70a1a65edc238ec687ca7148c015036ae4ca33d17fc53dcecc3
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/Bindings.java: 2dbeb5cc750c99ffbac7fdc8c1b6b78c7386ddac830dfd00d1477d5530fe3dc4
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/Configuration.java: 52b419743c2458f9663484601606dbea60a94f82ee8fbec54667e16271e18be4
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/Declaration.java: 0e7838520018081d7a6c3c35d993a711c534ce791a6d58ed2b66982e99cbf305
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/Env.java: ec3755f8c7bb9a742d41fb47d812b81eb304cb3156982e2dcfb9373d5db86e85
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/Events.java: 3598995a39c291941851010f9daa67a235ace8401f9accb08bbc2af6901c68a8
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/EventsItem.java: 12c9ac207762082cd7f497086220423883683792655c3f1d3502505c01932ddf
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/GoogleAnalyticsField.java: 97a82c8ad758fabba29fedc34048f1b894e313f902db46895537146a2f511a60
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/Name.java: 0a5b9024142236c8a0db7a7a98a58802e1269982bbd95fd8d746e04f5b044195
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/Web.java: bc93a061b1c4ed51de95c64ff73ecce06749349ea25ea302a053831aea759c36
+    src/main/java/io/runtimeconditions/bindings/googleanalytics/WebOptional.java: ec9b9e91574bc655c663fba6a06c659b3cb27dcd493dc32bfa8eb2f043089a0a
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: a251e989766efb1700019e254bc7c7c6b7369a06bf0e328756edde15613bb7c0
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 3ce66d9eda0332d32dcfb636d4fb70c8bbcf4a5eaca0d671077bc61a510189ed
     src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: 3662d3b383cfc5d018b194b9b95faf559bdc17b60d76184f3b1b17674e96deef
-    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 87297923fc224eb5be9a2998a7308f6527542fa38bce90b195cd353c447e3c19
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: f6f42deb166b5a1798be773c347540e51dbbf3dab59506cc27a734aee99a10a2

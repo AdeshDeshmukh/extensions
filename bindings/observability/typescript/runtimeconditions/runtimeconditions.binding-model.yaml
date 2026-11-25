@@ -1,0 +1,747 @@
+apiVersion: runtimeconditions.io/binding-model/v1alpha1
+kind: RuntimeConditionsBindingModel
+metadata:
+    semanticSha256: cc2d8036c64aec1c708b1fd4f05392c4bde260090eb899ea069e36775ab1e7df
+    normalizer:
+        name: rc-binding-model
+        version: 0.1.0
+        sha256: de7ebd0d2df1f49f086808c1ce471ecf1db02030f83d491ad181352ed93356a7
+coreProfileSchema:
+    id: https://runtimeconditions.io/schemas/profile/0.4.0/runtimeconditions.profile.schema.yaml
+    version: 0.4.0
+    semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
+rootExtension:
+    id: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+    version: 0.1.0
+    semanticSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+extensions:
+    - id: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+      version: 0.1.0
+      semanticSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+      description: Declares telemetry a workload exports or exposes for collection.
+vocabulary:
+    owners:
+        - coordinate: field-domain:rc.observability:otlp_export:interface.signals[]:"logs"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.signals[]
+          value: logs
+        - coordinate: field-domain:rc.observability:otlp_export:interface.signals[]:"metrics"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.signals[]
+          value: metrics
+        - coordinate: field-domain:rc.observability:otlp_export:interface.signals[]:"traces"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.signals[]
+          value: traces
+        - coordinate: field-domain:rc.observability:otlp_export:interface.transport:"grpc"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.transport
+          value: grpc
+        - coordinate: field-domain:rc.observability:otlp_export:interface.transport:"http/json"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.transport
+          value: http/json
+        - coordinate: field-domain:rc.observability:otlp_export:interface.transport:"http/protobuf"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.transport
+          value: http/protobuf
+        - coordinate: field-domain:rc.observability:prometheus_scrape:interface.scheme:"http"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          path: interface.scheme
+          value: http
+        - coordinate: field-domain:rc.observability:prometheus_scrape:interface.scheme:"https"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          path: interface.scheme
+          value: https
+        - coordinate: interface-field:rc.observability:otlp_export:signals
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.signals
+        - coordinate: interface-field:rc.observability:otlp_export:transport
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.transport
+        - coordinate: interface-field:rc.observability:prometheus_scrape:path
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          path: interface.path
+        - coordinate: interface-field:rc.observability:prometheus_scrape:port
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          path: interface.port
+        - coordinate: interface-field:rc.observability:prometheus_scrape:scheme
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          path: interface.scheme
+        - coordinate: interface:rc.observability:otlp_export
+          category: interface
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+        - coordinate: interface:rc.observability:prometheus_scrape
+          category: interface
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+        - coordinate: kind:rc.observability
+          category: kind
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+    ownedDeclarations:
+        - coordinate: kind:rc.observability
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          description: A workload telemetry endpoint that a platform must connect or scrape.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: kind:rc.observability
+    interfaces:
+        - coordinate: interface:rc.observability:otlp_export
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          type: otlp_export
+          description: The workload exports telemetry to an OTLP receiver.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: interface:rc.observability:otlp_export
+        - coordinate: interface:rc.observability:prometheus_scrape
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          type: prometheus_scrape
+          description: The workload exposes metrics for a Prometheus-compatible scraper.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: interface:rc.observability:prometheus_scrape
+    interfaceFields:
+        - coordinate: interface-field:rc.observability:otlp_export:signals
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          description: Telemetry signals the workload sends to the receiver.
+          path: interface.signals
+          segments:
+            - name: interface
+            - name: signals
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: interface-field:rc.observability:otlp_export:signals
+        - coordinate: interface-field:rc.observability:otlp_export:transport
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          description: OTLP transport and encoding that the receiver must support.
+          path: interface.transport
+          segments:
+            - name: interface
+            - name: transport
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: interface-field:rc.observability:otlp_export:transport
+        - coordinate: interface-field:rc.observability:prometheus_scrape:path
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          description: Absolute HTTP path from which a scraper reads metrics.
+          path: interface.path
+          segments:
+            - name: interface
+            - name: path
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: interface-field:rc.observability:prometheus_scrape:path
+        - coordinate: interface-field:rc.observability:prometheus_scrape:port
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          description: TCP port on which the workload exposes metrics.
+          path: interface.port
+          segments:
+            - name: interface
+            - name: port
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: interface-field:rc.observability:prometheus_scrape:port
+        - coordinate: interface-field:rc.observability:prometheus_scrape:scheme
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          description: HTTP scheme required to scrape the metrics endpoint.
+          path: interface.scheme
+          segments:
+            - name: interface
+            - name: scheme
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: interface-field:rc.observability:prometheus_scrape:scheme
+    valueDomains:
+        - coordinate: field-domain:rc.observability:otlp_export:interface.signals[]
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.signals[]
+          segments:
+            - name: interface
+            - name: signals
+              array: true
+          values:
+            - value: logs
+              description: Log records.
+            - value: metrics
+              description: Numeric measurements and aggregations.
+            - value: traces
+              description: Distributed trace data.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: field-domain:rc.observability:otlp_export:interface.signals[]
+        - coordinate: field-domain:rc.observability:otlp_export:interface.transport
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: otlp_export
+          path: interface.transport
+          segments:
+            - name: interface
+            - name: transport
+          values:
+            - value: grpc
+              description: OTLP over gRPC with Protocol Buffers.
+            - value: http/json
+              description: OTLP over HTTP with JSON encoding.
+            - value: http/protobuf
+              description: OTLP over HTTP with Protocol Buffers.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: field-domain:rc.observability:otlp_export:interface.transport
+        - coordinate: field-domain:rc.observability:prometheus_scrape:interface.scheme
+          owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.observability
+          interfaceType: prometheus_scrape
+          path: interface.scheme
+          segments:
+            - name: interface
+            - name: scheme
+          values:
+            - value: http
+              description: Scrape over HTTP.
+            - value: https
+              description: Scrape over HTTPS.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: field-domain:rc.observability:prometheus_scrape:interface.scheme
+scopes:
+    - coordinate: rc.observability:otlp_export
+      kind: rc.observability
+      interfaceType: otlp_export
+      applicableSchemas:
+        - https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - signals
+                    - transport
+                properties:
+                    - name: signals
+                      required: true
+                      shape:
+                        kind: array
+                        items:
+                            kind: scalar
+                            scalar: string
+                            values:
+                                - value: logs
+                                  description: Log records.
+                                - value: metrics
+                                  description: Numeric measurements and aggregations.
+                                - value: traces
+                                  description: Distributed trace data.
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                                coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                                jsonPointer: /properties/interface/properties/signals/items
+                        constraints:
+                            minItems: 1
+                            uniqueItems: true
+                        description: |-
+                            Telemetry signals the workload sends to the receiver.
+
+                            Must contain one or more distinct trace, metric, or log signals.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                            jsonPointer: /properties/interface/properties/signals
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                        jsonPointer: /properties/interface/properties/signals
+                    - name: transport
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: grpc
+                              description: OTLP over gRPC with Protocol Buffers.
+                            - value: http/json
+                              description: OTLP over HTTP with JSON encoding.
+                            - value: http/protobuf
+                              description: OTLP over HTTP with Protocol Buffers.
+                        description: |-
+                            OTLP transport and encoding that the receiver must support.
+
+                            Must be an OTLP transport and encoding supported by the receiver.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                            jsonPointer: /properties/interface/properties/transport
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                        jsonPointer: /properties/interface/properties/transport
+                description: The workload exports telemetry to an OTLP receiver.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                    coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                jsonPointer: /properties/interface
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+    - coordinate: rc.observability:prometheus_scrape
+      kind: rc.observability
+      interfaceType: prometheus_scrape
+      applicableSchemas:
+        - https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - path
+                    - port
+                    - scheme
+                properties:
+                    - name: path
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        constraints:
+                            pattern: ^/
+                        description: |-
+                            Absolute HTTP path from which a scraper reads metrics.
+
+                            Must begin with a slash.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                            jsonPointer: /properties/interface/properties/path
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                        jsonPointer: /properties/interface/properties/path
+                    - name: port
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: integer
+                        constraints:
+                            maximum: 65535
+                            minimum: 1
+                        description: |-
+                            TCP port on which the workload exposes metrics.
+
+                            Must be a TCP port from 1 through 65535.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                            jsonPointer: /properties/interface/properties/port
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                        jsonPointer: /properties/interface/properties/port
+                    - name: scheme
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: http
+                              description: Scrape over HTTP.
+                            - value: https
+                              description: Scrape over HTTPS.
+                        description: |-
+                            HTTP scheme required to scrape the metrics endpoint.
+
+                            Must be HTTP or HTTPS.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                            jsonPointer: /properties/interface/properties/scheme
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                        jsonPointer: /properties/interface/properties/scheme
+                description: The workload exposes metrics for a Prometheus-compatible scraper.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                    coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                jsonPointer: /properties/interface
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+schemas:
+    - coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+      owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+      id: observability-otlp-export
+      kind: rc.observability
+      interfaceType: otlp_export
+      exact:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        additionalProperties: true
+        properties:
+            interface:
+                additionalProperties: true
+                properties:
+                    signals:
+                        description: Must contain one or more distinct trace, metric, or log signals.
+                        items:
+                            enum:
+                                - logs
+                                - metrics
+                                - traces
+                        minItems: 1
+                        type: array
+                        uniqueItems: true
+                    transport:
+                        description: Must be an OTLP transport and encoding supported by the receiver.
+                        enum:
+                            - grpc
+                            - http/json
+                            - http/protobuf
+                    type:
+                        const: otlp_export
+                required:
+                    - signals
+                    - transport
+                    - type
+                type: object
+            kind:
+                const: rc.observability
+        required:
+            - interface
+            - kind
+        type: object
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - signals
+                    - transport
+                properties:
+                    - name: signals
+                      required: true
+                      shape:
+                        kind: array
+                        items:
+                            kind: scalar
+                            scalar: string
+                            values:
+                                - value: logs
+                                  description: Log records.
+                                - value: metrics
+                                  description: Numeric measurements and aggregations.
+                                - value: traces
+                                  description: Distributed trace data.
+                            provenance:
+                                owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                                extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                                coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                                jsonPointer: /properties/interface/properties/signals/items
+                        constraints:
+                            minItems: 1
+                            uniqueItems: true
+                        description: |-
+                            Telemetry signals the workload sends to the receiver.
+
+                            Must contain one or more distinct trace, metric, or log signals.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                            jsonPointer: /properties/interface/properties/signals
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                        jsonPointer: /properties/interface/properties/signals
+                    - name: transport
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: grpc
+                              description: OTLP over gRPC with Protocol Buffers.
+                            - value: http/json
+                              description: OTLP over HTTP with JSON encoding.
+                            - value: http/protobuf
+                              description: OTLP over HTTP with Protocol Buffers.
+                        description: |-
+                            OTLP transport and encoding that the receiver must support.
+
+                            Must be an OTLP transport and encoding supported by the receiver.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                            jsonPointer: /properties/interface/properties/transport
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                        jsonPointer: /properties/interface/properties/transport
+                description: The workload exports telemetry to an OTLP receiver.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                    coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+                jsonPointer: /properties/interface
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+      provenance:
+        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-otlp-export
+    - coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+      owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+      id: observability-prometheus-scrape
+      kind: rc.observability
+      interfaceType: prometheus_scrape
+      exact:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        additionalProperties: true
+        properties:
+            interface:
+                additionalProperties: true
+                properties:
+                    path:
+                        description: Must begin with a slash.
+                        pattern: ^/
+                        type: string
+                    port:
+                        description: Must be a TCP port from 1 through 65535.
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                    scheme:
+                        description: Must be HTTP or HTTPS.
+                        enum:
+                            - http
+                            - https
+                    type:
+                        const: prometheus_scrape
+                required:
+                    - path
+                    - port
+                    - scheme
+                    - type
+                type: object
+            kind:
+                const: rc.observability
+        required:
+            - interface
+            - kind
+        type: object
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - path
+                    - port
+                    - scheme
+                properties:
+                    - name: path
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        constraints:
+                            pattern: ^/
+                        description: |-
+                            Absolute HTTP path from which a scraper reads metrics.
+
+                            Must begin with a slash.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                            jsonPointer: /properties/interface/properties/path
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                        jsonPointer: /properties/interface/properties/path
+                    - name: port
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: integer
+                        constraints:
+                            maximum: 65535
+                            minimum: 1
+                        description: |-
+                            TCP port on which the workload exposes metrics.
+
+                            Must be a TCP port from 1 through 65535.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                            jsonPointer: /properties/interface/properties/port
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                        jsonPointer: /properties/interface/properties/port
+                    - name: scheme
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: http
+                              description: Scrape over HTTP.
+                            - value: https
+                              description: Scrape over HTTPS.
+                        description: |-
+                            HTTP scheme required to scrape the metrics endpoint.
+
+                            Must be HTTP or HTTPS.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                            jsonPointer: /properties/interface/properties/scheme
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                        jsonPointer: /properties/interface/properties/scheme
+                description: The workload exposes metrics for a Prometheus-compatible scraper.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                    coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+                coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+                jsonPointer: /properties/interface
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+            coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape
+      provenance:
+        owner: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+        extensionSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+        coordinate: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml#schema:observability-prometheus-scrape

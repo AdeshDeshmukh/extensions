@@ -1,0 +1,17 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    README.md: b0bfef6be1da55ff99b9193ec892df9010d42e10579ecb3d5fd64ae4357fce6a
+    pom.xml: cc30e9cda2bc2bdd89249aa1eae915fc5dce2839b2891b250e2f0bbf55022ae9
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/Action.java: 0ce868ade8dbd8bfccb1cc1f901dd1c82417cdc727f53b041a87cc2b7f141e99
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/Bindings.java: e5496a0322f2aee97edc4dd840d0bba94f119c2cddc04e1447d175ae8696d1f1
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/Declaration.java: e4e2edb516e0ba75e1dc384501d3d6f6a717661aef4d8bef6caa2c69e2dde7a2
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/KafkaServiceField.java: 4ba03945a2f1fd8082557357a7317936a6961142c26cf467b816c591c870e06d
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/Operations.java: 7714c52288175eeaac526dceb3b3af32f6ad6e40244b9ca5e9981497658a7d99
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/OperationsItem.java: 6790e264a190cb2a734b88c5f8906d95a396a3742831a29a918b49e0e178b92d
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/Resource.java: 1f3fd1ce81d15f01aa7231a8ff276fd7e76dbbb0911fcc68d9c1a280f83081a0
+    src/main/java/io/runtimeconditions/bindings/kafkaservice/Service.java: c03c017d4cdef3398742cfd9d6f0b8e5a0f22f82ff8bf29f30c03d641f9e5c97
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: 9544c9fd7cea6b87d5e443ea7545feab790e3a97d420b475b5dce67a9d997436
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: d889bb27c5ec85c60cf165887bea4e20820e365dd0fd60db940731b7b407f5a5
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: cbaee4ef1c7e270845ee69eb4d35deb93751795c26e4fba97b4237079bcb15a1
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 983a6b7edff797547e302d9e77c13da5bb23d2c045ce49928ebdee2c6c323953

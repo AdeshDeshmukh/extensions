@@ -1,0 +1,13 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    MANIFEST.in: d51e89c4c7c5e16c06d543c7aac32df945dd4f536e578b6ad089b68a6f489fca
+    README.md: 9f90dd6d68108113b4f90a0809c646ca5e3fb7efcbafba4bac7edc9a6e962189
+    pyproject.toml: 5c645d9e927e7475140fc28abf74b7f88a19bdc5c5e0ec7778594dd001ae970c
+    src/runtimeconditions_gpu/__init__.py: 45b19e53917075c6c142a5f70fe56306f93f15225ac7f7d63b56d863f23ad997
+    src/runtimeconditions_gpu/bindings.py: 9a538d564300ccdde4f2f08cc9bc1bcf5241af21c91e20ab5b49fec88367c6e2
+    src/runtimeconditions_gpu/py.typed: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    src/runtimeconditions_gpu/runtimeconditions.binding-model.yaml: a58428e1e7034e7d8ae554a687efd2dda3c69fe1a3026796c72c8cb025fb96ff
+    src/runtimeconditions_gpu/runtimeconditions.binding-release.yaml: f29c65ce6b7050d7ab00a4d32685482edc0be8cec74fe4b773be82bb023a728e
+    src/runtimeconditions_gpu/runtimeconditions.bindings.yaml: a3b220de8ae60957d1a1d69f7ce3688b3f06cb25c54b604fe3a6a930bd6e7768
+    src/runtimeconditions_gpu/runtimeconditions.extension.yaml: 14f8215f252ea721a32f276f4cfd27228cc62c987e803fd2365d58d7458a4f77

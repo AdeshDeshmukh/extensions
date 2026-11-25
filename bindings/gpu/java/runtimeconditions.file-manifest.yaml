@@ -1,0 +1,16 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    README.md: fffb33e6bf46b59098ded9793014f7d1a55620bed0ef491aaf9f510a245ae201
+    pom.xml: 0374a3409b69412c2eee3fb7544731ce7aaca8e206c52d9e85b749daf85eb912
+    src/main/java/io/runtimeconditions/bindings/gpu/Bindings.java: b7fddd1267059bff5d3df53db4df2e5ef77c49e46ebf4544e712b13b75c92f2b
+    src/main/java/io/runtimeconditions/bindings/gpu/Declaration.java: b2123bad38f913d2104013ccbec87bfe38a5100127cc1662bbc49c464e19d708
+    src/main/java/io/runtimeconditions/bindings/gpu/Device.java: 459921215ed78a999f7ef915abba2af0ab3e539cce8fe6fb1a46be14f06f291f
+    src/main/java/io/runtimeconditions/bindings/gpu/DeviceOptional.java: 646f595ae3565cda9c441e1fb4e1194151cd2cbf7f3960ccbba0173aca3babde
+    src/main/java/io/runtimeconditions/bindings/gpu/Name.java: dae93637c315e1c4c101b2ee65531081526d6beb94213c78deafeb042f892234
+    src/main/java/io/runtimeconditions/bindings/gpu/RcGpuField.java: dc4e4a01570d684d3a42d10f6abc22ce7b59df66b621f451a817217a74473b94
+    src/main/java/io/runtimeconditions/bindings/gpu/Vendor.java: e809f5bdd5d1cfefd2f8f17896b612a7804963f2aa7a2eb68211865095cb9be9
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: a58428e1e7034e7d8ae554a687efd2dda3c69fe1a3026796c72c8cb025fb96ff
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 4c5272db3ca4f2f387a6e9896de81515084d0650fcd5c626c76984543c83faaf
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: 14f8215f252ea721a32f276f4cfd27228cc62c987e803fd2365d58d7458a4f77
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 5c63b55941c2c9432412052bb6516476dc91112b45d40add87b0abaa00e7b6d5

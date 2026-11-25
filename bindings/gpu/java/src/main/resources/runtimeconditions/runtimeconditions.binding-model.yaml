@@ -1,0 +1,465 @@
+apiVersion: runtimeconditions.io/binding-model/v1alpha1
+kind: RuntimeConditionsBindingModel
+metadata:
+    semanticSha256: 9510f121327c0209360f6ab419f9cd1ab319a60a4c2701d5c672d03400abf676
+    normalizer:
+        name: rc-binding-model
+        version: 0.1.0
+        sha256: de7ebd0d2df1f49f086808c1ce471ecf1db02030f83d491ad181352ed93356a7
+coreProfileSchema:
+    id: https://runtimeconditions.io/schemas/profile/0.4.0/runtimeconditions.profile.schema.yaml
+    version: 0.4.0
+    semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
+rootExtension:
+    id: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+    version: 0.1.0
+    semanticSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+extensions:
+    - id: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+      version: 0.1.0
+      semanticSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+      description: Requests whole GPU devices with optional per-device memory and vendor constraints.
+vocabulary:
+    owners:
+        - coordinate: field-domain:rc.gpu:device:interface.vendor:"amd"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          path: interface.vendor
+          value: amd
+        - coordinate: field-domain:rc.gpu:device:interface.vendor:"intel"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          path: interface.vendor
+          value: intel
+        - coordinate: field-domain:rc.gpu:device:interface.vendor:"nvidia"
+          category: field-value
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          path: interface.vendor
+          value: nvidia
+        - coordinate: interface-field:rc.gpu:device:count
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          path: interface.count
+        - coordinate: interface-field:rc.gpu:device:minMemoryMiB
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          path: interface.minMemoryMiB
+        - coordinate: interface-field:rc.gpu:device:vendor
+          category: interface-field
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          path: interface.vendor
+        - coordinate: interface:rc.gpu:device
+          category: interface
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+        - coordinate: kind:rc.gpu
+          category: kind
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+    ownedDeclarations:
+        - coordinate: kind:rc.gpu
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          description: GPU hardware that a workload requires.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: kind:rc.gpu
+    interfaces:
+        - coordinate: interface:rc.gpu:device
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          type: device
+          description: Whole GPU devices available to the workload.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: interface:rc.gpu:device
+    interfaceFields:
+        - coordinate: interface-field:rc.gpu:device:count
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          description: Minimum number of whole GPU devices required.
+          path: interface.count
+          segments:
+            - name: interface
+            - name: count
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: interface-field:rc.gpu:device:count
+        - coordinate: interface-field:rc.gpu:device:minMemoryMiB
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          description: Minimum memory each GPU must provide, in mebibytes.
+          path: interface.minMemoryMiB
+          segments:
+            - name: interface
+            - name: minMemoryMiB
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: interface-field:rc.gpu:device:minMemoryMiB
+        - coordinate: interface-field:rc.gpu:device:vendor
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          description: Hardware vendor each GPU must match when specified.
+          path: interface.vendor
+          segments:
+            - name: interface
+            - name: vendor
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: interface-field:rc.gpu:device:vendor
+    valueDomains:
+        - coordinate: field-domain:rc.gpu:device:interface.vendor
+          owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+          kind: rc.gpu
+          interfaceType: device
+          path: interface.vendor
+          segments:
+            - name: interface
+            - name: vendor
+          values:
+            - value: amd
+              description: AMD GPU hardware.
+            - value: intel
+              description: Intel GPU hardware.
+            - value: nvidia
+              description: NVIDIA GPU hardware.
+          provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: field-domain:rc.gpu:device:interface.vendor
+scopes:
+    - coordinate: rc.gpu:device
+      kind: rc.gpu
+      interfaceType: device
+      applicableSchemas:
+        - https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - count
+                properties:
+                    - name: count
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: integer
+                        constraints:
+                            minimum: 1
+                        description: |-
+                            Minimum number of whole GPU devices required.
+
+                            Minimum number of whole GPU devices; must be at least one.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                            jsonPointer: /properties/interface/properties/count
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                        coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                        jsonPointer: /properties/interface/properties/count
+                    - name: minMemoryMiB
+                      shape:
+                        kind: scalar
+                        scalar: integer
+                        constraints:
+                            minimum: 1
+                        description: |-
+                            Minimum memory each GPU must provide, in mebibytes.
+
+                            Minimum memory per GPU in mebibytes; must be at least one when provided.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                            jsonPointer: /properties/interface/properties/minMemoryMiB
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                        coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                        jsonPointer: /properties/interface/properties/minMemoryMiB
+                    - name: vendor
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: amd
+                              description: AMD GPU hardware.
+                            - value: intel
+                              description: Intel GPU hardware.
+                            - value: nvidia
+                              description: NVIDIA GPU hardware.
+                        description: |-
+                            Hardware vendor each GPU must match when specified.
+
+                            Required GPU hardware vendor when the workload needs one of these vendors.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                            jsonPointer: /properties/interface/properties/vendor
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                        coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                        jsonPointer: /properties/interface/properties/vendor
+                description: |-
+                    Whole GPU devices available to the workload.
+
+                    GPU device requirements for scheduling and availability checks.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                    coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                jsonPointer: /properties/interface
+            - name: name
+              shape:
+                kind: scalar
+                scalar: string
+                constraints:
+                    minLength: 1
+                description: A nonempty name for this GPU requirement.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                    coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                    jsonPointer: /properties/name
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                jsonPointer: /properties/name
+            - name: optional
+              shape:
+                kind: scalar
+                scalar: boolean
+                description: Whether this requirement may be left unfulfilled.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                    coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                    jsonPointer: /properties/optional
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                jsonPointer: /properties/optional
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+schemas:
+    - coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+      owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+      id: rc-gpu-device
+      kind: rc.gpu
+      interfaceType: device
+      exact:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        additionalProperties: false
+        properties:
+            interface:
+                additionalProperties: false
+                description: GPU device requirements for scheduling and availability checks.
+                properties:
+                    count:
+                        description: Minimum number of whole GPU devices; must be at least one.
+                        minimum: 1
+                        type: integer
+                    minMemoryMiB:
+                        description: Minimum memory per GPU in mebibytes; must be at least one when provided.
+                        minimum: 1
+                        type: integer
+                    type:
+                        const: device
+                        description: Requests whole GPU devices.
+                    vendor:
+                        description: Required GPU hardware vendor when the workload needs one of these vendors.
+                        enum:
+                            - amd
+                            - intel
+                            - nvidia
+                required:
+                    - count
+                    - type
+                type: object
+            kind:
+                const: rc.gpu
+                description: Identifies a GPU requirement.
+            name:
+                description: A nonempty name for this GPU requirement.
+                minLength: 1
+                type: string
+            optional:
+                description: Whether this requirement may be left unfulfilled.
+                type: boolean
+        required:
+            - interface
+            - kind
+        type: object
+      projection:
+        kind: object
+        required:
+            - interface
+        properties:
+            - name: interface
+              required: true
+              shape:
+                kind: object
+                required:
+                    - count
+                properties:
+                    - name: count
+                      required: true
+                      shape:
+                        kind: scalar
+                        scalar: integer
+                        constraints:
+                            minimum: 1
+                        description: |-
+                            Minimum number of whole GPU devices required.
+
+                            Minimum number of whole GPU devices; must be at least one.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                            jsonPointer: /properties/interface/properties/count
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                        coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                        jsonPointer: /properties/interface/properties/count
+                    - name: minMemoryMiB
+                      shape:
+                        kind: scalar
+                        scalar: integer
+                        constraints:
+                            minimum: 1
+                        description: |-
+                            Minimum memory each GPU must provide, in mebibytes.
+
+                            Minimum memory per GPU in mebibytes; must be at least one when provided.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                            jsonPointer: /properties/interface/properties/minMemoryMiB
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                        coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                        jsonPointer: /properties/interface/properties/minMemoryMiB
+                    - name: vendor
+                      shape:
+                        kind: scalar
+                        scalar: string
+                        values:
+                            - value: amd
+                              description: AMD GPU hardware.
+                            - value: intel
+                              description: Intel GPU hardware.
+                            - value: nvidia
+                              description: NVIDIA GPU hardware.
+                        description: |-
+                            Hardware vendor each GPU must match when specified.
+
+                            Required GPU hardware vendor when the workload needs one of these vendors.
+                        provenance:
+                            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                            jsonPointer: /properties/interface/properties/vendor
+                      provenance:
+                        owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                        extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                        coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                        jsonPointer: /properties/interface/properties/vendor
+                description: |-
+                    Whole GPU devices available to the workload.
+
+                    GPU device requirements for scheduling and availability checks.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                    coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                    jsonPointer: /properties/interface
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                jsonPointer: /properties/interface
+            - name: name
+              shape:
+                kind: scalar
+                scalar: string
+                constraints:
+                    minLength: 1
+                description: A nonempty name for this GPU requirement.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                    coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                    jsonPointer: /properties/name
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                jsonPointer: /properties/name
+            - name: optional
+              shape:
+                kind: scalar
+                scalar: boolean
+                description: Whether this requirement may be left unfulfilled.
+                provenance:
+                    owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                    extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                    coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                    jsonPointer: /properties/optional
+              provenance:
+                owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+                extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+                coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+                jsonPointer: /properties/optional
+        provenance:
+            owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+            extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+            coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
+      provenance:
+        owner: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+        extensionSha256: ccf976d8a1ef07ef5b15601c016679f9edab6a330623efd349e78eb5f56bcd03
+        coordinate: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml#schema:rc-gpu-device
