@@ -186,6 +186,7 @@ def test_dependent_readme_examples_call_the_dependency_and_run_against_both_pack
         "| `env[].name` | `str` | yes |",
     ):
         assert expected in readme, f"{expected}\n{readme}"
+    _assert_ruff_formatted(readme)
     blocks = re.findall(r"```python\n(.*?)```", readme, flags=re.S)
     assert len(blocks) >= 2, readme
     _CURRENT_EXAMPLES.update(examples)
@@ -214,9 +215,56 @@ def test_dependent_readme_examples_call_the_dependency_and_run_against_both_pack
                 del sys.modules[name]
 
 
+def _assert_ruff_formatted(readme: str) -> None:
+    """Ruff formats the Python code blocks of a package's README, so each must already be formatted."""
+    import subprocess
+
+    with TemporaryDirectory() as temporary:
+        (Path(temporary) / "README.md").write_text(readme, encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, "-m", "ruff", "format", "--no-cache", "--check", "--diff", "README.md"],
+            cwd=temporary,
+            capture_output=True,
+            text=True,
+        )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_readme_examples_are_ruff_formatted() -> None:
+    model, plan = _model_and_plan()
+    readme = readme_source(plan, model, render_examples(plan, model))
+    assert readme is not None
+    _assert_ruff_formatted(readme)
+
+
+def test_nested_calls_and_long_imports_are_laid_out_like_ruff() -> None:
+    from runtimeconditions_binding_emitter.examples import _Atom, _Call, _layout, import_lines
+
+    spec = _Call(
+        "Spec",
+        (
+            ("format", _Atom("Format.OPENAPI")),
+            ("uri", _Atom('"catalog://api/default/todos-api"')),
+            ("version", _Atom('"1.0.0"')),
+        ),
+    )
+    node = _Call("api", (("", _Call("Http", (("spec", spec), ("operations", _Atom("None"))))),))
+    # Nested arguments are indented four spaces past their line, not aligned after "spec=".
+    assert "\n        spec=Spec(\n            format=Format.OPENAPI,\n" in _layout(node, 0)
+    names = ("Format", "Http", "HttpOperationsItem", "Method", "Spec", "api")
+    assert import_lines("runtimeconditions_common_integrations", names) == [
+        "from runtimeconditions_common_integrations import (",
+        *(f"    {name}," for name in names),
+        ")",
+    ]
+    assert import_lines("pkg", ("KeyValue", "cache")) == ["from pkg import KeyValue, cache"]
+
+
 if __name__ == "__main__":
     test_descriptions_become_docstrings()
     test_docstrings_do_not_change_the_api()
     test_readme_examples_run_against_the_generated_package()
     test_dependent_readme_examples_call_the_dependency_and_run_against_both_packages()
+    test_readme_examples_are_ruff_formatted()
+    test_nested_calls_and_long_imports_are_laid_out_like_ruff()
     print("ok")

@@ -18,6 +18,7 @@ from .examples import (
     RenderedExample,
     condition_field_docs,
     dedent,
+    import_lines,
     render_examples,
     split_documentation,
 )
@@ -125,7 +126,7 @@ def _markdown(text: str, plan: EmissionPlan, examples: dict[str, RenderedExample
             lines.extend(
                 (
                     "```python",
-                    *(f"from {package} import {', '.join(names)}" for package, names in example.imports),
+                    *(line for package, names in example.imports for line in import_lines(package, names)),
                     "",
                     example.code,
                     "```",
