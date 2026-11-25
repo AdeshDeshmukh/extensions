@@ -1,377 +1,461 @@
 apiVersion: runtimeconditions.io/binding-model/v1alpha1
 kind: RuntimeConditionsBindingModel
 metadata:
-    semanticSha256: 676077a34ad8de7099a9a2a59ec2d7731a0e333f9e323f566eeddd91bcb15560
+    semanticSha256: 088a912636849829e6faafd2f5d9f2f9e41f76c385689c69b3e9082fff0bd4ad
     normalizer:
         name: rc-binding-model
         version: 0.1.0
-        sha256: 2e36cdb35c32557d248920a9eb6f1cc09b4fe77122308a47072a4f8911b290b1
+        sha256: de7ebd0d2df1f49f086808c1ce471ecf1db02030f83d491ad181352ed93356a7
 coreProfileSchema:
     id: https://runtimeconditions.io/schemas/profile/0.4.0/runtimeconditions.profile.schema.yaml
     version: 0.4.0
     semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
 rootExtension:
-    id: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-    version: v1alpha2
-    semanticSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+    id: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+    version: v1alpha4
+    semanticSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
 extensions:
-    - id: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-      version: v1alpha2
-      semanticSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+    - id: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+      version: v1alpha4
+      semanticSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+      description: |-
+        The everyday services most workloads depend on: web APIs, email, databases and caches. A Condition says
+        what the workload needs, so the platform knows what to provide.
+
+        Choose the kind by what the workload does. Use api when it calls another service, with interface type
+        http for a web API or smtp for sending email. Use datastore when it keeps data in a database, with
+        relational for SQL databases such as PostgreSQL or MySQL, or document for databases such as MongoDB.
+        Use cache when it keeps fast, temporary data in a key/value store such as Redis or Memcached.
+
+        Most details are optional. Leave a field out when any choice works for the workload, and the platform
+        decides. Set it when the workload needs something specific: engine: postgres means only PostgreSQL will
+        do. Two interfaces need a little more: http needs the API document, the list of calls, or both, and smtp
+        needs the operations the workload performs, such as send.
+
+        To say how the workload finds what it depends on, for example which environment variable holds the
+        database URL, add the env-configuration extension. When a more specific extension exists for a service,
+        such as aws.s3 for Amazon S3 or nats.service for NATS, use that one instead.
 vocabulary:
     owners:
         - coordinate: field-domain:api:http:interface.operations[].method:"DELETE"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: DELETE
         - coordinate: field-domain:api:http:interface.operations[].method:"GET"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: GET
         - coordinate: field-domain:api:http:interface.operations[].method:"HEAD"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: HEAD
         - coordinate: field-domain:api:http:interface.operations[].method:"OPTIONS"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: OPTIONS
         - coordinate: field-domain:api:http:interface.operations[].method:"PATCH"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: PATCH
         - coordinate: field-domain:api:http:interface.operations[].method:"POST"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: POST
         - coordinate: field-domain:api:http:interface.operations[].method:"PUT"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: PUT
         - coordinate: field-domain:api:http:interface.operations[].method:"TRACE"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
           value: TRACE
         - coordinate: field-domain:api:http:interface.spec.format:"openapi"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.spec.format
           value: openapi
         - coordinate: field-domain:api:smtp:interface.operations[]:"send"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: smtp
           path: interface.operations[]
           value: send
         - coordinate: field-domain:cache:key_value:interface.engine:"memcached"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
           interfaceType: key_value
           path: interface.engine
           value: memcached
         - coordinate: field-domain:cache:key_value:interface.engine:"redis"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
           interfaceType: key_value
           path: interface.engine
           value: redis
         - coordinate: field-domain:datastore:document:interface.engine:"couchbase"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: document
           path: interface.engine
           value: couchbase
         - coordinate: field-domain:datastore:document:interface.engine:"mongodb"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: document
           path: interface.engine
           value: mongodb
         - coordinate: field-domain:datastore:relational:interface.engine:"mariadb"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
           value: mariadb
         - coordinate: field-domain:datastore:relational:interface.engine:"mysql"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
           value: mysql
         - coordinate: field-domain:datastore:relational:interface.engine:"oracle"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
           value: oracle
         - coordinate: field-domain:datastore:relational:interface.engine:"postgres"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
           value: postgres
         - coordinate: field-domain:datastore:relational:interface.engine:"sqlite"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
           value: sqlite
         - coordinate: field-domain:datastore:relational:interface.engine:"sqlserver"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
           value: sqlserver
         - coordinate: interface-field:api:http:operations
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations
         - coordinate: interface-field:api:http:spec
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.spec
         - coordinate: interface-field:api:smtp:operations
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: smtp
           path: interface.operations
         - coordinate: interface-field:cache:key_value:engine
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
           interfaceType: key_value
           path: interface.engine
         - coordinate: interface-field:datastore:document:engine
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: document
           path: interface.engine
         - coordinate: interface-field:datastore:relational:engine
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
         - coordinate: interface:api:http
           category: interface
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
         - coordinate: interface:api:smtp
           category: interface
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: smtp
         - coordinate: interface:cache:key_value
           category: interface
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
           interfaceType: key_value
         - coordinate: interface:datastore:document
           category: interface
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: document
         - coordinate: interface:datastore:relational
           category: interface
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
         - coordinate: kind:api
           category: kind
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
         - coordinate: kind:cache
           category: kind
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
         - coordinate: kind:datastore
           category: kind
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
     ownedDeclarations:
         - coordinate: kind:api
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
+          description: |-
+            The workload calls another service through a network API, such as an HTTP API or an SMTP mail server.
+
+            Example: a workload that reads todos from an HTTP API described by an OpenAPI document.
+
+            ```condition
+            kind: api
+            interface:
+              type: http
+              spec:
+                format: openapi
+                uri: catalog://api/default/todos-api
+                version: 1.0.0
+              operations:
+                - method: GET
+                  path: /todos/{id}
+            ```
+
+            Example: a workload that sends email through an SMTP server.
+
+            ```condition
+            kind: api
+            interface:
+              type: smtp
+              operations: [send]
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: kind:api
         - coordinate: kind:cache
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
+          description: |-
+            The workload keeps frequently used data in a cache for fast access.
+
+            Example: a workload that needs Redis.
+
+            ```condition
+            kind: cache
+            interface:
+              type: key_value
+              engine: redis
+            ```
+
+            Example: a workload that accepts any key/value cache.
+
+            ```condition
+            kind: cache
+            interface:
+              type: key_value
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: kind:cache
         - coordinate: kind:datastore
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
+          description: |-
+            The workload stores and reads persistent data in a database.
+
+            Example: a workload that needs a PostgreSQL database.
+
+            ```condition
+            kind: datastore
+            interface:
+              type: relational
+              engine: postgres
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: kind:datastore
     interfaces:
         - coordinate: interface:api:http
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           type: http
+          description: The API is reached over HTTP. It is described by an API document, by the operations the workload calls, or by both.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface:api:http
         - coordinate: interface:api:smtp
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           type: smtp
+          description: An SMTP mail server that the workload uses to send email, such as sign-up confirmations, password resets or alerts.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface:api:smtp
         - coordinate: interface:cache:key_value
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
           type: key_value
+          description: A key/value store, such as Redis or Memcached, for data the workload reads often and can afford to lose. Set engine when the workload needs one specific store.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface:cache:key_value
         - coordinate: interface:datastore:document
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           type: document
+          description: A document database that stores JSON-like records, such as MongoDB. Set engine when the workload needs one specific database.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface:datastore:document
         - coordinate: interface:datastore:relational
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           type: relational
+          description: A relational (SQL) database, such as PostgreSQL or MySQL, where data lives in tables. Set engine when the workload needs one specific database.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface:datastore:relational
     interfaceFields:
         - coordinate: interface-field:api:http:operations
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
+          description: The HTTP operations the workload calls. A platform can use them to allow only these calls.
           path: interface.operations
           segments:
             - name: interface
             - name: operations
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface-field:api:http:operations
         - coordinate: interface-field:api:http:spec
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
+          description: A machine-readable description of the API that the workload depends on.
           path: interface.spec
           segments:
             - name: interface
             - name: spec
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface-field:api:http:spec
         - coordinate: interface-field:api:smtp:operations
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: smtp
+          description: The SMTP operations the workload performs.
           path: interface.operations
           segments:
             - name: interface
             - name: operations
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface-field:api:smtp:operations
         - coordinate: interface-field:cache:key_value:engine
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
           interfaceType: key_value
+          description: The cache engine the workload needs.
           path: interface.engine
           segments:
             - name: interface
             - name: engine
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface-field:cache:key_value:engine
         - coordinate: interface-field:datastore:document:engine
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: document
+          description: The document database engine the workload needs.
           path: interface.engine
           segments:
             - name: interface
             - name: engine
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface-field:datastore:document:engine
         - coordinate: interface-field:datastore:relational:engine
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
+          description: The relational database engine the workload needs.
           path: interface.engine
           segments:
             - name: interface
             - name: engine
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: interface-field:datastore:relational:engine
     valueDomains:
         - coordinate: field-domain:api:http:interface.operations[].method
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.operations[].method
@@ -382,19 +466,27 @@ vocabulary:
             - name: method
           values:
             - value: DELETE
+              description: Delete a resource.
             - value: GET
+              description: Read a resource.
             - value: HEAD
+              description: Read only the headers of a resource.
             - value: OPTIONS
+              description: Ask which methods a resource supports.
             - value: PATCH
+              description: Change part of a resource.
             - value: POST
+              description: Create a resource or submit data.
             - value: PUT
+              description: Replace a resource.
             - value: TRACE
+              description: Echo the request back, for diagnostics.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: field-domain:api:http:interface.operations[].method
         - coordinate: field-domain:api:http:interface.spec.format
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: http
           path: interface.spec.format
@@ -404,12 +496,13 @@ vocabulary:
             - name: format
           values:
             - value: openapi
+              description: An OpenAPI document.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: field-domain:api:http:interface.spec.format
         - coordinate: field-domain:api:smtp:interface.operations[]
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: api
           interfaceType: smtp
           path: interface.operations[]
@@ -419,12 +512,13 @@ vocabulary:
               array: true
           values:
             - value: send
+              description: Submit an email for delivery.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: field-domain:api:smtp:interface.operations[]
         - coordinate: field-domain:cache:key_value:interface.engine
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: cache
           interfaceType: key_value
           path: interface.engine
@@ -433,13 +527,15 @@ vocabulary:
             - name: engine
           values:
             - value: memcached
+              description: Memcached, a simple in-memory cache.
             - value: redis
+              description: Redis, an in-memory key/value store.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: field-domain:cache:key_value:interface.engine
         - coordinate: field-domain:datastore:document:interface.engine
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: document
           path: interface.engine
@@ -448,13 +544,15 @@ vocabulary:
             - name: engine
           values:
             - value: couchbase
+              description: Couchbase.
             - value: mongodb
+              description: MongoDB.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: field-domain:datastore:document:interface.engine
         - coordinate: field-domain:datastore:relational:interface.engine
-          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
           kind: datastore
           interfaceType: relational
           path: interface.engine
@@ -463,21 +561,27 @@ vocabulary:
             - name: engine
           values:
             - value: mariadb
+              description: MariaDB.
             - value: mysql
+              description: MySQL.
             - value: oracle
+              description: Oracle Database.
             - value: postgres
+              description: PostgreSQL.
             - value: sqlite
+              description: SQLite, an embedded file-based database.
             - value: sqlserver
+              description: Microsoft SQL Server.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
             coordinate: field-domain:datastore:relational:interface.engine
 scopes:
     - coordinate: api:http
       kind: api
       interfaceType: http
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
       projection:
         kind: object
         required:
@@ -504,22 +608,31 @@ scopes:
                                     scalar: string
                                     values:
                                         - value: DELETE
+                                          description: Delete a resource.
                                         - value: GET
+                                          description: Read a resource.
                                         - value: HEAD
+                                          description: Read only the headers of a resource.
                                         - value: OPTIONS
+                                          description: Ask which methods a resource supports.
                                         - value: PATCH
+                                          description: Change part of a resource.
                                         - value: POST
+                                          description: Create a resource or submit data.
                                         - value: PUT
+                                          description: Replace a resource.
                                         - value: TRACE
+                                          description: Echo the request back, for diagnostics.
+                                    description: HTTP method of the operation. Must be one of the defined methods.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/method
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/method
                                 - name: path
                                   required: true
@@ -528,15 +641,16 @@ scopes:
                                     scalar: string
                                     constraints:
                                         minLength: 1
+                                    description: Request path of the operation, for example /todos/{id}, with path parameters in braces. Must not be empty.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/path
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/path
                                 - name: requestBodySchema
                                   shape:
@@ -547,31 +661,31 @@ scopes:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
                                             maxItems: 1
                                             minItems: 1
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
                                           mapValues:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
                                           scalar: string
@@ -582,19 +696,20 @@ scopes:
                                             - value: number
                                             - value: string
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
+                                    description: Shape of the request body that the workload sends.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/requestBodySchema
                                 - name: responseSchema
                                   shape:
@@ -605,31 +720,31 @@ scopes:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
                                             maxItems: 1
                                             minItems: 1
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
                                           mapValues:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
                                           scalar: string
@@ -640,36 +755,42 @@ scopes:
                                             - value: number
                                             - value: string
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
+                                    description: Shape of the response body that the workload expects back.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/responseSchema
+                            description: One HTTP operation. Requires method and path; no other properties are allowed.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
+                        description: |-
+                            The HTTP operations the workload calls. A platform can use them to allow only these calls.
+
+                            List at least one operation.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/operations
                     - name: spec
                       shape:
@@ -685,15 +806,17 @@ scopes:
                                 scalar: string
                                 values:
                                     - value: openapi
+                                      description: An OpenAPI document.
+                                description: Format of the API document. Must be openapi.
                                 provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/format
                               provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/format
                             - name: uri
                               required: true
@@ -702,15 +825,16 @@ scopes:
                                 scalar: string
                                 constraints:
                                     minLength: 1
+                                description: Where the API document can be found, for example catalog://api/default/todos-api. Must not be empty.
                                 provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/uri
                               provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/uri
                             - name: version
                               shape:
@@ -718,45 +842,54 @@ scopes:
                                 scalar: string
                                 constraints:
                                     pattern: ^(?:=?[0-9]+\.[0-9]+\.[0-9]+|[<>]=?[0-9]+\.[0-9]+\.[0-9]+|\^[0-9]+\.[0-9]+\.[0-9]+|~[0-9]+\.[0-9]+\.[0-9]+)$
+                                description: The API version the workload is written against. Must be an exact version (1.2.0 or =1.2.0), a comparison (>1.2.0, >=1.2.0, <2.0.0, <=2.0.0), a caret range (^1.2.0) or a tilde range (~1.2.0).
                                 provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/version
                               provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/version
+                        description: |-
+                            A machine-readable description of the API that the workload depends on.
+
+                            Requires format and uri. No other properties are allowed.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/spec
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/spec
+                description: |-
+                    The API is reached over HTTP. It is described by an API document, by the operations the workload calls, or by both.
+
+                    Give spec, operations, or both.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
     - coordinate: api:smtp
       kind: api
       interfaceType: smtp
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
       projection:
         kind: object
         required:
@@ -778,43 +911,52 @@ scopes:
                             scalar: string
                             values:
                                 - value: send
+                                  description: Submit an email for delivery.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
+                        description: |-
+                            The SMTP operations the workload performs.
+
+                            List at least one operation, without repeats.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                         jsonPointer: /properties/interface/properties/operations
+                description: |-
+                    An SMTP mail server that the workload uses to send email, such as sign-up confirmations, password resets or alerts.
+
+                    Requires operations.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
     - coordinate: cache:key_value
       kind: cache
       interfaceType: key_value
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
       projection:
         kind: object
         required:
@@ -831,36 +973,46 @@ scopes:
                         scalar: string
                         values:
                             - value: memcached
+                              description: Memcached, a simple in-memory cache.
                             - value: redis
+                              description: Redis, an in-memory key/value store.
+                        description: |-
+                            The cache engine the workload needs.
+
+                            Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                         jsonPointer: /properties/interface/properties/engine
+                description: |-
+                    A key/value store, such as Redis or Memcached, for data the workload reads often and can afford to lose. Set engine when the workload needs one specific store.
+
+                    Optional engine. Other properties are allowed.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
     - coordinate: datastore:document
       kind: datastore
       interfaceType: document
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
       projection:
         kind: object
         required:
@@ -877,36 +1029,46 @@ scopes:
                         scalar: string
                         values:
                             - value: couchbase
+                              description: Couchbase.
                             - value: mongodb
+                              description: MongoDB.
+                        description: |-
+                            The document database engine the workload needs.
+
+                            Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                         jsonPointer: /properties/interface/properties/engine
+                description: |-
+                    A document database that stores JSON-like records, such as MongoDB. Set engine when the workload needs one specific database.
+
+                    Optional engine. Other properties are allowed.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
     - coordinate: datastore:relational
       kind: datastore
       interfaceType: relational
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+        - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
       projection:
         kind: object
         required:
@@ -923,44 +1085,59 @@ scopes:
                         scalar: string
                         values:
                             - value: mariadb
+                              description: MariaDB.
                             - value: mysql
+                              description: MySQL.
                             - value: oracle
+                              description: Oracle Database.
                             - value: postgres
+                              description: PostgreSQL.
                             - value: sqlite
+                              description: SQLite, an embedded file-based database.
                             - value: sqlserver
+                              description: Microsoft SQL Server.
+                        description: |-
+                            The relational database engine the workload needs.
+
+                            Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                         jsonPointer: /properties/interface/properties/engine
+                description: |-
+                    A relational (SQL) database, such as PostgreSQL or MySQL, where data lives in tables. Set engine when the workload needs one specific database.
+
+                    Optional engine. Other properties are allowed.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
 schemas:
-    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
-      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
+      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
       id: api-http-interface
       kind: api
       interfaceType: http
       exact:
         $defs:
             simpleSchema:
+                description: 'A simple data shape. Must be one of: the name of a scalar type (string, number, integer, boolean or null); an object whose values are simple schemas; or a list with exactly one simple schema, which describes every item.'
                 oneOf:
                     - additionalProperties:
                         $ref: '#/$defs/simpleSchema'
@@ -987,12 +1164,16 @@ schemas:
                         - operations
                     - required:
                         - spec
+                description: Give spec, operations, or both.
                 properties:
                     operations:
+                        description: List at least one operation.
                         items:
                             additionalProperties: false
+                            description: One HTTP operation. Requires method and path; no other properties are allowed.
                             properties:
                                 method:
+                                    description: HTTP method of the operation. Must be one of the defined methods.
                                     enum:
                                         - DELETE
                                         - GET
@@ -1003,12 +1184,15 @@ schemas:
                                         - PUT
                                         - TRACE
                                 path:
+                                    description: Request path of the operation, for example /todos/{id}, with path parameters in braces. Must not be empty.
                                     minLength: 1
                                     type: string
                                 requestBodySchema:
                                     $ref: '#/$defs/simpleSchema'
+                                    description: Shape of the request body that the workload sends.
                                 responseSchema:
                                     $ref: '#/$defs/simpleSchema'
+                                    description: Shape of the response body that the workload expects back.
                             required:
                                 - method
                                 - path
@@ -1017,13 +1201,17 @@ schemas:
                         type: array
                     spec:
                         additionalProperties: false
+                        description: Requires format and uri. No other properties are allowed.
                         properties:
                             format:
                                 const: openapi
+                                description: Format of the API document. Must be openapi.
                             uri:
+                                description: Where the API document can be found, for example catalog://api/default/todos-api. Must not be empty.
                                 minLength: 1
                                 type: string
                             version:
+                                description: The API version the workload is written against. Must be an exact version (1.2.0 or =1.2.0), a comparison (>1.2.0, >=1.2.0, <2.0.0, <=2.0.0), a caret range (^1.2.0) or a tilde range (~1.2.0).
                                 pattern: ^(?:=?[0-9]+\.[0-9]+\.[0-9]+|[<>]=?[0-9]+\.[0-9]+\.[0-9]+|\^[0-9]+\.[0-9]+\.[0-9]+|~[0-9]+\.[0-9]+\.[0-9]+)$
                                 type: string
                         required:
@@ -1067,22 +1255,31 @@ schemas:
                                     scalar: string
                                     values:
                                         - value: DELETE
+                                          description: Delete a resource.
                                         - value: GET
+                                          description: Read a resource.
                                         - value: HEAD
+                                          description: Read only the headers of a resource.
                                         - value: OPTIONS
+                                          description: Ask which methods a resource supports.
                                         - value: PATCH
+                                          description: Change part of a resource.
                                         - value: POST
+                                          description: Create a resource or submit data.
                                         - value: PUT
+                                          description: Replace a resource.
                                         - value: TRACE
+                                          description: Echo the request back, for diagnostics.
+                                    description: HTTP method of the operation. Must be one of the defined methods.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/method
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/method
                                 - name: path
                                   required: true
@@ -1091,15 +1288,16 @@ schemas:
                                     scalar: string
                                     constraints:
                                         minLength: 1
+                                    description: Request path of the operation, for example /todos/{id}, with path parameters in braces. Must not be empty.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/path
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/path
                                 - name: requestBodySchema
                                   shape:
@@ -1110,31 +1308,31 @@ schemas:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
                                             maxItems: 1
                                             minItems: 1
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
                                           mapValues:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
                                           scalar: string
@@ -1145,19 +1343,20 @@ schemas:
                                             - value: number
                                             - value: string
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
+                                    description: Shape of the request body that the workload sends.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/requestBodySchema
                                 - name: responseSchema
                                   shape:
@@ -1168,31 +1367,31 @@ schemas:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
                                             maxItems: 1
                                             minItems: 1
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
                                           mapValues:
                                             kind: ref
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
-                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
                                           scalar: string
@@ -1203,36 +1402,42 @@ schemas:
                                             - value: number
                                             - value: string
                                           provenance:
-                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
+                                    description: Shape of the response body that the workload expects back.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/responseSchema
+                            description: One HTTP operation. Requires method and path; no other properties are allowed.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
+                        description: |-
+                            The HTTP operations the workload calls. A platform can use them to allow only these calls.
+
+                            List at least one operation.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/operations
                     - name: spec
                       shape:
@@ -1248,15 +1453,17 @@ schemas:
                                 scalar: string
                                 values:
                                     - value: openapi
+                                      description: An OpenAPI document.
+                                description: Format of the API document. Must be openapi.
                                 provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/format
                               provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/format
                             - name: uri
                               required: true
@@ -1265,15 +1472,16 @@ schemas:
                                 scalar: string
                                 constraints:
                                     minLength: 1
+                                description: Where the API document can be found, for example catalog://api/default/todos-api. Must not be empty.
                                 provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/uri
                               provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/uri
                             - name: version
                               shape:
@@ -1281,40 +1489,49 @@ schemas:
                                 scalar: string
                                 constraints:
                                     pattern: ^(?:=?[0-9]+\.[0-9]+\.[0-9]+|[<>]=?[0-9]+\.[0-9]+\.[0-9]+|\^[0-9]+\.[0-9]+\.[0-9]+|~[0-9]+\.[0-9]+\.[0-9]+)$
+                                description: The API version the workload is written against. Must be an exact version (1.2.0 or =1.2.0), a comparison (>1.2.0, >=1.2.0, <2.0.0, <=2.0.0), a caret range (^1.2.0) or a tilde range (~1.2.0).
                                 provenance:
-                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/version
                               provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/version
+                        description: |-
+                            A machine-readable description of the API that the workload depends on.
+
+                            Requires format and uri. No other properties are allowed.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/spec
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/spec
+                description: |-
+                    The API is reached over HTTP. It is described by an API document, by the operations the workload calls, or by both.
+
+                    Give spec, operations, or both.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
       definitions:
         - name: simpleSchema
           jsonPointer: /$defs/simpleSchema
@@ -1326,31 +1543,31 @@ schemas:
                     kind: ref
                     ref: '#/$defs/simpleSchema'
                     provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                         jsonPointer: /$defs/simpleSchema/oneOf/2/items
                   constraints:
                     maxItems: 1
                     minItems: 1
                   provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                     jsonPointer: /$defs/simpleSchema/oneOf/2
                 - kind: map
                   mapValues:
                     kind: ref
                     ref: '#/$defs/simpleSchema'
                     provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                         jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                   provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                     jsonPointer: /$defs/simpleSchema/oneOf/0
                 - kind: scalar
                   scalar: string
@@ -1361,26 +1578,27 @@ schemas:
                     - value: number
                     - value: string
                   provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                     jsonPointer: /$defs/simpleSchema/oneOf/1
+            description: 'A simple data shape. Must be one of: the name of a scalar type (string, number, integer, boolean or null); an object whose values are simple schemas; or a list with exactly one simple schema, which describes every item.'
             provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
                 jsonPointer: /$defs/simpleSchema
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
             jsonPointer: /$defs/simpleSchema
       provenance:
-        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-http-interface
-    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
-      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-http-interface
+    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
+      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
       id: api-smtp-interface
       kind: api
       interfaceType: smtp
@@ -1390,8 +1608,10 @@ schemas:
         properties:
             interface:
                 additionalProperties: true
+                description: Requires operations.
                 properties:
                     operations:
+                        description: List at least one operation, without repeats.
                         items:
                             enum:
                                 - send
@@ -1431,44 +1651,53 @@ schemas:
                             scalar: string
                             values:
                                 - value: send
+                                  description: Submit an email for delivery.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
+                        description: |-
+                            The SMTP operations the workload performs.
+
+                            List at least one operation, without repeats.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                         jsonPointer: /properties/interface/properties/operations
+                description: |-
+                    An SMTP mail server that the workload uses to send email, such as sign-up confirmations, password resets or alerts.
+
+                    Requires operations.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
       provenance:
-        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:api-smtp-interface
-    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
-      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:api-smtp-interface
+    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
       id: cache-key-value-interface
       kind: cache
       interfaceType: key_value
@@ -1478,8 +1707,10 @@ schemas:
         properties:
             interface:
                 additionalProperties: true
+                description: Optional engine. Other properties are allowed.
                 properties:
                     engine:
+                        description: Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         enum:
                             - memcached
                             - redis
@@ -1510,37 +1741,47 @@ schemas:
                         scalar: string
                         values:
                             - value: memcached
+                              description: Memcached, a simple in-memory cache.
                             - value: redis
+                              description: Redis, an in-memory key/value store.
+                        description: |-
+                            The cache engine the workload needs.
+
+                            Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                         jsonPointer: /properties/interface/properties/engine
+                description: |-
+                    A key/value store, such as Redis or Memcached, for data the workload reads often and can afford to lose. Set engine when the workload needs one specific store.
+
+                    Optional engine. Other properties are allowed.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
       provenance:
-        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:cache-key-value-interface
-    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
-      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:cache-key-value-interface
+    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
+      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
       id: datastore-document-interface
       kind: datastore
       interfaceType: document
@@ -1550,8 +1791,10 @@ schemas:
         properties:
             interface:
                 additionalProperties: true
+                description: Optional engine. Other properties are allowed.
                 properties:
                     engine:
+                        description: Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         enum:
                             - couchbase
                             - mongodb
@@ -1582,37 +1825,47 @@ schemas:
                         scalar: string
                         values:
                             - value: couchbase
+                              description: Couchbase.
                             - value: mongodb
+                              description: MongoDB.
+                        description: |-
+                            The document database engine the workload needs.
+
+                            Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                         jsonPointer: /properties/interface/properties/engine
+                description: |-
+                    A document database that stores JSON-like records, such as MongoDB. Set engine when the workload needs one specific database.
+
+                    Optional engine. Other properties are allowed.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
       provenance:
-        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-document-interface
-    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
-      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
+        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-document-interface
+    - coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+      owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
       id: datastore-relational-interface
       kind: datastore
       interfaceType: relational
@@ -1622,8 +1875,10 @@ schemas:
         properties:
             interface:
                 additionalProperties: true
+                description: Optional engine. Other properties are allowed.
                 properties:
                     engine:
+                        description: Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         enum:
                             - mariadb
                             - mysql
@@ -1658,36 +1913,50 @@ schemas:
                         scalar: string
                         values:
                             - value: mariadb
+                              description: MariaDB.
                             - value: mysql
+                              description: MySQL.
                             - value: oracle
+                              description: Oracle Database.
                             - value: postgres
+                              description: PostgreSQL.
                             - value: sqlite
+                              description: SQLite, an embedded file-based database.
                             - value: sqlserver
+                              description: Microsoft SQL Server.
+                        description: |-
+                            The relational database engine the workload needs.
+
+                            Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                         jsonPointer: /properties/interface/properties/engine
+                description: |-
+                    A relational (SQL) database, such as PostgreSQL or MySQL, where data lives in tables. Set engine when the workload needs one specific database.
+
+                    Optional engine. Other properties are allowed.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                    extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                    owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                    extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                    coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-                extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+                owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+                extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+                coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-            extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+            owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+            extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+            coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
       provenance:
-        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml
-        extensionSha256: c25ac6b901fe29a73331ca38e58a93fa07ae0204cf8ffc02acfa20bf3ab51844
-        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha2/runtimeconditions.extension.yaml#schema:datastore-relational-interface
+        owner: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+        extensionSha256: 650270ce3b6d65bd9ab324c7b74fce13fca362b888471e196b54041786d3669e
+        coordinate: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml#schema:datastore-relational-interface
