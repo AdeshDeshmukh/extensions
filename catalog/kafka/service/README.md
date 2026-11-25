@@ -4,7 +4,6 @@ This extension declares the Kafka topic and consumer-group access a workload
 requires. It is separate from common integrations so future Kafka SDK mappings
 can target the same service contract across languages.
 
-The first release is [`0.1.0`](releases/0.1.0/runtimeconditions.extension.yaml).
 Each Condition uses `kind: kafka.service` and `interface.type: service`. Its
 `name` identifies the logical Kafka service requirement; resource identities
 appear in `interface.operations`.
@@ -50,12 +49,7 @@ These entries describe workload access requirements. They do not request topic
 creation, configure a broker, or identify an authentication principal. The
 platform supplies connectivity, authentication, and authorization policy.
 
-## Scope and SDK support
-
-Release `0.1.0` covers ordinary topic read/write access and consumer groups.
-It does not represent transactions, additional idempotent-producer permissions,
-administration, pattern subscriptions, Kafka Streams or Share Groups, AMQP,
-schema registries, broker URLs, credentials, or client tuning.
+## SDK support
 
 Future SDK mappings can map proven application topic/group identities to these
 capabilities. They must preserve additional demands such as transactional or

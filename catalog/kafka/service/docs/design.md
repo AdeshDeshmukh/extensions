@@ -1,13 +1,7 @@
 # Kafka service contract
 
-## Intent and boundaries
-
-Issue [#26](https://github.com/runtimeconditions/extensions/issues/26) requests
-message-broker requirements. Colin's
-[review direction](https://github.com/runtimeconditions/extensions/issues/26#issuecomment-7128060352)
-supports a separate Kafka-specific extension for future SDK support. This
-release implements the Kafka portion. AMQP remains a separate follow-up; this
-contribution does not establish that the entire issue is complete.
+The `kafka.service` contract describes topic read/write access and consumer-group
+access through the Kafka client protocol.
 
 ## Approaches
 
