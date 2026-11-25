@@ -1,0 +1,149 @@
+name: Publish bindings to every registry
+
+# One button for a release: checks what each registry would receive, then runs
+# the per-registry publish workflows (Go tags, PyPI, npm, Maven Central) side by
+# side and waits for them. Each registry is still published by its own workflow,
+# so npm and PyPI trusted publishing keep matching those workflow files, and the
+# pypi and maven-central environments still ask for approval.
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Comma-separated package keys from packages.yaml (for example common-integrations,env-configuration), or all'
+        type: string
+        default: 'all'
+      go:
+        description: 'Go: tag and release the modules'
+        type: boolean
+        default: true
+      python:
+        description: 'Python: upload to PyPI'
+        type: boolean
+        default: true
+      typescript:
+        description: 'TypeScript: publish to npm'
+        type: boolean
+        default: true
+      java:
+        description: 'Java: upload to Maven Central'
+        type: boolean
+        default: true
+      dry_run:
+        description: 'Check and build everything without publishing anything'
+        type: boolean
+        default: true
+      maven_auto_publish:
+        description: 'Maven: publish without pressing Publish in the Portal, and wait for each package before its dependents'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: binding-publish-all
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    # Lists every selected package with its registry status, and stops a real run that npm cannot accept.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      languages: ${{ steps.plan.outputs.languages }}
+    env:
+      PACKAGES: ${{ inputs.packages }}
+      EXECUTE: ${{ !inputs.dry_run }}
+      GO: ${{ inputs.go }}
+      PYTHON: ${{ inputs.python }}
+      TYPESCRIPT: ${{ inputs.typescript }}
+      JAVA: ${{ inputs.java }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python for the publication helper
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12.10'
+
+      - name: Install the helper dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+
+      - name: Test the publication helper
+        run: python -m unittest discover -s tooling/extension-bindings/ci -p 'test_publish_all.py'
+
+      - name: Check what each registry would receive
+        id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          languages=()
+          [[ "$GO" == true ]] && languages+=(go)
+          [[ "$PYTHON" == true ]] && languages+=(python)
+          [[ "$TYPESCRIPT" == true ]] && languages+=(typescript)
+          [[ "$JAVA" == true ]] && languages+=(java)
+          if [[ ${#languages[@]} -eq 0 ]]; then
+            echo "::error::Select at least one language."
+            exit 1
+          fi
+          args=(--packages "$PACKAGES" --languages "$(IFS=,; echo "${languages[*]}")")
+          if [[ "$EXECUTE" == true ]]; then
+            args+=(--execute)
+          fi
+          python tooling/extension-bindings/ci/publish_all.py preflight "${args[@]}"
+
+  publish:
+    # One job per language with something new, each running that registry's publish workflow and waiting for it.
+    needs: preflight
+    if: needs.preflight.outputs.languages != '[]'
+    runs-on: ubuntu-24.04
+    # Covers environment approvals and, with Maven auto publish, waiting for packages to reach Maven Central.
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(needs.preflight.outputs.languages) }}
+    permissions:
+      contents: read
+      # Starting another workflow with workflow_dispatch.
+      actions: write
+    env:
+      PACKAGES: ${{ inputs.packages }}
+      EXECUTE: ${{ !inputs.dry_run }}
+      MAVEN_AUTO_PUBLISH: ${{ inputs.maven_auto_publish }}
+      LANGUAGE: ${{ matrix.language }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python for the publication helper
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12.10'
+
+      - name: Install the helper dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+
+      - name: Run the ${{ matrix.language }} publish workflow and wait for it
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          args=(--language "$LANGUAGE" --packages "$PACKAGES" --ref main)
+          if [[ "$EXECUTE" == true ]]; then
+            args+=(--execute)
+          fi
+          if [[ "$MAVEN_AUTO_PUBLISH" == true ]]; then
+            args+=(--maven-auto-publish)
+          fi
+          python tooling/extension-bindings/ci/publish_all.py dispatch "${args[@]}"
