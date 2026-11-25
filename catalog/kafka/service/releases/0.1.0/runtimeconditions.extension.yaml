@@ -1,0 +1,115 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+  version: 0.1.0
+  description: Declares topic and consumer-group access required by a Kafka workload.
+spec:
+  kinds:
+    - name: kafka.service
+      description: A Kafka service providing the declared topic and consumer-group access.
+  interfaceTypes:
+    - name: service
+      targetKind: kafka.service
+      description: Kafka access through its native client protocol.
+  interfaceFields:
+    - name: operations
+      targetKind: kafka.service
+      targetType: service
+      description: Distinct topic and consumer-group capabilities required by the workload.
+  fieldValues:
+    - field: interface.operations[].resource
+      targetKind: kafka.service
+      targetType: service
+      values: [topic, group]
+      valueDescriptions:
+        topic: A named Kafka topic to read from or write to.
+        group: A named Kafka consumer group used for coordination or offset management.
+    - field: interface.operations[].action
+      targetKind: kafka.service
+      targetType: service
+      values: [read, write]
+      valueDescriptions:
+        read: Read a topic, or use a consumer group for coordination or offset management.
+        write: Produce records to a topic without declaring transactional or idempotent privileges.
+  schemas:
+    - id: kafka-service-interface
+      appliesToKind: kafka.service
+      appliesToInterfaceType: service
+      description: Validates topic read/write and consumer-group read requirements with literal identities.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        $defs:
+          topicName:
+            type: string
+            minLength: 1
+            maxLength: 249
+            description: Literal Kafka topic name using ASCII letters, digits, dots, underscores, or hyphens; not '.' or '..'.
+            not:
+              anyOf:
+                - enum: ['.', '..']
+                - pattern: '[^a-zA-Z0-9._-]'
+          groupId:
+            type: string
+            minLength: 1
+            pattern: '^[^*]+$'
+            description: Nonempty literal consumer-group ID; wildcard matching is unsupported.
+        type: object
+        required: [kind, interface]
+        properties:
+          kind:
+            const: kafka.service
+          interface:
+            type: object
+            required: [type, operations]
+            properties:
+              type:
+                const: service
+              operations:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                description: Capabilities requested on exact topic and consumer-group identities.
+                items:
+                  oneOf:
+                    - type: object
+                      description: Read records from a named topic without implying consumer-group access.
+                      required: [resource, action, topic]
+                      properties:
+                        resource:
+                          const: topic
+                          description: Kafka resource category to which the capability applies.
+                        action:
+                          const: read
+                          description: Kafka capability required on the named resource.
+                        topic:
+                          $ref: '#/$defs/topicName'
+                      additionalProperties: false
+                    - type: object
+                      description: Produce records to a named topic without implying topic creation.
+                      required: [resource, action, topic]
+                      properties:
+                        resource:
+                          const: topic
+                          description: Kafka resource category to which the capability applies.
+                        action:
+                          const: write
+                          description: Kafka capability required on the named resource.
+                        topic:
+                          $ref: '#/$defs/topicName'
+                      additionalProperties: false
+                    - type: object
+                      description: Coordinate consumption or commit and fetch offsets for a named group without implying topic access.
+                      required: [resource, action, groupId]
+                      properties:
+                        resource:
+                          const: group
+                          description: Kafka resource category to which the capability applies.
+                        action:
+                          const: read
+                          description: Kafka capability required on the named resource.
+                        groupId:
+                          $ref: '#/$defs/groupId'
+                      additionalProperties: false
+            additionalProperties: true
+        additionalProperties: true

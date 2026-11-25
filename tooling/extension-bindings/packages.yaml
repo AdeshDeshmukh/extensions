@@ -248,6 +248,41 @@ packages:
         languageVersion: 21.0.12
         publicationMode: registry
         registryId: maven-central
+  kafka-service:
+    rootExtension: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+    coreProfileSchemaVersion: 0.4.0
+    languages:
+      go:
+        coordinate: runtimeconditions.io/x/kafka/service
+        name: service
+        version: 0.1.0
+        sourceDirectory: bindings/kafka-service/go
+        languageVersion: 1.25.0
+        publicationMode: github-tag
+      python:
+        coordinate: runtimeconditions-kafka-service
+        name: runtimeconditions_kafka_service
+        version: 0.1.0
+        sourceDirectory: bindings/kafka-service/python
+        languageVersion: 3.12.10
+        publicationMode: registry
+        registryId: pypi
+      typescript:
+        coordinate: '@runtimeconditions/kafka-service'
+        name: '@runtimeconditions/kafka-service'
+        version: 0.1.0
+        sourceDirectory: bindings/kafka-service/typescript
+        languageVersion: 20.19.6
+        publicationMode: registry
+        registryId: npm
+      java:
+        coordinate: io.runtimeconditions.bindings:runtimeconditions-kafka-service
+        name: io.runtimeconditions.bindings.kafkaservice
+        version: 0.1.0
+        sourceDirectory: bindings/kafka-service/java
+        languageVersion: 21.0.12
+        publicationMode: registry
+        registryId: maven-central
   kubernetes-api:
     rootExtension: https://runtimeconditions.io/extensions/kubernetes/api/0.1.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
