@@ -279,7 +279,7 @@ spec:
                 required: [queueRef, maxReceiveCount]
                 properties:
                   queueRef: {$ref: '#/$defs/queueRef', description: "Name of the destination dead-letter queue Condition; the adapter checks existence, type compatibility, and cycles."}
-                  maxReceiveCount: {description: "Exact positive configured receive threshold before dead-letter transfer; a larger threshold does not fulfill it.", type: integer, minimum: 1}
+                  maxReceiveCount: {description: "Exact positive configured receive threshold before dead-letter transfer; a larger threshold does not fulfill it.", type: integer, minimum: 1, maximum: 1000}
                 additionalProperties: false
               redriveAllowPolicy:
                 description: Requires a mode; sourceQueueRefs is required only for byQueue and forbidden for other modes.
@@ -323,7 +323,7 @@ spec:
                       additionalProperties: false
                 additionalProperties: false
               tags:
-                description: Required tag subset; platform tags remain permitted. Conflicting values prevent fulfillment; provider character rules also apply.
+                description: Required tag subset; platform tags remain permitted. Conflicting values prevent fulfillment; provider character rules also apply. AWS recommends keeping a queue under 50 tags.
                 type: object
                 propertyNames:
                   description: Non-empty tag key of at most 128 Unicode characters; the aws prefix followed by a colon is reserved.
