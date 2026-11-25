@@ -38,6 +38,41 @@ packages:
         languageVersion: 21.0.12
         publicationMode: registry
         registryId: maven-central
+  aws-sqs:
+    rootExtension: https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml
+    coreProfileSchemaVersion: 0.4.0
+    languages:
+      go:
+        coordinate: runtimeconditions.io/x/aws/sqs
+        name: sqs
+        version: 0.1.0
+        sourceDirectory: bindings/aws-sqs/go
+        languageVersion: 1.25.0
+        publicationMode: github-tag
+      python:
+        coordinate: runtimeconditions-aws-sqs
+        name: runtimeconditions_aws_sqs
+        version: 0.1.0
+        sourceDirectory: bindings/aws-sqs/python
+        languageVersion: 3.12.10
+        publicationMode: registry
+        registryId: pypi
+      typescript:
+        coordinate: '@runtimeconditions/aws-sqs'
+        name: '@runtimeconditions/aws-sqs'
+        version: 0.1.0
+        sourceDirectory: bindings/aws-sqs/typescript
+        languageVersion: 20.19.6
+        publicationMode: registry
+        registryId: npm
+      java:
+        coordinate: io.runtimeconditions.bindings:runtimeconditions-aws-sqs
+        name: io.runtimeconditions.bindings.awssqs
+        version: 0.1.0
+        sourceDirectory: bindings/aws-sqs/java
+        languageVersion: 21.0.12
+        publicationMode: registry
+        registryId: maven-central
   common-integrations:
     rootExtension: https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0

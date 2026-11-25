@@ -23,6 +23,7 @@ Per the [spec](https://github.com/runtimeconditions/spec/blob/main/docs/sixth-dr
 | Source Control | `https://runtimeconditions.io/extensions/source-control/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/source-control/`](catalog/rc/source-control/) |
 | File System | `https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/file-system/`](catalog/rc/file-system/) |
 | Amazon S3 | `https://runtimeconditions.io/extensions/aws/s3/0.1.0/runtimeconditions.extension.yaml` | [`catalog/aws/s3/`](catalog/aws/s3/) |
+| Amazon SQS | `https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml` | [`catalog/aws/sqs/`](catalog/aws/sqs/) |
 | Kubernetes API | `https://runtimeconditions.io/extensions/kubernetes/api/0.1.0/runtimeconditions.extension.yaml` | [`catalog/kubernetes/api/`](catalog/kubernetes/api/) |
 | NATS | `https://runtimeconditions.io/extensions/nats/service/0.1.0/runtimeconditions.extension.yaml` | [`catalog/nats/service/`](catalog/nats/service/) |
 | Google Analytics | `https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml` | [`catalog/google/analytics/`](catalog/google/analytics/) |

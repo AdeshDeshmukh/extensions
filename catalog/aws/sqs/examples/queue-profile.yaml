@@ -1,0 +1,104 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsProfile
+
+metadata:
+  name: sqs-queue-operations
+
+workload:
+  uri: urn:runtimeconditions:example:sqs-queue-operations
+
+extensions:
+  - https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml:0.1.0
+
+conditions:
+  - name: work-queue
+    kind: aws.sqs
+    interface:
+      type: queue
+      queueType: fifo
+      # Queue attribute values are exact requirements, not minimum capabilities.
+      visibilityTimeoutSeconds: 60
+      messageRetentionPeriodSeconds: 345600
+      delaySeconds: 0
+      maximumMessageSizeBytes: 1048576
+      receiveMessageWaitTimeSeconds: 20
+      contentBasedDeduplication: true
+      deduplicationScope: messageGroup
+      fifoThroughputLimit: perMessageGroupId
+      encryption:
+        mode: kms
+        keyRef: work-message-key
+        dataKeyReusePeriodSeconds: 300
+      deadLetterQueue:
+        queueRef: failed-work-queue
+        maxReceiveCount: 5
+      redriveAllowPolicy:
+        mode: denyAll
+      accessPolicy:
+        statements:
+          - effect: Allow
+            principalRefs: [work-producer]
+            operations: [{name: SendMessageBatch}]
+            conditionRefs: [approved-producer-context]
+      # Platforms may add compatible cost and compliance tags.
+      tags:
+        component: work-processing
+      operations:
+        - name: SendMessageBatch
+        - name: ReceiveMessage
+        - name: DeleteMessageBatch
+        - name: ChangeMessageVisibilityBatch
+
+  # Configuration alone does not invent workload permissions on this queue.
+  - name: failed-work-queue
+    kind: aws.sqs
+    interface:
+      type: queue
+      queueType: fifo
+      messageRetentionPeriodSeconds: 1209600
+      encryption:
+        mode: kms
+        keyRef: work-message-key
+      redriveAllowPolicy:
+        mode: byQueue
+        sourceQueueRefs: [work-queue]
+      # This binding identifies restricted principals, not the approved workload.
+      accessPolicy:
+        statements:
+          - effect: Deny
+            principalRefs: [restricted-redrive-operators]
+            operations: [{name: StartMessageMoveTask}, {name: CancelMessageMoveTask}]
+
+  - name: queue-management
+    kind: aws.sqs
+    interface:
+      type: service
+      operations:
+        - name: CreateQueue
+        - name: ListQueues
+
+  - name: failed-work-redrive
+    kind: aws.sqs
+    interface:
+      type: message_move_task
+      sourceQueueRef: failed-work-queue
+      destinationQueueRef: retry-queue
+      # A lower positive execution rate also satisfies this ceiling.
+      maxMessagesPerSecond: 100
+      operations:
+        - name: StartMessageMoveTask
+        - name: ListMessageMoveTasks
+        - name: CancelMessageMoveTask
+
+  # The adapter binds the referenced queues and supplies dependent permissions.
+  # Redrive destination authorization does not imply an application SendMessage call.
+  # It also resolves key, principal, and approved-producer-context bindings.
+  # That condition alias restricts its Allow statement; it is not a global deny.
+  - name: retry-queue
+    kind: aws.sqs
+    interface:
+      type: queue
+      queueType: fifo
+      encryption:
+        mode: kms
+        keyRef: work-message-key
