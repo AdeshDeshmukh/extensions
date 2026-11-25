@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import subprocess
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 import yaml
@@ -118,6 +121,7 @@ def write_outputs(**outputs: str) -> None:
 
 
 CATALOG_FILE = "tooling/extension-bindings/packages.yaml"
+BOT_NAME = "github-actions[bot]"
 EXTENSION_KIND = "RuntimeConditionsExtensionDefinition"
 # Inputs every generated package depends on: a change regenerates all targets.
 SHARED_INPUTS = (
@@ -182,6 +186,44 @@ def _closure(graph: dict[str, list[str]], identifier: str) -> set[str]:
     return seen
 
 
+def last_successful_head(
+    repository: str, token: str, workflow: str = "binding-generate.yml", branch: str = "main",
+    api: str = "https://api.github.com", opener=urllib.request.urlopen,
+) -> str | None:
+    """The commit the last successful generation run on a branch was started for, or None.
+
+    Comparing with it instead of the commit before the push means a run that
+    failed or was cancelled does not lose its changes: the next run still sees
+    them. A successful run left every target current up to that commit, so
+    nothing it covered is selected again.
+    """
+    request = urllib.request.Request(
+        f"{api}/repos/{repository}/actions/workflows/{workflow}/runs?branch={branch}&status=success&per_page=1",
+        headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
+                 "X-GitHub-Api-Version": "2022-11-28"},
+    )
+    try:
+        with opener(request, timeout=30) as response:
+            runs = json.load(response).get("workflow_runs", [])
+    except (urllib.error.URLError, OSError, ValueError):
+        return None
+    sha = runs[0].get("head_sha") if runs else None
+    return sha if isinstance(sha, str) and re.fullmatch(r"[0-9a-f]{40}", sha) else None
+
+
+def choose_base(root: Path, candidates: list[str], head: str = "HEAD") -> str:
+    """The first candidate commit that is an ancestor of head, or "" when none is."""
+    for candidate in candidates:
+        if not candidate or not re.fullmatch(r"[0-9a-f]{7,40}", candidate) or set(candidate) == {"0"}:
+            continue
+        try:
+            git(root, "merge-base", "--is-ancestor", candidate, head)
+        except subprocess.CalledProcessError:
+            continue
+        return candidate
+    return ""
+
+
 def automatic_targets(root: Path, base: str, head: str = "HEAD") -> tuple[list[str], list[str]]:
     """The targets a push from base to head needs regenerated, and why.
 
@@ -200,6 +242,14 @@ def automatic_targets(root: Path, base: str, head: str = "HEAD") -> tuple[list[s
     if not re.fullmatch(r"[0-9a-f]{7,40}", base) or set(base) == {"0"}:
         return every, ["no earlier commit to compare with, so every target"]
     changed = [line for line in git(root, "diff", "--name-only", "--no-renames", base, head).splitlines() if line]
+    # Generated trees change in this workflow's own commits; only someone else's edit needs undoing.
+    hand_edited: set[str] = set()
+    author = ""
+    for line in git(root, "log", "--no-merges", "--format=%x00%an", "--name-only", f"{base}..{head}").splitlines():
+        if line.startswith("\0"):
+            author = line[1:]
+        elif line and author != BOT_NAME:
+            hand_edited.add(line)
     chosen: set[str] = set()
     reasons: list[str] = []
 
@@ -216,7 +266,7 @@ def automatic_targets(root: Path, base: str, head: str = "HEAD") -> tuple[list[s
             if path.startswith(prefixes):
                 add({key for key in targets if key.endswith(":" + language)}, f"{path} changes {LANGUAGES[language]}")
         match = re.fullmatch(r"bindings/([a-z0-9-]+)/(go|python|typescript|java)/.+", path)
-        if match:
+        if match and path in hand_edited:
             add({f"{match.group(1)}:{match.group(2)}"}, f"{path} is generated source")
 
     if CATALOG_FILE in changed:
@@ -315,11 +365,23 @@ def main() -> None:
     parser.add_argument("--source-commit", default="")
     parser.add_argument("--base", default="", help="automatic: the commit before the push")
     parser.add_argument("--head", default="HEAD", help="automatic: the pushed commit")
+    parser.add_argument(
+        "--since-last-success", action="store_true",
+        help="automatic: compare with the commit of the last successful generation run, falling back to --base",
+    )
     args = parser.parse_args()
     root = args.root.resolve()
     try:
         if args.command == "automatic":
-            chosen, reasons = automatic_targets(root, args.base, args.head)
+            candidates = [args.base]
+            token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+            repository = os.environ.get("GITHUB_REPOSITORY")
+            if args.since_last_success and token and repository:
+                candidates.insert(0, last_successful_head(repository, token) or "")
+            base = choose_base(root, candidates, args.head)
+            chosen, reasons = automatic_targets(root, base, args.head)
+            if base:
+                reasons.insert(0, f"compared with {base[:12]}")
             write_outputs(targets=",".join(chosen))
             if chosen:
                 summarize("Automatic targets:\n\n" + "\n".join(f"- {reason}" for reason in reasons))

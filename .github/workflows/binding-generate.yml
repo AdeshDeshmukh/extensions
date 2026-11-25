@@ -43,6 +43,8 @@ jobs:
     timeout-minutes: 45
     permissions:
       contents: write
+      # Reading the last successful run of this workflow, to compare the push with.
+      actions: read
     env:
       GOTOOLCHAIN: local
     steps:
@@ -63,11 +65,13 @@ jobs:
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
 
       # Targets typed into a manual run win, then the BINDING_GENERATION_TARGETS
-      # variable as a fixed override. Otherwise a push regenerates only what it
-      # changed: every package for a shared tool, one language for its emitter, a
-      # package whose catalog entry changed, and every package whose root extension
-      # is or depends on a changed extension. A manual run without targets
-      # regenerates everything.
+      # variable as a fixed override. Otherwise a push regenerates only what
+      # changed since the last successful run of this workflow (or, when that
+      # cannot be read, since the commit before the push), so the changes of a run
+      # that failed or was cancelled are picked up by the next one: every package
+      # for a shared tool, one language for its emitter, a package whose catalog
+      # entry changed, and every package whose root extension is or depends on a
+      # changed extension. A manual run without targets regenerates everything.
       - name: Choose the targets to regenerate
         id: targets
         shell: bash
@@ -75,6 +79,7 @@ jobs:
           MANUAL: ${{ inputs.targets }}
           CONFIGURED: ${{ vars.BINDING_GENERATION_TARGETS }}
           BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           if [[ -n "$MANUAL" ]]; then
@@ -84,7 +89,7 @@ jobs:
           else
             selection="$RUNNER_TEMP/automatic-targets"
             GITHUB_OUTPUT="$selection" python tooling/extension-bindings/ci/generation.py automatic \
-              --base "$BEFORE" --head HEAD
+              --since-last-success --base "$BEFORE" --head HEAD
             targets="$(sed -n 's/^targets=//p' "$selection")"
           fi
           echo "INPUT_TARGETS=$targets" >> "$GITHUB_ENV"
