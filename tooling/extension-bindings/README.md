@@ -9,25 +9,31 @@ GitHub Actions generates and commits Go and Python bindings to `main`, then a
 separate manual workflow publishes verified Go module tags and release assets.
 Registry publication of Python bindings remains later work.
 
-## Automatic Go and Python binding generation
+## Automatic binding generation
 
 `.github/workflows/binding-generate.yml` runs on relevant `main` changes to the
-extension catalog, delivery configuration, schemas, Go and Python generation
-tooling, and the workflow or its helper. The initial automatic targets are the
-verified pair in both languages,
-`common-integrations:go,env-configuration:go,common-integrations:python,env-configuration:python`.
-The repository variable `BINDING_GENERATION_TARGETS` replaces that default with a
-comma-separated list of `package-key:go` and `package-key:python` targets, or
-`all` to select every configured target. Manual dispatch on `main` accepts the
-same values; an empty `targets` input uses the automatic selection. A run needs
-one exact version per language, so mixed catalog versions must be generated
-separately.
+extension catalog, delivery configuration, schemas, generation tooling, and the
+workflow or its helper. A push regenerates only the targets it affects
+(`generation.py automatic`, compared with the commit before the push):
 
-The initial pair completes generation and verification. An all-catalog rehearsal
-stops at `aws-s3:go`: the catalog requests a URI/version identity, while its local
-definition still supplies legacy `metadata.id`. Remaining targets must resolve
-and verify before expanding automatic selection. The workflow does not silently
-skip an unresolved selected target or commit a partial failed generation.
+- a shared input (the normalizer, model schemas, orchestrator, toolchain lock,
+  binding tools action, this workflow or `generation.py`) regenerates every target;
+- an emitter or its `generate-<language>.py` script regenerates that language;
+- a new or changed package entry in `packages.yaml` regenerates that package;
+- a changed catalog extension regenerates every package whose root extension is
+  that extension or depends on it, so a common-integrations change also
+  regenerates env-configuration;
+- a hand edit under `bindings/<package>/<language>/` regenerates that target.
+
+Documentation beside an extension and publication scripts select nothing, and a
+push that selects nothing skips generation. The run summary lists why each target
+was selected. The repository variable `BINDING_GENERATION_TARGETS`, when set,
+replaces the automatic choice with a fixed comma-separated list of
+`package-key:language` targets, or `all`. Manual dispatch on `main` accepts the
+same values; an empty `targets` input regenerates every target. A run needs one
+exact version per language, so mixed catalog versions must be generated
+separately. The workflow does not silently skip an unresolved selected target or
+commit a partial failed generation.
 
 The workflow checks out current `main` and uses `.github/actions/binding-tools`
 to select the exact catalog Go compiler, install the checksummed Go profiler
