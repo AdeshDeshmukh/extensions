@@ -122,20 +122,38 @@ def _flat(node: Any) -> str:
     return f"{node.opening}{inner}{node.closing}"
 
 
-def _layout(node: Any, indent: int) -> str:
+def _layout(node: Any, indent: int, column: int | None = None, trailing: int = 0) -> str:
+    """Lay out a node the way Ruff formats it.
+
+    indent is the indentation of the line the node starts on and column the
+    position where it starts; trailing counts the characters that follow it on
+    that line, such as a comma. A node that fits within WIDTH stays on one line;
+    otherwise each argument or item goes on its own line, indented four spaces
+    past the line, with a trailing comma that Ruff keeps.
+    """
+    start = indent if column is None else column
     flat = _flat(node)
-    if indent + len(flat) <= WIDTH or isinstance(node, _Atom):
+    if start + len(flat) + trailing <= WIDTH or isinstance(node, _Atom):
         return flat
-    pad = " " * (indent + 4)
+    inner = indent + 4
+    pad = " " * inner
     if isinstance(node, _Call):
-        parts = [
-            f"{pad}{key + '=' if key else ''}{_layout(value, indent + 4 + len(key) + (1 if key else 0))},"
-            for key, value in node.arguments
-        ]
+        parts = []
+        for key, value in node.arguments:
+            prefix = f"{key}=" if key else ""
+            parts.append(f"{pad}{prefix}{_layout(value, inner, inner + len(prefix), 1)},")
         return f"{node.name}(\n" + "\n".join(parts) + "\n" + " " * indent + ")"
     collection: _Collection = node
-    parts = [f"{pad}{key}{_layout(value, indent + 4 + len(key))}," for key, value in collection.items]
+    parts = [f"{pad}{key}{_layout(value, inner, inner + len(key), 1)}," for key, value in collection.items]
     return f"{collection.opening}\n" + "\n".join(parts) + "\n" + " " * indent + collection.closing
+
+
+def import_lines(package: str, names: tuple[str, ...]) -> list[str]:
+    """A from-import as Ruff formats it: one line, or one name per line in parentheses."""
+    line = f"from {package} import {', '.join(names)}"
+    if len(line) <= WIDTH:
+        return [line]
+    return [f"from {package} import (", *(f"    {name}," for name in names), ")"]
 
 
 class _Renderer:
