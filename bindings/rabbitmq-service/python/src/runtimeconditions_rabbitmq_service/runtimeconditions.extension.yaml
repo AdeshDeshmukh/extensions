@@ -1,0 +1,126 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+  version: 0.1.0
+  description: Declares RabbitMQ exchange publishing and queue consumption through AMQP 0-9-1.
+spec:
+  kinds:
+    - name: rabbitmq.service
+      description: |-
+        A RabbitMQ service providing access to exchanges and queues in a virtual host.
+
+        Example: publish order events through a named exchange.
+
+        ```condition
+        kind: rabbitmq.service
+        interface:
+          type: amqp_0_9_1
+          virtualHost: /orders
+          operations:
+            - resource: exchange
+              action: publish
+              exchange: order-events
+              routingKey: orders.created
+        ```
+  interfaceTypes:
+    - name: amqp_0_9_1
+      targetKind: rabbitmq.service
+      description: RabbitMQ access using the AMQP 0-9-1 client protocol.
+  interfaceFields:
+    - name: virtualHost
+      targetKind: rabbitmq.service
+      targetType: amqp_0_9_1
+      description: Literal virtual-host name containing every exchange and queue in this Condition.
+    - name: operations
+      targetKind: rabbitmq.service
+      targetType: amqp_0_9_1
+      description: Distinct publishing and consumption capabilities required by the workload.
+  fieldValues:
+    - field: interface.operations[].resource
+      targetKind: rabbitmq.service
+      targetType: amqp_0_9_1
+      values: [exchange, queue]
+      valueDescriptions:
+        exchange: A RabbitMQ exchange receiving published messages.
+        queue: A RabbitMQ queue from which messages are consumed.
+    - field: interface.operations[].action
+      targetKind: rabbitmq.service
+      targetType: amqp_0_9_1
+      values: [publish, consume]
+      valueDescriptions:
+        publish: Publish messages to an exchange with the declared routing key.
+        consume: Receive messages from a named queue.
+  schemas:
+    - id: rabbitmq-amqp-0-9-1-interface
+      appliesToKind: rabbitmq.service
+      appliesToInterfaceType: amqp_0_9_1
+      description: Validates exchange publishing and queue consumption in an explicit virtual host.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required: [kind, interface]
+        properties:
+          kind:
+            const: rabbitmq.service
+          interface:
+            type: object
+            required: [type, virtualHost, operations]
+            properties:
+              type:
+                const: amqp_0_9_1
+              virtualHost:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: '^[^\x00]*$'
+                description: Exact virtual-host name; '/' explicitly selects the default virtual host.
+              operations:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                description: Capabilities on literal exchanges and queues in this virtual host.
+                items:
+                  oneOf:
+                    - type: object
+                      description: Publish to an exchange using an explicit routing key.
+                      required: [resource, action, exchange, routingKey]
+                      properties:
+                        resource:
+                          const: exchange
+                          description: RabbitMQ resource category to which the capability applies.
+                        action:
+                          const: publish
+                          description: RabbitMQ capability required on the named resource.
+                        exchange:
+                          type: string
+                          maxLength: 255
+                          pattern: '^[^\x00]*$'
+                          not:
+                            const: amq.default
+                          description: Exact exchange name; the empty string selects the default exchange.
+                        routingKey:
+                          type: string
+                          maxLength: 255
+                          pattern: '^[^\x00]*$'
+                          description: Literal publishing routing key, which may be empty.
+                      additionalProperties: false
+                    - type: object
+                      description: Consume messages from an explicitly named queue.
+                      required: [resource, action, queue]
+                      properties:
+                        resource:
+                          const: queue
+                          description: RabbitMQ resource category to which the capability applies.
+                        action:
+                          const: consume
+                          description: RabbitMQ capability required on the named resource.
+                        queue:
+                          type: string
+                          minLength: 1
+                          maxLength: 255
+                          pattern: '^[^\x00]*$'
+                          description: Exact name of the queue from which messages are received.
+                      additionalProperties: false
+            additionalProperties: true
+        additionalProperties: true

@@ -1,0 +1,17 @@
+apiVersion: runtimeconditions.io/file-manifest/v1alpha1
+kind: RuntimeConditionsFileManifest
+files:
+    README.md: 15fd7b468be510f4e68da7d405ed1c3ee82593f1fadd59762bc4a0fe39291b27
+    pom.xml: cfc8d1c68675a7c83943426f6bce8eb5bba6f4aec358a28d82cb4bf90af9d977
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/Action.java: 56671b5e9f78c2ac71cb28378aa6a91da4c3a03d7b0ba40236843fdea9cb9d2d
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/Amqp091.java: 1ddcb6f5c81496798d6cceea857e7bc7fee582b6d9df11f2705e975894cfd1d8
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/Bindings.java: f259e88759f086c5b4d3b881cbc60f190521582a427709000d2555031d8cb5c5
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/Declaration.java: 485083a96c9ee643b19614ee4293dcae628e99d0d7808d90611734250bd62320
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/Operations.java: ac8a5caabb2d16de8d4974557be6e991a040a953bc8e9d06146ef1e097f22150
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/OperationsItem.java: 8eee281e1e367cbabdd504c21657773ee73097e85dde231ed3aadc66efc6cf85
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/RabbitmqServiceField.java: 849898b920db43e8bec415f92f3e7eceea273ca332a1827be9a0fa8a531d9301
+    src/main/java/io/runtimeconditions/bindings/rabbitmqservice/Resource.java: 024ac67701de39bbac5e0abe33b93773c84a4c4f22fbed05696558a175293069
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: 54d6edb8d79d79a6f264a2eb04d9a736f76851530aebb3d6c1de8ebec5e95f6a
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: c27f92ca57749ab02b08b24bb5584736afb51efdb2a57e98923d9760a9df7cac
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: d009a845b6d0b03caf01fbee33fa2d9bd48fb2af32fe249a52796460a957a8fd
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 0a425f1589b4b3c8bcf11e3a9bfba228df407df942ad4ad9ec1787244ea1c3b7
