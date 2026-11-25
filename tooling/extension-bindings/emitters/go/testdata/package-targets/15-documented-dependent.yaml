@@ -1,0 +1,14 @@
+apiVersion: runtimeconditions.io/go-package-target/v1alpha1
+kind: RuntimeConditionsGoPackageTarget
+packageKey: conformance-documented-dependent
+rootExtension: https://runtimeconditions.io/conformance/documented-dependent:1.0.0
+modulePath: example.com/runtimeconditions/conformance/documented-dependent
+packageName: documenteddependent
+version: v1.0.0
+minimumGoVersion: "1.22"
+publicationMode: github-tag
+dependencies:
+  - extension: https://runtimeconditions.io/conformance/documented-extension:1.0.0
+    modulePath: example.com/runtimeconditions/conformance/documented-extension
+    packageName: documentedextension
+    version: v1.0.0

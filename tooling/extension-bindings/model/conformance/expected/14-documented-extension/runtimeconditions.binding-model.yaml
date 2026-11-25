@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/binding-model/v1alpha1
 kind: RuntimeConditionsBindingModel
 metadata:
-    semanticSha256: 33e347bfc9f90d15cd10de2af358371230d7f5e3cf8a91468e479e8f12c58848
+    semanticSha256: 6a0443c2248d009588c51bbf2758781ae207c1be1154c201faaafc2b53f05b69
     normalizer:
         name: rc-binding-model
         version: 0.1.0
@@ -13,11 +13,11 @@ coreProfileSchema:
 rootExtension:
     id: https://runtimeconditions.io/conformance/documented-extension:1.0.0
     version: 1.0.0
-    semanticSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+    semanticSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
 extensions:
     - id: https://runtimeconditions.io/conformance/documented-extension:1.0.0
       version: 1.0.0
-      semanticSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+      semanticSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
       description: 'Common integrations a workload depends on: network APIs (HTTP and SMTP), databases (relational and document) and key/value caches. Start here when a workload needs one of these, and use more specific extensions when they exist.'
 vocabulary:
     owners:
@@ -238,26 +238,79 @@ vocabulary:
         - coordinate: kind:api
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
           kind: api
-          description: The workload calls another service through a network API, such as an HTTP API or an SMTP mail server.
+          description: |-
+            The workload calls another service through a network API, such as an HTTP API or an SMTP mail server.
+
+            Example: a workload that reads todos from an HTTP API described by an OpenAPI document.
+
+            ```condition
+            kind: api
+            interface:
+              type: http
+              spec:
+                format: openapi
+                uri: catalog://api/default/todos-api
+                version: 1.0.0
+              operations:
+                - method: GET
+                  path: /todos/{id}
+            ```
+
+            Example: a workload that sends email through an SMTP server.
+
+            ```condition
+            kind: api
+            interface:
+              type: smtp
+              operations: [send]
+            ```
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: kind:api
         - coordinate: kind:cache
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
           kind: cache
-          description: The workload keeps frequently used data in a cache for fast access.
+          description: |-
+            The workload keeps frequently used data in a cache for fast access.
+
+            Example: a workload that needs Redis.
+
+            ```condition
+            kind: cache
+            interface:
+              type: key_value
+              engine: redis
+            ```
+
+            Example: a workload that accepts any key/value cache.
+
+            ```condition
+            kind: cache
+            interface:
+              type: key_value
+            ```
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: kind:cache
         - coordinate: kind:datastore
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
           kind: datastore
-          description: The workload stores and reads persistent data in a database.
+          description: |-
+            The workload stores and reads persistent data in a database.
+
+            Example: a workload that needs a PostgreSQL database.
+
+            ```condition
+            kind: datastore
+            interface:
+              type: relational
+              engine: postgres
+            ```
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: kind:datastore
     interfaces:
         - coordinate: interface:api:http
@@ -267,7 +320,7 @@ vocabulary:
           description: The API is reached over HTTP. It is described by an API document, by the operations the workload calls, or by both.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface:api:http
         - coordinate: interface:api:smtp
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -276,7 +329,7 @@ vocabulary:
           description: An SMTP server that the workload uses to send email.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface:api:smtp
         - coordinate: interface:cache:key_value
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -285,7 +338,7 @@ vocabulary:
           description: A key/value store, such as Redis or Memcached.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface:cache:key_value
         - coordinate: interface:datastore:document
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -294,7 +347,7 @@ vocabulary:
           description: A document database that stores JSON-like documents, such as MongoDB.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface:datastore:document
         - coordinate: interface:datastore:relational
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -303,7 +356,7 @@ vocabulary:
           description: A relational (SQL) database, such as PostgreSQL or MySQL.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface:datastore:relational
     interfaceFields:
         - coordinate: interface-field:api:http:operations
@@ -317,7 +370,7 @@ vocabulary:
             - name: operations
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface-field:api:http:operations
         - coordinate: interface-field:api:http:spec
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -330,7 +383,7 @@ vocabulary:
             - name: spec
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface-field:api:http:spec
         - coordinate: interface-field:api:smtp:operations
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -343,7 +396,7 @@ vocabulary:
             - name: operations
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface-field:api:smtp:operations
         - coordinate: interface-field:cache:key_value:engine
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -356,7 +409,7 @@ vocabulary:
             - name: engine
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface-field:cache:key_value:engine
         - coordinate: interface-field:datastore:document:engine
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -369,7 +422,7 @@ vocabulary:
             - name: engine
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface-field:datastore:document:engine
         - coordinate: interface-field:datastore:relational:engine
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -382,7 +435,7 @@ vocabulary:
             - name: engine
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: interface-field:datastore:relational:engine
     valueDomains:
         - coordinate: field-domain:api:http:interface.operations[].method
@@ -414,7 +467,7 @@ vocabulary:
               description: Echo the request back, for diagnostics.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: field-domain:api:http:interface.operations[].method
         - coordinate: field-domain:api:http:interface.spec.format
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -430,7 +483,7 @@ vocabulary:
               description: An OpenAPI document.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: field-domain:api:http:interface.spec.format
         - coordinate: field-domain:api:smtp:interface.operations[]
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -446,7 +499,7 @@ vocabulary:
               description: Submit an email for delivery.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: field-domain:api:smtp:interface.operations[]
         - coordinate: field-domain:cache:key_value:interface.engine
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -463,7 +516,7 @@ vocabulary:
               description: Redis, an in-memory key/value store.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: field-domain:cache:key_value:interface.engine
         - coordinate: field-domain:datastore:document:interface.engine
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -480,7 +533,7 @@ vocabulary:
               description: MongoDB.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: field-domain:datastore:document:interface.engine
         - coordinate: field-domain:datastore:relational:interface.engine
           owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -505,7 +558,7 @@ vocabulary:
               description: Microsoft SQL Server.
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: field-domain:datastore:relational:interface.engine
 scopes:
     - coordinate: api:http
@@ -557,12 +610,12 @@ scopes:
                                     description: HTTP method of the operation. Must be one of the defined methods.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/method
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/method
                                 - name: path
@@ -575,12 +628,12 @@ scopes:
                                     description: Request path of the operation, for example /todos/{id}, with path parameters in braces. Must not be empty.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/path
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/path
                                 - name: requestBodySchema
@@ -593,7 +646,7 @@ scopes:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
@@ -601,7 +654,7 @@ scopes:
                                             minItems: 1
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
@@ -610,12 +663,12 @@ scopes:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
@@ -628,18 +681,18 @@ scopes:
                                             - value: string
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
                                     description: Shape of the request body that the workload sends.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/requestBodySchema
                                 - name: responseSchema
@@ -652,7 +705,7 @@ scopes:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
@@ -660,7 +713,7 @@ scopes:
                                             minItems: 1
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
@@ -669,12 +722,12 @@ scopes:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
@@ -687,24 +740,24 @@ scopes:
                                             - value: string
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
                                     description: Shape of the response body that the workload expects back.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/responseSchema
                             description: One HTTP operation. Requires method and path; no other properties are allowed.
                             provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
@@ -715,12 +768,12 @@ scopes:
                             List at least one operation.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/operations
                     - name: spec
@@ -741,12 +794,12 @@ scopes:
                                 description: Format of the API document. Must be openapi.
                                 provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/format
                               provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/format
                             - name: uri
@@ -759,12 +812,12 @@ scopes:
                                 description: Where the API document can be found, for example catalog://api/default/todos-api. Must not be empty.
                                 provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/uri
                               provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/uri
                             - name: version
@@ -776,12 +829,12 @@ scopes:
                                 description: The API version the workload is written against. Must be an exact version (1.2.0 or =1.2.0), a comparison (>1.2.0, >=1.2.0, <2.0.0, <=2.0.0), a caret range (^1.2.0) or a tilde range (~1.2.0).
                                 provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/version
                               provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/version
                         description: |-
@@ -790,12 +843,12 @@ scopes:
                             Requires format and uri. No other properties are allowed.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/spec
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/spec
                 description: |-
@@ -804,17 +857,17 @@ scopes:
                     Give spec, operations, or both.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
     - coordinate: api:smtp
       kind: api
@@ -845,7 +898,7 @@ scopes:
                                   description: Submit an email for delivery.
                             provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
@@ -857,12 +910,12 @@ scopes:
                             List at least one operation, without repeats.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                         jsonPointer: /properties/interface/properties/operations
                 description: |-
@@ -871,17 +924,17 @@ scopes:
                     Requires operations.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
     - coordinate: cache:key_value
       kind: cache
@@ -913,12 +966,12 @@ scopes:
                             Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                         jsonPointer: /properties/interface/properties/engine
                 description: |-
@@ -927,17 +980,17 @@ scopes:
                     Optional engine. Other properties are allowed.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
     - coordinate: datastore:document
       kind: datastore
@@ -969,12 +1022,12 @@ scopes:
                             Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                         jsonPointer: /properties/interface/properties/engine
                 description: |-
@@ -983,17 +1036,17 @@ scopes:
                     Optional engine. Other properties are allowed.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
     - coordinate: datastore:relational
       kind: datastore
@@ -1033,12 +1086,12 @@ scopes:
                             Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                         jsonPointer: /properties/interface/properties/engine
                 description: |-
@@ -1047,17 +1100,17 @@ scopes:
                     Optional engine. Other properties are allowed.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
 schemas:
     - coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
@@ -1204,12 +1257,12 @@ schemas:
                                     description: HTTP method of the operation. Must be one of the defined methods.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/method
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/method
                                 - name: path
@@ -1222,12 +1275,12 @@ schemas:
                                     description: Request path of the operation, for example /todos/{id}, with path parameters in braces. Must not be empty.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /properties/interface/properties/operations/items/properties/path
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/path
                                 - name: requestBodySchema
@@ -1240,7 +1293,7 @@ schemas:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
@@ -1248,7 +1301,7 @@ schemas:
                                             minItems: 1
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
@@ -1257,12 +1310,12 @@ schemas:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
@@ -1275,18 +1328,18 @@ schemas:
                                             - value: string
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
                                     description: Shape of the request body that the workload sends.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/requestBodySchema
                                 - name: responseSchema
@@ -1299,7 +1352,7 @@ schemas:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/2/items
                                           constraints:
@@ -1307,7 +1360,7 @@ schemas:
                                             minItems: 1
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/2
                                         - kind: map
@@ -1316,12 +1369,12 @@ schemas:
                                             ref: '#/$defs/simpleSchema'
                                             provenance:
                                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                                 jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/0
                                         - kind: scalar
@@ -1334,24 +1387,24 @@ schemas:
                                             - value: string
                                           provenance:
                                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                             jsonPointer: /$defs/simpleSchema/oneOf/1
                                     description: Shape of the response body that the workload expects back.
                                     provenance:
                                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                         jsonPointer: /$defs/simpleSchema
                                   provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/operations/items/properties/responseSchema
                             description: One HTTP operation. Requires method and path; no other properties are allowed.
                             provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
@@ -1362,12 +1415,12 @@ schemas:
                             List at least one operation.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/operations
                     - name: spec
@@ -1388,12 +1441,12 @@ schemas:
                                 description: Format of the API document. Must be openapi.
                                 provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/format
                               provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/format
                             - name: uri
@@ -1406,12 +1459,12 @@ schemas:
                                 description: Where the API document can be found, for example catalog://api/default/todos-api. Must not be empty.
                                 provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/uri
                               provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/uri
                             - name: version
@@ -1423,12 +1476,12 @@ schemas:
                                 description: The API version the workload is written against. Must be an exact version (1.2.0 or =1.2.0), a comparison (>1.2.0, >=1.2.0, <2.0.0, <=2.0.0), a caret range (^1.2.0) or a tilde range (~1.2.0).
                                 provenance:
                                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                     jsonPointer: /properties/interface/properties/spec/properties/version
                               provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                                 jsonPointer: /properties/interface/properties/spec/properties/version
                         description: |-
@@ -1437,12 +1490,12 @@ schemas:
                             Requires format and uri. No other properties are allowed.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                             jsonPointer: /properties/interface/properties/spec
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                         jsonPointer: /properties/interface/properties/spec
                 description: |-
@@ -1451,17 +1504,17 @@ schemas:
                     Give spec, operations, or both.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
       definitions:
         - name: simpleSchema
@@ -1475,7 +1528,7 @@ schemas:
                     ref: '#/$defs/simpleSchema'
                     provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                         jsonPointer: /$defs/simpleSchema/oneOf/2/items
                   constraints:
@@ -1483,7 +1536,7 @@ schemas:
                     minItems: 1
                   provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                     jsonPointer: /$defs/simpleSchema/oneOf/2
                 - kind: map
@@ -1492,12 +1545,12 @@ schemas:
                     ref: '#/$defs/simpleSchema'
                     provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                         jsonPointer: /$defs/simpleSchema/oneOf/0/additionalProperties
                   provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                     jsonPointer: /$defs/simpleSchema/oneOf/0
                 - kind: scalar
@@ -1510,23 +1563,23 @@ schemas:
                     - value: string
                   provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                     jsonPointer: /$defs/simpleSchema/oneOf/1
             description: 'A simple data shape. Must be one of: the name of a scalar type (string, number, integer, boolean or null); an object whose values are simple schemas; or a list with exactly one simple schema, which describes every item.'
             provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
                 jsonPointer: /$defs/simpleSchema
           provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
             jsonPointer: /$defs/simpleSchema
       provenance:
         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-http-interface
     - coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
       owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -1585,7 +1638,7 @@ schemas:
                                   description: Submit an email for delivery.
                             provenance:
                                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
@@ -1597,12 +1650,12 @@ schemas:
                             List at least one operation, without repeats.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                         jsonPointer: /properties/interface/properties/operations
                 description: |-
@@ -1611,21 +1664,21 @@ schemas:
                     Requires operations.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
       provenance:
         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:api-smtp-interface
     - coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
       owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -1681,12 +1734,12 @@ schemas:
                             Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                         jsonPointer: /properties/interface/properties/engine
                 description: |-
@@ -1695,21 +1748,21 @@ schemas:
                     Optional engine. Other properties are allowed.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
       provenance:
         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:cache-key-value-interface
     - coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
       owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -1765,12 +1818,12 @@ schemas:
                             Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                         jsonPointer: /properties/interface/properties/engine
                 description: |-
@@ -1779,21 +1832,21 @@ schemas:
                     Optional engine. Other properties are allowed.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
       provenance:
         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-document-interface
     - coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
       owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
@@ -1861,12 +1914,12 @@ schemas:
                             Optional. When present, must be one of the defined engine values. Leave it out if any engine of this type works.
                         provenance:
                             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                             jsonPointer: /properties/interface/properties/engine
                       provenance:
                         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                         jsonPointer: /properties/interface/properties/engine
                 description: |-
@@ -1875,19 +1928,19 @@ schemas:
                     Optional engine. Other properties are allowed.
                 provenance:
                     owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                    extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                    extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                     coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                     jsonPointer: /properties/interface
               provenance:
                 owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-                extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+                extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
                 coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
                 jsonPointer: /properties/interface
         provenance:
             owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-            extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+            extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
             coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface
       provenance:
         owner: https://runtimeconditions.io/conformance/documented-extension:1.0.0
-        extensionSha256: 59415dea53e1f39ae7dd03391a7f3a9cc9b9009540268fe74669aeb262684350
+        extensionSha256: dea80be6e41d4b0f7b7035dae22521dd48f8f9bc9f6250f33e21bfde7e4c3fe7
         coordinate: https://runtimeconditions.io/conformance/documented-extension:1.0.0#schema:datastore-relational-interface

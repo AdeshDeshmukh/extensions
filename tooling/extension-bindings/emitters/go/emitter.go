@@ -106,6 +106,9 @@ type packageIR struct {
 	domains            map[string]normalizer.ValueDomainModel
 	rootBindings       []rootBindingIR
 	sampleError        error
+	// dependencyIRs caches the planned packages of direct dependencies, used to
+	// render examples that call a dependency's declaration function.
+	dependencyIRs map[string]*packageIR
 }
 
 func Emit(model normalizer.BindingModel, target PackageTarget, output string) error {
@@ -725,11 +728,16 @@ func (ir *packageIR) files() (map[string][]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return map[string][]byte{
+	files := map[string][]byte{
 		generatedGoFile:                   bindings,
 		"go.mod":                          ir.renderGoMod(),
 		"runtimeconditions.bindings.yaml": manifest,
-	}, nil
+	}
+	// Only documented extensions get a README, so other packages are unchanged.
+	if readme := ir.renderReadme(); readme != nil {
+		files["README.md"] = readme
+	}
+	return files, nil
 }
 
 func (ir *packageIR) renderBindings() ([]byte, error) {
@@ -737,7 +745,7 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 	writeGoHeader(&buffer, ir.model.Metadata.SemanticSHA256)
 	if description := ir.rootDescription(); description != "" {
 		fmt.Fprintf(&buffer, "// Package %s declares Runtime Conditions defined by %s.\n//\n", ir.target.PackageName, ir.model.RootExtension.ID)
-		writeDocComment(&buffer, "", description)
+		ir.writeDocs(&buffer, "", "", description)
 	}
 	fmt.Fprintf(&buffer, "package %s\n\n", ir.target.PackageName)
 	buffer.WriteString("// Declaration is the inert result of a Runtime Conditions declaration.\n")
@@ -749,7 +757,7 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 		fmt.Fprintf(&buffer, "// %s declares a %s Condition.\n", declaration.function.name, declaration.model.Kind)
 		if declaration.model.Description != "" {
 			buffer.WriteString("//\n")
-			writeDocComment(&buffer, "", declaration.model.Description)
+			ir.writeDocs(&buffer, "", "", declaration.model.Description)
 		}
 		fmt.Fprintf(&buffer, "func %s(fields ...%s) Declaration { return Declaration{} }\n\n", declaration.function.name, declaration.fieldInterface.name)
 	}
@@ -758,7 +766,7 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 		typeValue := ir.types[key]
 		name := typeValue.request.name
 		if typeValue.description != "" {
-			writeDocComment(&buffer, "", name+": "+typeValue.description)
+			ir.writeDocs(&buffer, "", name+": ", typeValue.description)
 			buffer.WriteString("//\n")
 		}
 		fmt.Fprintf(&buffer, "// %s is generated from %s.\n", name, typeValue.coordinate)
@@ -769,7 +777,7 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 			fmt.Fprintf(&buffer, "type %s struct {\n", name)
 			for _, field := range typeValue.fields {
 				if field.description != "" {
-					writeDocComment(&buffer, "\t", field.description)
+					ir.writeDocs(&buffer, "\t", "", field.description)
 				}
 				fmt.Fprintf(&buffer, "\t%s %s\n", field.name, ir.renderTypeReference(field.typeRef))
 			}
@@ -801,7 +809,7 @@ func (ir *packageIR) renderBindings() ([]byte, error) {
 		buffer.WriteString("const (\n")
 		for _, constant := range ir.constants {
 			if constant.description != "" {
-				writeDocComment(&buffer, "\t", constant.description)
+				ir.writeDocs(&buffer, "\t", "", constant.description)
 			}
 			fmt.Fprintf(&buffer, "\t%s %s = %s\n", constant.name, ir.types[constant.typeKey].request.name, strconv.Quote(constant.value))
 		}

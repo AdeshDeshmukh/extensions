@@ -8,7 +8,9 @@ This document defines a first-party Runtime Conditions extension for declaring w
 
 The current machine-readable definition is [env-configuration-v1alpha2.yaml](env-configuration-v1alpha2.yaml). The previous [v1alpha1 definition](env-configuration-v1alpha1.yaml) is preserved.
 
-[env-configuration-v1alpha3.yaml](env-configuration-v1alpha3.yaml) has the same vocabulary as v1alpha2 and adds documentation: a description of the extension and of every kind, interface type, field and allowed value, and JSON Schema descriptions of the validation rules. The generated language bindings show this text as Godoc, Javadoc, Python docstrings and JSDoc. The published bindings move to v1alpha3 in their next release. It depends on common-integrations v1alpha3.
+[env-configuration-v1alpha3.yaml](env-configuration-v1alpha3.yaml) has the same vocabulary as v1alpha2 and adds documentation: a description of the extension and of every kind, interface type, field and allowed value, and JSON Schema descriptions of the validation rules. The generated language bindings show this text as Godoc, Javadoc, Python docstrings and JSDoc. The published bindings move to v1alpha3 in their next release.
+
+[env-configuration-v1alpha4.yaml](env-configuration-v1alpha4.yaml) has the same vocabulary and documentation as v1alpha3. It depends on common-integrations v1alpha4 and was released automatically when common-integrations v1alpha4 was added. It depends on common-integrations v1alpha3.
 
 This extension is not part of the core Runtime Conditions Profile vocabulary. Profiles that use this extension MUST declare it in the top-level `extensions` list.
 

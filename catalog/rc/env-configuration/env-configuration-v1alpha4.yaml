@@ -1,0 +1,655 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/env-configuration/v1alpha4/runtimeconditions.extension.yaml
+  version: v1alpha4
+  description: |-
+    Tells the platform which environment variables a workload reads to reach its APIs, mail servers,
+    databases and caches. The platform fills them in, so addresses and secrets never live in the code.
+
+    Add a configuration field to a common-integrations Condition. Each entry pairs a variable the workload
+    reads, such as DATABASE_URL, with the detail it carries, such as url, hostname, port, username or
+    password. Mark an entry sensitive when it holds a secret, so the platform stores and passes it securely,
+    and required when the workload cannot start without it.
+
+    When the workload can connect in more than one way, list alternatives instead. For example, one full
+    DATABASE_URL, or separate host, port, user and password variables. Put them in order of preference; the
+    platform provides one of them.
+
+    Each integration accepts only the details that make sense for it: a database can take database, and an
+    HTTP API can take baseUrl or token. This extension builds on common-integrations, which defines the
+    integrations themselves.
+spec:
+  dependencies:
+  - https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha4/runtimeconditions.extension.yaml
+  conditionFields:
+  - name: configuration
+    appliesToKinds:
+    - api
+    appliesToInterfaceTypes:
+    - http
+    description: |-
+      How the platform passes the address and credentials of the HTTP API to the workload, as environment
+      variables.
+
+      Example: a workload that reads the todos API base URL and an access token from its environment.
+
+      ```condition
+      kind: api
+      interface:
+        type: http
+        spec:
+          format: openapi
+          uri: catalog://api/default/todos-api
+      configuration:
+        env:
+        - property: baseUrl
+          name: TODOS_API_URL
+          required: true
+        - property: token
+          name: TODOS_API_TOKEN
+          sensitive: true
+      ```
+  - name: configuration
+    appliesToKinds:
+    - datastore
+    appliesToInterfaceTypes:
+    - relational
+    - document
+    description: |-
+      How the platform passes the connection details of the database to the workload, as environment
+      variables.
+
+      Example: a workload that accepts either one PostgreSQL connection URL or separate host, port, user,
+      password and database variables. The platform provides one of the two sets.
+
+      ```condition
+      kind: datastore
+      interface:
+        type: relational
+        engine: postgres
+      configuration:
+        alternatives:
+        - env:
+          - property: url
+            name: DATABASE_URL
+            sensitive: true
+        - env:
+          - property: hostname
+            name: DB_HOST
+          - property: port
+            name: DB_PORT
+          - property: username
+            name: DB_USER
+          - property: password
+            name: DB_PASSWORD
+            sensitive: true
+          - property: database
+            name: DB_NAME
+      ```
+  - name: configuration
+    appliesToKinds:
+    - cache
+    appliesToInterfaceTypes:
+    - key_value
+    description: |-
+      How the platform passes the connection details of the cache to the workload, as environment variables.
+
+      Example: a workload that needs a Redis cache and cannot start without its URL.
+
+      ```condition
+      kind: cache
+      interface:
+        type: key_value
+        engine: redis
+      configuration:
+        env:
+        - property: url
+          name: REDIS_URL
+          required: true
+      ```
+  - name: configuration
+    appliesToKinds:
+    - api
+    appliesToInterfaceTypes:
+    - smtp
+    description: |-
+      How the platform passes the SMTP server details and email addresses to the workload, as environment
+      variables.
+
+      Example: a workload that sends email through an SMTP server and reads the server, login and sender
+      address from its environment.
+
+      ```condition
+      kind: api
+      interface:
+        type: smtp
+        operations:
+        - send
+      configuration:
+        env:
+        - property: hostname
+          name: SMTP_HOST
+          required: true
+        - property: port
+          name: SMTP_PORT
+        - property: username
+          name: SMTP_USER
+        - property: password
+          name: SMTP_PASSWORD
+          sensitive: true
+        - property: fromAddress
+          name: MAIL_FROM
+      ```
+  fieldValues:
+  - field: configuration.env[].property
+    targetKind: api
+    targetType: http
+    values:
+    - url
+    - baseUrl
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - token
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      baseUrl: The base URL that request paths are appended to, for example https://api.example.com/v1.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      token: A bearer token or API key to authenticate with. Usually marked sensitive.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.alternatives[].env[].property
+    targetKind: api
+    targetType: http
+    values:
+    - url
+    - baseUrl
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - token
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      baseUrl: The base URL that request paths are appended to, for example https://api.example.com/v1.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      token: A bearer token or API key to authenticate with. Usually marked sensitive.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.env[].property
+    targetKind: datastore
+    targetType: relational
+    values:
+    - url
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - database
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      database: The name of the database, or the database number for a cache, to use.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.alternatives[].env[].property
+    targetKind: datastore
+    targetType: relational
+    values:
+    - url
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - database
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      database: The name of the database, or the database number for a cache, to use.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.env[].property
+    targetKind: datastore
+    targetType: document
+    values:
+    - url
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - database
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      database: The name of the database, or the database number for a cache, to use.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.alternatives[].env[].property
+    targetKind: datastore
+    targetType: document
+    values:
+    - url
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - database
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      database: The name of the database, or the database number for a cache, to use.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.env[].property
+    targetKind: cache
+    targetType: key_value
+    values:
+    - url
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - database
+    - token
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      database: The name of the database, or the database number for a cache, to use.
+      token: A bearer token or API key to authenticate with. Usually marked sensitive.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.alternatives[].env[].property
+    targetKind: cache
+    targetType: key_value
+    values:
+    - url
+    - hostname
+    - port
+    - scheme
+    - username
+    - password
+    - database
+    - token
+    - tls
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      scheme: The URL scheme or protocol, for example https or postgres.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      database: The name of the database, or the database number for a cache, to use.
+      token: A bearer token or API key to authenticate with. Usually marked sensitive.
+      tls: Whether to use TLS, or TLS settings, for the connection.
+  - field: configuration.env[].property
+    targetKind: api
+    targetType: smtp
+    values:
+    - url
+    - hostname
+    - port
+    - username
+    - password
+    - tlsMode
+    - fromAddress
+    - toAddress
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      tlsMode: How the SMTP connection uses TLS, for example starttls or tls.
+      fromAddress: The email address that messages are sent from.
+      toAddress: The email address that messages are sent to.
+  - field: configuration.alternatives[].env[].property
+    targetKind: api
+    targetType: smtp
+    values:
+    - url
+    - hostname
+    - port
+    - username
+    - password
+    - tlsMode
+    - fromAddress
+    - toAddress
+    valueDescriptions:
+      url: A full connection URL, for example https://api.example.com or redis://cache:6379.
+      hostname: The host name or IP address to connect to.
+      port: The port number to connect to.
+      username: The user name to authenticate with.
+      password: The password to authenticate with. Usually marked sensitive.
+      tlsMode: How the SMTP connection uses TLS, for example starttls or tls.
+      fromAddress: The email address that messages are sent from.
+      toAddress: The email address that messages are sent to.
+  schemas:
+  - id: configuration-shape
+    description: Validates the environment configuration field shape.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      properties:
+        configuration:
+          type: object
+          oneOf:
+          - required:
+            - env
+            properties:
+              env:
+                $ref: '#/$defs/envList'
+            additionalProperties: false
+          - required:
+            - alternatives
+            properties:
+              alternatives:
+                type: array
+                minItems: 2
+                items:
+                  type: object
+                  required:
+                  - env
+                  properties:
+                    env:
+                      $ref: '#/$defs/envList'
+                  additionalProperties: false
+                  description: One alternative. Requires env; no other properties are allowed.
+                description: List at least two alternative sets of variables. The platform satisfies one
+                  of them.
+            additionalProperties: false
+          description: Give either env (one set of variables) or alternatives (two or more sets the workload
+            accepts, in order of preference), not both.
+      additionalProperties: true
+      $defs:
+        envList:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: '#/$defs/envInput'
+          description: List at least one environment variable, without repeats.
+        envInput:
+          type: object
+          required:
+          - property
+          - name
+          properties:
+            property:
+              type: string
+              minLength: 1
+              description: Which connection detail the variable carries, such as url or password. Must
+                not be empty; each integration allows a fixed set of properties.
+            name:
+              type: string
+              pattern: ^[A-Za-z_][A-Za-z0-9_]*$
+              description: The environment variable name, for example REDIS_URL. Must start with a letter
+                or underscore and contain only letters, digits and underscores.
+            sensitive:
+              type: boolean
+              description: True when the value is a secret, such as a password or token, so the platform
+                can store and pass it securely.
+            required:
+              type: boolean
+              description: True when the workload cannot start without this variable.
+          additionalProperties: false
+          description: One environment variable the workload reads. Requires property and name; no other
+            properties are allowed.
+  - id: configuration-properties-api-http
+    appliesToKind: api
+    appliesToInterfaceType: http
+    description: Validates allowed environment configuration properties for HTTP API integrations.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      properties:
+        configuration:
+          $ref: '#/$defs/configuration'
+      additionalProperties: true
+      $defs:
+        allowedProperty:
+          enum:
+          - url
+          - baseUrl
+          - hostname
+          - port
+          - scheme
+          - username
+          - password
+          - token
+          - tls
+          description: Must be one of the properties defined for this integration.
+        configuration:
+          type: object
+          properties:
+            env:
+              type: array
+              items:
+                $ref: '#/$defs/envInput'
+            alternatives:
+              type: array
+              items:
+                type: object
+                properties:
+                  env:
+                    type: array
+                    items:
+                      $ref: '#/$defs/envInput'
+        envInput:
+          type: object
+          properties:
+            property:
+              $ref: '#/$defs/allowedProperty'
+  - id: configuration-properties-datastore-relational
+    appliesToKind: datastore
+    appliesToInterfaceType: relational
+    description: Validates allowed environment configuration properties for relational datastore integrations.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      properties:
+        configuration:
+          $ref: '#/$defs/configuration'
+      additionalProperties: true
+      $defs:
+        allowedProperty:
+          enum:
+          - url
+          - hostname
+          - port
+          - scheme
+          - username
+          - password
+          - database
+          - tls
+          description: Must be one of the properties defined for this integration.
+        configuration:
+          type: object
+          properties:
+            env:
+              type: array
+              items:
+                $ref: '#/$defs/envInput'
+            alternatives:
+              type: array
+              items:
+                type: object
+                properties:
+                  env:
+                    type: array
+                    items:
+                      $ref: '#/$defs/envInput'
+        envInput:
+          type: object
+          properties:
+            property:
+              $ref: '#/$defs/allowedProperty'
+  - id: configuration-properties-datastore-document
+    appliesToKind: datastore
+    appliesToInterfaceType: document
+    description: Validates allowed environment configuration properties for document datastore integrations.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      properties:
+        configuration:
+          $ref: '#/$defs/configuration'
+      additionalProperties: true
+      $defs:
+        allowedProperty:
+          enum:
+          - url
+          - hostname
+          - port
+          - scheme
+          - username
+          - password
+          - database
+          - tls
+          description: Must be one of the properties defined for this integration.
+        configuration:
+          type: object
+          properties:
+            env:
+              type: array
+              items:
+                $ref: '#/$defs/envInput'
+            alternatives:
+              type: array
+              items:
+                type: object
+                properties:
+                  env:
+                    type: array
+                    items:
+                      $ref: '#/$defs/envInput'
+        envInput:
+          type: object
+          properties:
+            property:
+              $ref: '#/$defs/allowedProperty'
+  - id: configuration-properties-cache-key-value
+    appliesToKind: cache
+    appliesToInterfaceType: key_value
+    description: Validates allowed environment configuration properties for key/value cache integrations.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      properties:
+        configuration:
+          $ref: '#/$defs/configuration'
+      additionalProperties: true
+      $defs:
+        allowedProperty:
+          enum:
+          - url
+          - hostname
+          - port
+          - scheme
+          - username
+          - password
+          - database
+          - token
+          - tls
+          description: Must be one of the properties defined for this integration.
+        configuration:
+          type: object
+          properties:
+            env:
+              type: array
+              items:
+                $ref: '#/$defs/envInput'
+            alternatives:
+              type: array
+              items:
+                type: object
+                properties:
+                  env:
+                    type: array
+                    items:
+                      $ref: '#/$defs/envInput'
+        envInput:
+          type: object
+          properties:
+            property:
+              $ref: '#/$defs/allowedProperty'
+  - id: configuration-properties-api-smtp
+    appliesToKind: api
+    appliesToInterfaceType: smtp
+    description: Validates allowed environment configuration properties for SMTP API integrations.
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      properties:
+        configuration:
+          $ref: '#/$defs/configuration'
+      additionalProperties: true
+      $defs:
+        allowedProperty:
+          enum:
+          - url
+          - hostname
+          - port
+          - username
+          - password
+          - tlsMode
+          - fromAddress
+          - toAddress
+          description: Must be one of the properties defined for this integration.
+        configuration:
+          type: object
+          properties:
+            env:
+              type: array
+              items:
+                $ref: '#/$defs/envInput'
+            alternatives:
+              type: array
+              items:
+                type: object
+                properties:
+                  env:
+                    type: array
+                    items:
+                      $ref: '#/$defs/envInput'
+        envInput:
+          type: object
+          properties:
+            property:
+              $ref: '#/$defs/allowedProperty'

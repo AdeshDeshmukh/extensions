@@ -13,7 +13,16 @@ from pathlib import Path
 from typing import Any
 
 from .emitter import EmissionPlan
+from .examples import (
+    ConditionFieldDoc,
+    RenderedExample,
+    condition_field_docs,
+    dedent,
+    render_examples,
+    split_documentation,
+)
 from .metadata import EMITTER_NAME, EMITTER_VERSION, render_resources
+from .reference import conditions_reference
 from .package import fail
 
 
@@ -45,25 +54,19 @@ def _all_literal(names: list[str]) -> list[str]:
     ]
 
 
-def _docstring(text: str, indent: str = "") -> list[str]:
-    """Render extension documentation as a docstring; empty text renders nothing.
+# Examples rendered for the package being emitted. render_sources sets this
+# around _bindings_source, so a docstring can show an example as Python code.
+_CURRENT_EXAMPLES: dict[str, RenderedExample] = {}
 
-    Descriptions come from the extension's vocabulary and JSON Schema. Docstrings
-    are expression statements, which the AST verification ignores.
-    """
-    paragraphs = [
-        paragraph.split() for paragraph in text.strip().split("\n\n") if paragraph.split()
-    ]
-    if not paragraphs:
-        return []
-    width = 88 - len(indent) - 4
+
+def _prose_lines(text: str, width: int) -> list[str]:
     lines: list[str] = []
+    paragraphs = [paragraph.split() for paragraph in text.split("\n\n") if paragraph.split()]
     for index, words in enumerate(paragraphs):
         if index:
             lines.append("")
         line = ""
         for word in words:
-            word = word.replace("\\", "\\\\").replace('"""', '\\"\\"\\"')
             if line and len(line) + 1 + len(word) > width:
                 lines.append(line)
                 line = word
@@ -71,6 +74,33 @@ def _docstring(text: str, indent: str = "") -> list[str]:
                 line = f"{line} {word}" if line else word
         if line:
             lines.append(line)
+    return lines
+
+
+def _docstring(text: str, indent: str = "") -> list[str]:
+    """Render extension documentation as a docstring; empty text renders nothing.
+
+    Descriptions come from the extension's vocabulary and JSON Schema. Example
+    Conditions become Python code blocks. Docstrings are expression statements,
+    which the AST verification ignores.
+    """
+    width = 88 - len(indent) - 4
+    lines: list[str] = []
+    for segment in split_documentation(text.strip()):
+        if segment.condition is None:
+            block = _prose_lines(segment.text, width)
+        elif segment.source in _CURRENT_EXAMPLES:
+            block = ["```python", *_CURRENT_EXAMPLES[segment.source].code.split("\n"), "```"]
+        else:
+            block = ["```yaml", *dedent(segment.source).strip().split("\n"), "```"]
+        if not block:
+            continue
+        if lines:
+            lines.append("")
+        lines.extend(block)
+    if not lines:
+        return []
+    lines = [line.replace("\\", "\\\\").replace('"""', '\\"\\"\\"') for line in lines]
     if lines[-1].endswith('"'):
         lines[-1] += " "
     if len(lines) == 1:
@@ -80,6 +110,70 @@ def _docstring(text: str, indent: str = "") -> list[str]:
         *(f"{indent}{line}" if line else "" for line in lines[1:]),
         f'{indent}"""',
     ]
+
+
+def _markdown(text: str, plan: EmissionPlan, examples: dict[str, RenderedExample]) -> list[str]:
+    lines: list[str] = []
+    for segment in split_documentation(text.strip()):
+        if lines:
+            lines.append("")
+        if segment.condition is None:
+            lines.append(segment.text)
+            continue
+        example = examples.get(segment.source)
+        if example is not None:
+            lines.extend(
+                (
+                    "```python",
+                    *(f"from {package} import {', '.join(names)}" for package, names in example.imports),
+                    "",
+                    example.code,
+                    "```",
+                    "",
+                    "In a Profile, this declares:",
+                    "",
+                )
+            )
+        lines.extend(("```yaml", dedent(segment.source).strip(), "```"))
+    return lines
+
+
+def readme_source(plan: EmissionPlan, model: dict[str, Any], examples: dict[str, RenderedExample]) -> str | None:
+    """The package README from the extension's documentation, or None when undocumented."""
+    if not plan.package_description:
+        return None
+    lines = [
+        f"<!-- {_header(model).strip().removeprefix('# ')} -->",
+        "",
+        f"# {plan.target.distribution_name}",
+        "",
+        *_markdown(plan.package_description, plan, examples),
+        "",
+        "```sh",
+        f"pip install {plan.target.distribution_name}",
+        "```",
+        "",
+        f"Runtime Conditions extension: {plan.target.root_extension}",
+    ]
+    reference = conditions_reference(plan, model)
+    if reference:
+        lines.extend(("", *reference))
+    for declaration in sorted(plan.declarations, key=lambda item: item.function):
+        lines.extend(("", f"## {declaration.function}", "", f"`{declaration.function}` declares a `{declaration.kind}` Condition."))
+        if declaration.description:
+            lines.extend(("", *_markdown(declaration.description, plan, examples)))
+    # Fields this package adds to Conditions; fields sharing one description share a section.
+    groups: dict[str, list[ConditionFieldDoc]] = {}
+    for field in condition_field_docs(plan, model):
+        groups.setdefault(field.description, []).append(field)
+    for description, fields in groups.items():
+        lines.extend(("", f"## {', '.join(field.name for field in fields)}", ""))
+        for field in fields:
+            scope = f" with interface type `{field.interface_type}`" if field.interface_type else ""
+            lines.append(f"`{field.name}` sets the `{field.path}` field of `{field.kind}` Conditions{scope}.")
+        lines.extend(("", *_markdown(description, plan, examples)))
+    lines.extend(("", "Every class, field and enum member is documented in the package's docstrings.", ""))
+    return "\n".join(lines)
 
 
 def _bindings_source(plan: EmissionPlan, model: dict[str, Any]) -> str:
@@ -224,9 +318,16 @@ def render_sources(plan: EmissionPlan, model: dict[str, Any]) -> dict[str, str]:
     ):
         fail("model", "RCP1003", "model", "emission plan does not match supplied model")
     prefix = f"src/{plan.target.import_package}"
+    examples = render_examples(plan, model)
+    _CURRENT_EXAMPLES.clear()
+    _CURRENT_EXAMPLES.update(examples)
+    try:
+        bindings = _bindings_source(plan, model)
+    finally:
+        _CURRENT_EXAMPLES.clear()
     sources = {
         f"{prefix}/__init__.py": _init_source(plan, model),
-        f"{prefix}/bindings.py": _bindings_source(plan, model),
+        f"{prefix}/bindings.py": bindings,
     }
     try:
         formatter_version = metadata.version("ruff")
@@ -301,6 +402,9 @@ def render_sources(plan: EmissionPlan, model: dict[str, Any]) -> dict[str, str]:
                 "pinned Ruff formatter failed",
             )
         formatted[path] = result.stdout
+    readme = readme_source(plan, model, examples)
+    if readme is not None:
+        formatted["README.md"] = readme
     return formatted
 
 

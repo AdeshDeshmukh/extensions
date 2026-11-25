@@ -40,6 +40,7 @@ from runtimeconditions_binding_emitter.naming import (
     allocate_symbols,
     python_name,
 )
+from runtimeconditions_binding_emitter.examples import summary
 from runtimeconditions_binding_emitter.package import DiagnosticError, PackageDependency
 
 TOOLING = Path(__file__).resolve().parents[3]
@@ -781,12 +782,22 @@ def test_package_metadata_and_manifest_are_deterministic(case: str) -> None:
         f"{prefix}/bindings.py",
         f"{prefix}/py.typed",
         f"{prefix}/runtimeconditions.bindings.yaml",
-    }
+    } | ({"README.md"} if plan.package_description else set())
     assert files[f"{prefix}/py.typed"] == ""
     metadata = tomllib.loads(files["pyproject.toml"])
     assert metadata["build-system"]["requires"] == [f"setuptools=={SETUPTOOLS_VERSION}"]
     assert metadata["project"]["name"] == plan.target.distribution_name
     assert metadata["project"]["requires-python"] == ">=3.11"
+    # Documented extensions publish their generated README as the PyPI description.
+    assert metadata["project"].get("readme") == (
+        "README.md" if plan.package_description else None
+    )
+    # The extension summary is the one-line PyPI summary.
+    if plan.package_description:
+        assert metadata["project"]["description"] == summary(plan.package_description)
+        assert "\n" not in metadata["project"]["description"]
+    else:
+        assert "description" not in metadata["project"]
     assert (
         str(Version(metadata["project"]["version"])) == metadata["project"]["version"]
     )
