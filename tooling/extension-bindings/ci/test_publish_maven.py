@@ -197,6 +197,45 @@ class MavenPublicationTests(RepoTestCase):
         self.assertEqual(run.call_args.args[0], ["mvn", "-B", "-Prelease", "deploy"])
         self.assertTrue(str(run.call_args.args[1]).endswith("sources/owner"))
 
+    def test_auto_publish_turns_on_publishing_in_the_release_settings(self) -> None:
+        settings = "<autoPublish>false</autoPublish><waitUntil>validated</waitUntil>"
+        self.assertEqual(
+            script.auto_publish_settings(settings), "<autoPublish>true</autoPublish><waitUntil>published</waitUntil>"
+        )
+        with self.assertRaisesRegex(ValueError, "cannot publish automatically"):
+            script.auto_publish_settings("<project/>")
+
+    def test_auto_publish_uploads_a_dependent_once_its_dependency_is_public(self) -> None:
+        release = "<profiles><autoPublish>false</autoPublish><waitUntil>validated</waitUntil></profiles></project>"
+        for key, dependencies in (("addon", None), ("owner", ["addon"])):
+            self.write(f"bindings/{key}/java/pom.xml", pom(key, dependencies=dependencies).replace("</project>", release))
+        public: set[str] = set()
+        uploaded: list[str] = []
+
+        def deploy(command, directory):
+            text = (directory / "pom.xml").read_text(encoding="utf-8")
+            self.assertIn("<autoPublish>true</autoPublish>", text)
+            self.assertIn("<waitUntil>published</waitUntil>", text)
+            uploaded.append(directory.name)
+            public.add(directory.name)
+
+        with patch.object(script, "run", side_effect=deploy), patch.object(
+            script, "already_published", side_effect=lambda coordinate: coordinate[1] in public
+        ):
+            count = script.publish(self.root, self.targets, True, auto=True)
+        self.assertEqual(count, 2)
+        self.assertEqual(uploaded, ["addon", "owner"])
+        committed = (self.root / "bindings/owner/java/pom.xml").read_text(encoding="utf-8")
+        self.assertIn("<autoPublish>false</autoPublish>", committed, "only the temporary copy changes")
+
+    def test_waiting_for_central_gives_up_after_the_timeout(self) -> None:
+        ticks = iter(range(0, 10000, 100))
+        with patch.object(script, "already_published", return_value=False), self.assertRaisesRegex(
+            ValueError, "is not on Maven Central after 300s"
+        ):
+            script.wait_until_public((GROUP, "addon", "0.1.0"), timeout=300, poll=1, sleep=lambda _: None,
+                                     clock=lambda: next(ticks))
+
     def test_other_languages_are_not_published(self) -> None:
         targets = select_targets(self.catalog, "owner:go")
         with patch.object(script, "run") as run:

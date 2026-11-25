@@ -3,7 +3,9 @@
 A dry run builds and checks every selected package, with sources and Javadoc jars, and installs each into a
 throwaway local repository so that a package finds the selected packages it depends on. A real run signs each
 package and uploads it with manual release: the Portal validates the upload, and nothing is public until someone
-presses Publish on the deployment. Versions already on Maven Central are never uploaded again.
+presses Publish on the deployment. With --auto-publish, the Portal publishes each upload once it passes
+validation, and the script waits until Maven Central serves it before uploading a package that depends on it.
+Versions already on Maven Central are never uploaded again.
 """
 
 from __future__ import annotations
@@ -13,6 +15,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -166,8 +169,35 @@ def check_dependencies(coordinate: Coordinate, dependencies: list[Coordinate]) -
             )
 
 
-def publish(root: Path, targets: list[Target], execute: bool) -> int:
-    """Build and check, and when execute is true upload, the packages Central does not have yet. Return how many."""
+def auto_publish_settings(pom_text: str) -> str:
+    """The release settings with automatic publishing: the plugin publishes a validated deployment and waits for it."""
+    for old, new in (
+        ("<autoPublish>false</autoPublish>", "<autoPublish>true</autoPublish>"),
+        ("<waitUntil>validated</waitUntil>", "<waitUntil>published</waitUntil>"),
+    ):
+        if old not in pom_text:
+            raise ValueError(f"the release profile has no {old}; cannot publish automatically")
+        pom_text = pom_text.replace(old, new)
+    return pom_text
+
+
+def wait_until_public(
+    coordinate: Coordinate, timeout: float = 3600, poll: float = 60, sleep=time.sleep, clock=time.monotonic
+) -> None:
+    """Wait until Maven Central serves a published version, so packages that depend on it can be built."""
+    deadline = clock() + timeout
+    while not already_published(coordinate):
+        if clock() > deadline:
+            raise ValueError(f"{':'.join(coordinate)} was published but is not on Maven Central after {int(timeout)}s")
+        sleep(poll)
+
+
+def publish(root: Path, targets: list[Target], execute: bool, auto: bool = False) -> int:
+    """Build and check, and when execute is true upload, the packages Central does not have yet. Return how many.
+
+    With auto, each upload is published without pressing Publish in the Portal, and the script waits until it is
+    on Maven Central before uploading a package that depends on it.
+    """
     selected = of_language(targets, LANGUAGE)
     if not selected:
         summarize("No Java targets selected; nothing to publish.")
@@ -190,11 +220,19 @@ def publish(root: Path, targets: list[Target], execute: bool) -> int:
             shutil.copytree(packages[coordinate]["directory"], copy, ignore=shutil.ignore_patterns("target"))
             if execute:
                 check_dependencies(coordinate, packages[coordinate]["dependencies"])
+                if auto:
+                    # Only this temporary copy changes; the committed package keeps manual publishing.
+                    pom_file = copy / "pom.xml"
+                    pom_file.write_text(auto_publish_settings(pom_file.read_text(encoding="utf-8")), encoding="utf-8")
                 run(["mvn", "-B", "-Prelease", "deploy"], copy)
-                summarize(
-                    f"Uploaded {label} to the Central Portal and it passed validation. It is not public until "
-                    f"someone presses Publish on the deployment at {DEPLOYMENTS}."
-                )
+                if auto:
+                    wait_until_public(coordinate)
+                    summarize(f"Uploaded and published {label}; it is on Maven Central.")
+                else:
+                    summarize(
+                        f"Uploaded {label} to the Central Portal and it passed validation. It is not public until "
+                        f"someone presses Publish on the deployment at {DEPLOYMENTS}."
+                    )
             else:
                 run(
                     ["mvn", "-B", "-Prelease", "-Dgpg.skip=true", f"-Dmaven.repo.local={local_repository}", "install"],
@@ -211,11 +249,15 @@ def main() -> None:
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--targets", default="")
     parser.add_argument("--execute", action="store_true", help="sign and upload; without it the packages are only built and checked")
+    parser.add_argument(
+        "--auto-publish", action="store_true",
+        help="with --execute, publish each upload without the Portal's Publish button and wait until it is on Central",
+    )
     args = parser.parse_args()
     root = args.root.resolve()
     try:
         targets = select_targets(root / TOOLING / "packages.yaml", args.targets)
-        count = publish(root, targets, args.execute)
+        count = publish(root, targets, args.execute, args.auto_publish)
     except (ValueError, KeyError, OSError, subprocess.CalledProcessError, urllib.error.URLError, ET.ParseError) as error:
         parser.exit(1, f"Maven publication failed: {error}\n")
     write_outputs(count=str(count))

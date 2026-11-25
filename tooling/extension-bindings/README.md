@@ -149,6 +149,39 @@ python3 tooling/common/build_extensions_site.py --output /tmp/extension-site
 python3 tooling/extension-bindings/ci/publish.py configure --targets env-configuration:go
 ```
 
+## Publishing to every registry at once
+
+**Publish bindings to every registry** (`binding-publish-all.yml`) releases the
+selected packages to Go, PyPI, npm and Maven Central from one dispatch on `main`.
+It takes package keys (or `all`), a checkbox per language, `dry_run`, and
+`maven_auto_publish`.
+
+1. A preflight job looks each selected package up on its registry and writes a
+   table to the run summary: already published (skipped), new version, or first
+   release. A first release needs a one-time setup that the workflow cannot do:
+   - **PyPI:** add a pending trusted publisher on PyPI (Account, Publishing) for
+     the project name, workflow `binding-publish-pypi.yml` and environment
+     `pypi`. The first upload then creates the project; no placeholder upload is
+     needed. A pending publisher does not reserve the name, so publish soon after.
+   - **npm:** a trusted publisher can only be added to a package that exists, so
+     the first version is published once with an npm token. Afterwards add
+     `binding-publish-npm.yml` as the package's trusted publisher. A real run
+     stops in preflight, before publishing anything, when an npm package would
+     need its first release.
+   - **Maven Central and Go** need no setup for a new package.
+2. One job per language with something new starts that registry's own workflow
+   (`binding-promote.yml`, `binding-publish-pypi.yml`, `binding-publish-npm.yml`,
+   `binding-publish-maven.yml`) and waits for it. Because each registry is still
+   published by its own workflow, trusted publishing keeps matching those files,
+   and the `pypi` and `maven-central` environments still ask for approval. The
+   per-registry workflows also stay usable on their own.
+
+Maven Central uploads are published by hand in the Portal unless
+`maven_auto_publish` (or `auto_publish` on `binding-publish-maven.yml`) is set.
+Then each upload is published once it passes validation, and the workflow waits
+until Maven Central serves it before uploading a package that depends on it, so
+`common-integrations` and `env-configuration` go out in one run.
+
 ## Java emitter quickstart
 
 The Java emitter is a standalone program under `emitters/java/`. It needs JDK 21 and

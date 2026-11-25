@@ -11,6 +11,10 @@ on:
         description: 'Build and check the packages without uploading them to Maven Central'
         type: boolean
         default: true
+      auto_publish:
+        description: 'Publish each upload without pressing Publish in the Portal, and wait until it is on Maven Central before uploading packages that depend on it'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -72,16 +76,19 @@ jobs:
   publish:
     # Signs and uploads in its own job, in the maven-central environment, so only it holds the credentials,
     # and only for a real run. The Portal then validates the upload; nothing is public until someone presses
-    # Publish on the deployment at https://central.sonatype.com/publishing/deployments.
+    # Publish on the deployment at https://central.sonatype.com/publishing/deployments, unless auto_publish
+    # is set, in which case each upload is published once it passes validation.
     if: ${{ !inputs.dry_run }}
     needs: check
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    # Waiting for a package to reach Maven Central before uploading its dependents can take a while.
+    timeout-minutes: ${{ inputs.auto_publish && 120 || 45 }}
     environment: maven-central
     permissions:
       contents: read
     env:
       INPUT_TARGETS: ${{ inputs.targets }}
+      AUTO_PUBLISH: ${{ inputs.auto_publish }}
 
     steps:
       - name: Check out repository
@@ -126,4 +133,11 @@ jobs:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-        run: python tooling/extension-bindings/ci/publish-maven.py --targets "$INPUT_TARGETS" --execute
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--execute)
+          if [[ "$AUTO_PUBLISH" == true ]]; then
+            args+=(--auto-publish)
+          fi
+          python tooling/extension-bindings/ci/publish-maven.py --targets "$INPUT_TARGETS" "${args[@]}"
