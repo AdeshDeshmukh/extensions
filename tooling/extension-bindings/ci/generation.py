@@ -117,6 +117,143 @@ def write_outputs(**outputs: str) -> None:
                 stream.write(f"{name.replace('_', '-')}={value}\n")
 
 
+CATALOG_FILE = "tooling/extension-bindings/packages.yaml"
+EXTENSION_KIND = "RuntimeConditionsExtensionDefinition"
+# Inputs every generated package depends on: a change regenerates all targets.
+SHARED_INPUTS = (
+    ".github/workflows/binding-generate.yml",
+    ".github/actions/binding-tools/",
+    "tooling/common/go_bindings.py",
+    "tooling/extension-bindings/toolchain.lock.yaml",
+    "tooling/extension-bindings/model/",
+    "tooling/extension-bindings/normalizer/",
+    "tooling/extension-bindings/orchestrator/",
+    "tooling/extension-bindings/ci/generation.py",
+)
+# Inputs of one language: a change regenerates that language's targets.
+LANGUAGE_INPUTS = {
+    language: (f"tooling/extension-bindings/emitters/{language}/", f"tooling/extension-bindings/ci/generate-{language}.py")
+    for language in LANGUAGES
+}
+
+
+def _yaml_at(root: Path, revision: str, path: str) -> object:
+    """A YAML file at a revision, or None when it does not exist there or is not YAML."""
+    try:
+        text = git(root, "show", f"{revision}:{path}")
+    except subprocess.CalledProcessError:
+        return None
+    try:
+        return yaml.safe_load(text)
+    except yaml.YAMLError:
+        return None
+
+
+def _extension_id(document: object) -> str | None:
+    if isinstance(document, dict) and document.get("kind") == EXTENSION_KIND:
+        identifier = (document.get("metadata") or {}).get("id")
+        return identifier if isinstance(identifier, str) else None
+    return None
+
+
+def _extension_graph(root: Path, revision: str) -> dict[str, list[str]]:
+    """Every catalog extension at a revision and the extensions it depends on."""
+    graph: dict[str, list[str]] = {}
+    names = git(root, "ls-tree", "-r", "--name-only", revision, "--", "catalog").splitlines()
+    for path in names:
+        if not path.endswith((".yaml", ".yml")):
+            continue
+        document = _yaml_at(root, revision, path)
+        identifier = _extension_id(document)
+        if identifier is not None:
+            assert isinstance(document, dict)
+            graph[identifier] = list((document.get("spec") or {}).get("dependencies") or [])
+    return graph
+
+
+def _closure(graph: dict[str, list[str]], identifier: str) -> set[str]:
+    seen: set[str] = set()
+    pending = [identifier]
+    while pending:
+        current = pending.pop()
+        if current not in seen:
+            seen.add(current)
+            pending.extend(graph.get(current, []))
+    return seen
+
+
+def automatic_targets(root: Path, base: str, head: str = "HEAD") -> tuple[list[str], list[str]]:
+    """The targets a push from base to head needs regenerated, and why.
+
+    A shared generation input regenerates every target; an emitter regenerates
+    its language; a changed or added package entry regenerates that package; a
+    changed catalog extension regenerates every package whose root extension is
+    it or depends on it; and an edited generated tree is regenerated to undo the
+    hand edit. Without a usable base every target is selected.
+    """
+    targets = load_targets(root / CATALOG_FILE)
+    every = sorted(targets)
+    try:
+        git(root, "cat-file", "-e", f"{base}^{{commit}}")
+    except (subprocess.CalledProcessError, ValueError):
+        return every, ["no earlier commit to compare with, so every target"]
+    if not re.fullmatch(r"[0-9a-f]{7,40}", base) or set(base) == {"0"}:
+        return every, ["no earlier commit to compare with, so every target"]
+    changed = [line for line in git(root, "diff", "--name-only", "--no-renames", base, head).splitlines() if line]
+    chosen: set[str] = set()
+    reasons: list[str] = []
+
+    def add(keys: set[str], reason: str) -> None:
+        new = keys & set(targets) - chosen
+        if new:
+            chosen.update(new)
+            reasons.append(f"{reason}: {', '.join(sorted(new))}")
+
+    for path in changed:
+        if path.startswith(SHARED_INPUTS) or path in SHARED_INPUTS:
+            add(set(targets), f"{path} is shared by every package")
+        for language, prefixes in LANGUAGE_INPUTS.items():
+            if path.startswith(prefixes):
+                add({key for key in targets if key.endswith(":" + language)}, f"{path} changes {LANGUAGES[language]}")
+        match = re.fullmatch(r"bindings/([a-z0-9-]+)/(go|python|typescript|java)/.+", path)
+        if match:
+            add({f"{match.group(1)}:{match.group(2)}"}, f"{path} is generated source")
+
+    if CATALOG_FILE in changed:
+        old = (_yaml_at(root, base, CATALOG_FILE) or {}).get("packages", {}) or {}
+        new = (_yaml_at(root, head, CATALOG_FILE) or {}).get("packages", {}) or {}
+        for key, package in new.items():
+            before = old.get(key)
+            if before is None:
+                add({f"{key}:{language}" for language in package.get("languages", {})}, f"package {key} is new")
+                continue
+            shared = {name: value for name, value in package.items() if name != "languages"}
+            shared_before = {name: value for name, value in before.items() if name != "languages"}
+            for language, config in package.get("languages", {}).items():
+                if shared != shared_before or config != (before.get("languages") or {}).get(language):
+                    add({f"{key}:{language}"}, f"package {key} changed")
+
+    extension_files = [path for path in changed if path.startswith("catalog/") and path.endswith((".yaml", ".yml"))]
+    if extension_files:
+        touched = {
+            identifier
+            for path in extension_files
+            for revision in (base, head)
+            if (identifier := _extension_id(_yaml_at(root, revision, path))) is not None
+        }
+        if touched:
+            graph = _extension_graph(root, head)
+            packages = (_yaml_at(root, head, CATALOG_FILE) or {}).get("packages", {}) or {}
+            for key, package in packages.items():
+                hit = _closure(graph, str(package.get("rootExtension", ""))) & touched
+                if hit:
+                    add(
+                        {f"{key}:{language}" for language in package.get("languages", {})},
+                        f"extension {sorted(hit)[0]} changed",
+                    )
+    return sorted(chosen), reasons
+
+
 def commit(root: Path, targets: list[Target], source_commit: str) -> bool:
     if not re.fullmatch(r"[0-9a-f]{40}", source_commit):
         raise ValueError("a full source commit is required")
@@ -172,13 +309,23 @@ def commit(root: Path, targets: list[Target], source_commit: str) -> bool:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["configure", "commit"])
+    parser.add_argument("command", choices=["configure", "commit", "automatic"])
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--targets", default="")
     parser.add_argument("--source-commit", default="")
+    parser.add_argument("--base", default="", help="automatic: the commit before the push")
+    parser.add_argument("--head", default="HEAD", help="automatic: the pushed commit")
     args = parser.parse_args()
     root = args.root.resolve()
     try:
+        if args.command == "automatic":
+            chosen, reasons = automatic_targets(root, args.base, args.head)
+            write_outputs(targets=",".join(chosen))
+            if chosen:
+                summarize("Automatic targets:\n\n" + "\n".join(f"- {reason}" for reason in reasons))
+            else:
+                summarize("Nothing in this push changes generated bindings; no targets selected.")
+            return
         targets = select_targets(
             root / "tooling/extension-bindings/packages.yaml", args.targets
         )

@@ -25,7 +25,7 @@ on:
   workflow_dispatch:
     inputs:
       targets:
-        description: 'Comma-separated package-key:go, package-key:python, package-key:typescript, or package-key:java targets, or all; empty uses automatic targets'
+        description: 'Comma-separated package-key:go, package-key:python, package-key:typescript, or package-key:java targets, or all; empty regenerates every target'
         type: string
         default: ''
 
@@ -44,7 +44,6 @@ jobs:
     permissions:
       contents: write
     env:
-      INPUT_TARGETS: ${{ inputs.targets || vars.BINDING_GENERATION_TARGETS || 'common-integrations:go,env-configuration:go,common-integrations:python,env-configuration:python,common-integrations:typescript,env-configuration:typescript,common-integrations:java,env-configuration:java' }}
       GOTOOLCHAIN: local
     steps:
       - name: Check out current main
@@ -52,14 +51,54 @@ jobs:
         with:
           ref: main
           persist-credentials: true
+          # The whole history, so the push can be compared with the commit before it.
+          fetch-depth: 0
+
+      - name: Set up Python for target selection
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12.10'
+
+      - name: Install the target selection dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+
+      # Targets typed into a manual run win, then the BINDING_GENERATION_TARGETS
+      # variable as a fixed override. Otherwise a push regenerates only what it
+      # changed: every package for a shared tool, one language for its emitter, a
+      # package whose catalog entry changed, and every package whose root extension
+      # is or depends on a changed extension. A manual run without targets
+      # regenerates everything.
+      - name: Choose the targets to regenerate
+        id: targets
+        shell: bash
+        env:
+          MANUAL: ${{ inputs.targets }}
+          CONFIGURED: ${{ vars.BINDING_GENERATION_TARGETS }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$MANUAL" ]]; then
+            targets="$MANUAL"
+          elif [[ -n "$CONFIGURED" ]]; then
+            targets="$CONFIGURED"
+          else
+            selection="$RUNNER_TEMP/automatic-targets"
+            GITHUB_OUTPUT="$selection" python tooling/extension-bindings/ci/generation.py automatic \
+              --base "$BEFORE" --head HEAD
+            targets="$(sed -n 's/^targets=//p' "$selection")"
+          fi
+          echo "INPUT_TARGETS=$targets" >> "$GITHUB_ENV"
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
 
       - name: Prepare shared binding tools
+        if: steps.targets.outputs.targets != ''
         uses: ./.github/actions/binding-tools
         id: tools
         with:
           targets: ${{ env.INPUT_TARGETS }}
 
       - name: Test generation helper and emitter tooling
+        if: steps.targets.outputs.targets != ''
         shell: bash
         env:
           HAS_PYTHON: ${{ steps.tools.outputs.has-python }}
@@ -85,6 +124,7 @@ jobs:
           fi
 
       - name: Generate and verify bindings
+        if: steps.targets.outputs.targets != ''
         env:
           RC: ${{ steps.tools.outputs.rc }}
           CORE_SCHEMA: ${{ steps.tools.outputs.core-schema }}
@@ -99,11 +139,13 @@ jobs:
             --rc "$RC" --core-schema "$CORE_SCHEMA"
 
       - name: Commit verified generated source to main
+        if: steps.targets.outputs.targets != ''
         env:
           SOURCE_COMMIT: ${{ steps.tools.outputs.source-commit }}
         run: python tooling/extension-bindings/ci/generation.py commit --targets "$INPUT_TARGETS" --source-commit "$SOURCE_COMMIT"
 
       - name: Publish updated discovery pages through the existing docs build
+        if: steps.targets.outputs.targets != ''
         uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
         with:
           token: ${{ secrets.DOCS_REPO_DISPATCH_TOKEN }}
