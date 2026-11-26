@@ -144,7 +144,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   file-system:
-    rootExtension: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:

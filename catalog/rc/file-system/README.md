@@ -7,7 +7,9 @@ at the path. It does not name the storage technology behind it; NFS, a cloud
 file service or a local disk can all fulfill the same Condition.
 
 The first immutable candidate release is
-[`0.1.0`](releases/0.1.0/runtimeconditions.extension.yaml).
+[`0.1.0`](releases/0.1.0/runtimeconditions.extension.yaml). The newest is
+[`0.2.0`](releases/0.2.0/runtimeconditions.extension.yaml), with the same rules
+and descriptions and examples for every part.
 
 Example Condition:
 
