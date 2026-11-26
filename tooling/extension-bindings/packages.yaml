@@ -179,20 +179,20 @@ packages:
         publicationMode: registry
         registryId: maven-central
   google-analytics:
-    rootExtension: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
         coordinate: runtimeconditions.io/x/google/analytics
         name: analytics
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/go
         languageVersion: 1.25.0
         publicationMode: github-tag
       python:
         coordinate: runtimeconditions-google-analytics
         name: runtimeconditions_google_analytics
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/python
         languageVersion: 3.12.10
         publicationMode: registry
@@ -200,7 +200,7 @@ packages:
       typescript:
         coordinate: '@runtimeconditions/google-analytics'
         name: '@runtimeconditions/google-analytics'
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/typescript
         languageVersion: 20.19.6
         publicationMode: registry
@@ -208,7 +208,7 @@ packages:
       java:
         coordinate: io.runtimeconditions.bindings:runtimeconditions-google-analytics
         name: io.runtimeconditions.bindings.googleanalytics
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/java
         languageVersion: 21.0.12
         publicationMode: registry
