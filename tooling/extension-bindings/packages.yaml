@@ -39,7 +39,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   aws-sqs:
-    rootExtension: https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:

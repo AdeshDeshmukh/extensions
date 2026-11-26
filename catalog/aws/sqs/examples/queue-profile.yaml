@@ -8,7 +8,7 @@ workload:
   uri: urn:runtimeconditions:example:sqs-queue-operations
 
 extensions:
-  - https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml:0.1.0
+  - https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml:0.2.0
 
 conditions:
   - name: work-queue
