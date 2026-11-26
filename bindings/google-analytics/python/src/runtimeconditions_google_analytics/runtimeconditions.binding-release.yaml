@@ -1,16 +1,16 @@
 apiVersion: runtimeconditions.io/binding-release/v1alpha1
 dependencyLock:
     extensions:
-        - id: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-          version: 0.1.0
-          sourceSha256: 3662d3b383cfc5d018b194b9b95faf559bdc17b60d76184f3b1b17674e96deef
-          semanticSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+        - id: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+          version: 0.2.0
+          sourceSha256: 3b04d3c19310b3d8e93bd4ad4294e5ed230cba3f1971a106b1fc51d78641ed2b
+          semanticSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
           sourceBackend: catalog
-          sourceLocator: catalog:google/analytics/releases/0.1.0/runtimeconditions.extension.yaml
+          sourceLocator: catalog:google/analytics/releases/0.2.0/runtimeconditions.extension.yaml
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: dd823bb6d1a32cca2200f6bc4039e4a9fe9647d84d1172c37c5b10497d203c69
+    semanticSha256: 1dc17ddd7196183d26b593df977da968af1a6bf2414fa6e35dc921e78833d4c2
 package:
     coordinate: runtimeconditions-google-analytics
     language: python
@@ -19,21 +19,21 @@ package:
     packageKey: google-analytics
     publicationMode: registry
     registryId: pypi
-    version: 0.1.0
+    version: 0.2.0
 packageDependencies: []
 provenance:
     mode: production
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+        sha256: 23764404c2196c92518a6560cf511cf4def70ef2ef48a901b67380737754dea9
     profiler:
         name: python-rc-profiler
         version: 0.4.0
         sha256: 6382d2f2a48b79c1b9e90c4084062a30259e74942ec72264264f1a594826ced9
     sourceDirectory: bindings/google-analytics/python
-    targetReleaseTag: bindings/google-analytics/python/v0.1.0
+    targetReleaseTag: bindings/google-analytics/python/v0.2.0
 rootExtension:
-    id: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+    id: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c

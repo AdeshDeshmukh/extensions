@@ -1,16 +1,16 @@
 apiVersion: runtimeconditions.io/binding-release/v1alpha1
 dependencyLock:
     extensions:
-        - id: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-          version: 0.1.0
-          sourceSha256: 9216eb22d6b43b0385996dfa4fb38de2853681006b19de490b9657e476f67e52
-          semanticSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+        - id: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+          version: 0.2.0
+          sourceSha256: db5659d187c46f1ce6f0ce3920053ae76f9beadda8b2c8c456d3af6692c98e47
+          semanticSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
           sourceBackend: catalog
-          sourceLocator: catalog:rc/file-system/releases/0.1.0/runtimeconditions.extension.yaml
+          sourceLocator: catalog:rc/file-system/releases/0.2.0/runtimeconditions.extension.yaml
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: cc0194f13453df8c70297d93aec7f52a2f409844286adabf941cdae36a1f7a95
+    semanticSha256: e6e40d67658c06e4b7a0559b219e4d46121b049785f54d72fdf9051bddbc1b19
 package:
     coordinate: runtimeconditions.io/x/rc/filesystem
     language: go
@@ -25,7 +25,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+        sha256: 23764404c2196c92518a6560cf511cf4def70ef2ef48a901b67380737754dea9
     profiler:
         name: go-rc-profiler
         version: v0.4.0
@@ -33,6 +33,6 @@ provenance:
     sourceDirectory: bindings/file-system/go
     targetReleaseTag: bindings/file-system/go/v0.1.0
 rootExtension:
-    id: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+    id: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a

@@ -2,40 +2,50 @@
 
 # runtimeconditions.io/x/rc/observability
 
-Declares telemetry a workload exports or exposes for collection.
+Use this extension to say how the platform can see what your workload is doing: its traces, metrics and
+logs.
+
+There are two ways, and each one is an interface type:
+
+- otlp_export: your workload sends its traces, metrics or logs to a receiver, using OpenTelemetry
+  (OTLP). The platform gives it a receiver to send to.
+- prometheus_scrape: your workload shows its metrics on a web address, and a Prometheus server reads
+  them from time to time. The platform sets up the reading.
+
+If your workload does both, add one Condition for each.
 
 ```sh
 go get runtimeconditions.io/x/rc/observability@v0.1.0
 ```
 
-Runtime Conditions extension: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+Runtime Conditions extension: https://runtimeconditions.io/extensions/rc/observability/0.2.0/runtimeconditions.extension.yaml
 
 ## Conditions
 
 Every Condition part this package defines, with the fields you can set. Select a line to open it.
 
 <details>
-<summary><b>rc.observability</b> · <code>otlp_export</code>: The workload exports telemetry to an OTLP receiver.</summary>
+<summary><b>rc.observability</b> · <code>otlp_export</code>: Your workload sends telemetry to an OpenTelemetry (OTLP) receiver.</summary>
 
 `observability.OtlpExport` is the `interface` of a `rc.observability` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `Signals` | `Signals` | yes | Telemetry signals the workload sends to the receiver. Must contain one or more distinct trace, metric, or log signals.<br>Values:<br>`logs`: Log records.<br>`metrics`: Numeric measurements and aggregations.<br>`traces`: Distributed trace data. |
-| `Transport` | `Transport` | yes | OTLP transport and encoding that the receiver must support. Must be an OTLP transport and encoding supported by the receiver.<br>Values:<br>`grpc`: OTLP over gRPC with Protocol Buffers.<br>`http/json`: OTLP over HTTP with JSON encoding.<br>`http/protobuf`: OTLP over HTTP with Protocol Buffers. |
+| `Signals` | `Signals` | yes | The kinds of telemetry that your workload sends, such as traces, metrics and logs. At least one of traces, metrics and logs, each one once.<br>Values:<br>`logs`: Logs, which are the lines of text that your workload writes about what it does.<br>`metrics`: Metrics, which are numbers measured over time, such as the number of requests.<br>`traces`: Traces, which show how one request moves through your services. |
+| `Transport` | `Transport` | yes | How your workload sends the telemetry. The receiver must accept this way. grpc, http/protobuf or http/json. The receiver must accept it.<br>Values:<br>`grpc`: OTLP over gRPC, with the data in Protocol Buffers.<br>`http/json`: OTLP over HTTP, with the data in JSON.<br>`http/protobuf`: OTLP over HTTP, with the data in Protocol Buffers. |
 
 </details>
 
 <details>
-<summary><b>rc.observability</b> · <code>prometheus_scrape</code>: The workload exposes metrics for a Prometheus-compatible scraper.</summary>
+<summary><b>rc.observability</b> · <code>prometheus_scrape</code>: Your workload shows metrics that a Prometheus server can read.</summary>
 
 `observability.PrometheusScrape` is the `interface` of a `rc.observability` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `Path` | `string` | yes | Absolute HTTP path from which a scraper reads metrics. Must begin with a slash. |
-| `Port` | `int64` | yes | TCP port on which the workload exposes metrics. Must be a TCP port from 1 through 65535. |
-| `Scheme` | `Scheme` | yes | HTTP scheme required to scrape the metrics endpoint. Must be HTTP or HTTPS.<br>Values:<br>`http`: Scrape over HTTP.<br>`https`: Scrape over HTTPS. |
+| `Path` | `string` | yes | The web path where your workload shows its metrics, such as /metrics. The web path. It must start with /. |
+| `Port` | `int64` | yes | The TCP port where your workload shows its metrics. A TCP port, from 1 to 65535. |
+| `Scheme` | `Scheme` | yes | Whether Prometheus reads the metrics over http or https. http or https.<br>Values:<br>`http`: Read the metrics over plain HTTP.<br>`https`: Read the metrics over HTTPS. |
 
 </details>
 
@@ -43,6 +53,30 @@ Every Condition part this package defines, with the fields you can set. Select a
 
 `observability.RcObservability` declares a `rc.observability` Condition.
 
-A workload telemetry endpoint that a platform must connect or scrape.
+Your workload sends telemetry to the platform, or shows telemetry that the platform must collect.
+
+Example: a workload that sends its traces and logs with OpenTelemetry over gRPC.
+
+```go
+observability.RcObservability(
+	observability.OtlpExport{
+		Signals: observability.Signals{
+			observability.SignalsItemTraces,
+			observability.SignalsItemLogs,
+		},
+		Transport: observability.TransportGrpc,
+	},
+)
+```
+
+In a Profile, this declares:
+
+```yaml
+kind: rc.observability
+interface:
+  type: otlp_export
+  signals: [traces, logs]
+  transport: grpc
+```
 
 The full API, with every type, field and constant documented, is in the Go package documentation.

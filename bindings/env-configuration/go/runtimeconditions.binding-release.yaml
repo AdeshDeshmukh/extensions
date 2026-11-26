@@ -30,7 +30,7 @@ package:
 packageDependencies:
     - artifact:
         kind: go-module-zip
-        sha256: d5944efce836a935f90c5afcf1e52992a50fec4841b0f717cff231697d4d8566
+        sha256: a0e602ef9a433f81eb5297133edd33fee64ce1e3f06467770a477e2c441f53f2
       compatibleVersionRange:
         minimumInclusive: v0.4.0
         nextBreakingExclusive: v0.5.0
@@ -43,7 +43,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+        sha256: 23764404c2196c92518a6560cf511cf4def70ef2ef48a901b67380737754dea9
     profiler:
         name: go-rc-profiler
         version: v0.4.0

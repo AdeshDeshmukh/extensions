@@ -2,28 +2,36 @@
 
 # runtimeconditions.io/x/rc/gpu
 
-Requests whole GPU devices with optional per-device memory and vendor constraints.
+Use this extension when your workload needs one or more GPUs, for example to run a machine learning
+model.
+
+In a Condition, you say how many GPUs your workload needs. You can also say how much memory each GPU
+must have, and which company must make the GPUs. The platform then runs your workload on a machine that
+has these GPUs, or tells you that it cannot.
+
+A GPU here always means a whole GPU. You cannot ask for part of a GPU. This extension does not say
+which driver or CUDA version the machine must have.
 
 ```sh
 go get runtimeconditions.io/x/rc/gpu@v0.1.0
 ```
 
-Runtime Conditions extension: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+Runtime Conditions extension: https://runtimeconditions.io/extensions/rc/gpu/0.2.0/runtimeconditions.extension.yaml
 
 ## Conditions
 
 Every Condition part this package defines, with the fields you can set. Select a line to open it.
 
 <details>
-<summary><b>rc.gpu</b> · <code>device</code>: Whole GPU devices available to the workload.</summary>
+<summary><b>rc.gpu</b> · <code>device</code>: Whole GPUs that your workload can use.</summary>
 
 `gpu.Device` is the `interface` of a `rc.gpu` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `Count` | `int64` | yes | Minimum number of whole GPU devices required. Minimum number of whole GPU devices; must be at least one. |
-| `MinMemoryMiB` | `*int64` | no | Minimum memory each GPU must provide, in mebibytes. Minimum memory per GPU in mebibytes; must be at least one when provided. |
-| `Vendor` | `*Vendor` | no | Hardware vendor each GPU must match when specified. Required GPU hardware vendor when the workload needs one of these vendors.<br>Values:<br>`amd`: AMD GPU hardware.<br>`intel`: Intel GPU hardware.<br>`nvidia`: NVIDIA GPU hardware. |
+| `Count` | `int64` | yes | How many whole GPUs your workload needs, at least. How many whole GPUs, at least. It must be 1 or more. |
+| `MinMemoryMiB` | `*int64` | no | How much memory each GPU must have, at least, in MiB. For example, 16384 MiB is 16 GiB. How much memory each GPU must have, at least, in MiB. If you set it, it must be 1 or more. |
+| `Vendor` | `*Vendor` | no | The company that must make the GPUs. Leave it out if any GPU works. The company that must make the GPUs, if your workload needs one of these.<br>Values:<br>`amd`: GPUs made by AMD.<br>`intel`: GPUs made by Intel.<br>`nvidia`: GPUs made by NVIDIA. |
 
 </details>
 
@@ -31,6 +39,25 @@ Every Condition part this package defines, with the fields you can set. Select a
 
 `gpu.RcGpu` declares a `rc.gpu` Condition.
 
-GPU hardware that a workload requires.
+Your workload needs GPU hardware.
+
+Example: a workload that runs a large model and needs two GPUs.
+
+```go
+gpu.RcGpu(
+	gpu.Device{
+		Count: 2,
+	},
+)
+```
+
+In a Profile, this declares:
+
+```yaml
+kind: rc.gpu
+interface:
+  type: device
+  count: 2
+```
 
 The full API, with every type, field and constant documented, is in the Go package documentation.

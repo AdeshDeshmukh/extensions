@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/binding-model/v1alpha1
 kind: RuntimeConditionsBindingModel
 metadata:
-    semanticSha256: d1115cae41c8d6cd1f7e22cbdd592275f30a026e8a120a79fd366d699d062c17
+    semanticSha256: 0597c7cca9e3537705040fd3af4ea00e911a40e0445ffd5a7a775426ed8d96e9
     normalizer:
         name: rc-binding-model
         version: 0.1.0
@@ -11,73 +11,85 @@ coreProfileSchema:
     version: 0.4.0
     semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
 rootExtension:
-    id: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+    id: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
 extensions:
-    - id: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-      version: 0.1.0
-      semanticSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-      description: Declares RabbitMQ exchange publishing and queue consumption through AMQP 0-9-1.
+    - id: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+      version: 0.2.0
+      semanticSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+      description: |-
+        Use this extension when your workload sends or receives messages with RabbitMQ.
+
+        In RabbitMQ, a workload sends a message to an exchange, together with a routing key. The exchange uses
+        the routing key to put the message into one or more queues. Other workloads then read the messages from
+        those queues. Exchanges and queues live inside a virtual host, which is like a separate space on the
+        RabbitMQ server.
+
+        In a Condition, you give the virtual host, and you list every exchange that your workload sends to and
+        every queue that it reads from. The platform then creates them or gives your workload access to them.
+
+        Write the exact names. Patterns are not allowed.
 vocabulary:
     owners:
         - coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].action:"consume"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.operations[].action
           value: consume
         - coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].action:"publish"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.operations[].action
           value: publish
         - coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].resource:"exchange"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.operations[].resource
           value: exchange
         - coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].resource:"queue"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.operations[].resource
           value: queue
         - coordinate: interface-field:rabbitmq.service:amqp_0_9_1:operations
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.operations
         - coordinate: interface-field:rabbitmq.service:amqp_0_9_1:virtualHost
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.virtualHost
         - coordinate: interface:rabbitmq.service:amqp_0_9_1
           category: interface
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
         - coordinate: kind:rabbitmq.service
           category: kind
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
     ownedDeclarations:
         - coordinate: kind:rabbitmq.service
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           description: |-
-            A RabbitMQ service providing access to exchanges and queues in a virtual host.
+            Your workload needs a RabbitMQ server with the exchanges and queues listed in the Condition.
 
-            Example: publish order events through a named exchange.
+            Example: a workload that sends an event to the order-events exchange, with the routing key
+            orders.created, each time someone places an order.
 
             ```condition
             kind: rabbitmq.service
@@ -91,49 +103,65 @@ vocabulary:
                   routingKey: orders.created
             ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
             coordinate: kind:rabbitmq.service
     interfaces:
         - coordinate: interface:rabbitmq.service:amqp_0_9_1
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           type: amqp_0_9_1
-          description: RabbitMQ access using the AMQP 0-9-1 client protocol.
+          description: |-
+            Your workload connects to RabbitMQ with a normal AMQP 0-9-1 client library, the protocol that most
+            RabbitMQ clients use.
+
+            Example: a workload that reads messages from the order-emails queue to send order emails. The
+            virtual host / is the default one.
+
+            ```condition
+            kind: rabbitmq.service
+            interface:
+              type: amqp_0_9_1
+              virtualHost: /
+              operations:
+                - resource: queue
+                  action: consume
+                  queue: order-emails
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
             coordinate: interface:rabbitmq.service:amqp_0_9_1
     interfaceFields:
         - coordinate: interface-field:rabbitmq.service:amqp_0_9_1:operations
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
-          description: Distinct publishing and consumption capabilities required by the workload.
+          description: The exchanges that your workload sends to and the queues that it reads from. Each line names one of them.
           path: interface.operations
           segments:
             - name: interface
             - name: operations
           provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
             coordinate: interface-field:rabbitmq.service:amqp_0_9_1:operations
         - coordinate: interface-field:rabbitmq.service:amqp_0_9_1:virtualHost
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
-          description: Literal virtual-host name containing every exchange and queue in this Condition.
+          description: The exact name of the virtual host. Every exchange and queue in this Condition is inside it.
           path: interface.virtualHost
           segments:
             - name: interface
             - name: virtualHost
           provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
             coordinate: interface-field:rabbitmq.service:amqp_0_9_1:virtualHost
     valueDomains:
         - coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].action
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.operations[].action
@@ -144,15 +172,15 @@ vocabulary:
             - name: action
           values:
             - value: consume
-              description: Receive messages from a named queue.
+              description: Read messages from a queue.
             - value: publish
-              description: Publish messages to an exchange with the declared routing key.
+              description: Send messages to an exchange, with the routing key given in the same line.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
             coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].action
         - coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].resource
-          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
           kind: rabbitmq.service
           interfaceType: amqp_0_9_1
           path: interface.operations[].resource
@@ -163,19 +191,19 @@ vocabulary:
             - name: resource
           values:
             - value: exchange
-              description: A RabbitMQ exchange receiving published messages.
+              description: An exchange, which receives the messages that your workload sends.
             - value: queue
-              description: A RabbitMQ queue from which messages are consumed.
+              description: A queue, which holds the messages that your workload reads.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
             coordinate: field-domain:rabbitmq.service:amqp_0_9_1:interface.operations[].resource
 scopes:
     - coordinate: rabbitmq.service:amqp_0_9_1
       kind: rabbitmq.service
       interfaceType: amqp_0_9_1
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+        - https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
       projection:
         kind: object
         required:
@@ -206,19 +234,19 @@ scopes:
                                     scalar: string
                                     values:
                                         - value: consume
-                                          description: Receive messages from a named queue.
+                                          description: Read messages from a queue.
                                         - value: publish
-                                          description: Publish messages to an exchange with the declared routing key.
-                                    description: RabbitMQ capability required on the named resource.
+                                          description: Send messages to an exchange, with the routing key given in the same line.
+                                    description: What the workload does with it.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/action
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/action
                                 - name: exchange
                                   shape:
@@ -229,16 +257,16 @@ scopes:
                                         not:
                                             const: amq.default
                                         pattern: ^[^\x00]*$
-                                    description: Exact exchange name; the empty string selects the default exchange.
+                                    description: The exact name of the exchange. Write an empty string for the default exchange.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/exchange
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/exchange
                                 - name: queue
                                   shape:
@@ -248,16 +276,16 @@ scopes:
                                         maxLength: 255
                                         minLength: 1
                                         pattern: ^[^\x00]*$
-                                    description: Exact name of the queue from which messages are received.
+                                    description: The exact name of the queue that the workload reads from.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/queue
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/queue
                                 - name: resource
                                   required: true
@@ -266,19 +294,19 @@ scopes:
                                     scalar: string
                                     values:
                                         - value: exchange
-                                          description: A RabbitMQ exchange receiving published messages.
+                                          description: An exchange, which receives the messages that your workload sends.
                                         - value: queue
-                                          description: A RabbitMQ queue from which messages are consumed.
-                                    description: RabbitMQ resource category to which the capability applies.
+                                          description: A queue, which holds the messages that your workload reads.
+                                    description: What the line is about, an exchange or a queue.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/resource
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/resource
                                 - name: routingKey
                                   shape:
@@ -287,38 +315,38 @@ scopes:
                                     constraints:
                                         maxLength: 255
                                         pattern: ^[^\x00]*$
-                                    description: Literal publishing routing key, which may be empty.
+                                    description: The exact routing key that the workload sends with each message. It can be empty.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/routingKey
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/routingKey
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
                         description: |-
-                            Distinct publishing and consumption capabilities required by the workload.
+                            The exchanges that your workload sends to and the queues that it reads from. Each line names one of them.
 
-                            Capabilities on literal exchanges and queues in this virtual host.
+                            The exchanges and queues in this virtual host that your workload uses. List at least one, and do not repeat a line.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                         jsonPointer: /properties/interface/properties/operations
                     - name: virtualHost
                       required: true
@@ -330,37 +358,53 @@ scopes:
                             minLength: 1
                             pattern: ^[^\x00]*$
                         description: |-
-                            Literal virtual-host name containing every exchange and queue in this Condition.
+                            The exact name of the virtual host. Every exchange and queue in this Condition is inside it.
 
-                            Exact virtual-host name; '/' explicitly selects the default virtual host.
+                            The exact name of the virtual host. Write / for the default virtual host.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                             jsonPointer: /properties/interface/properties/virtualHost
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                         jsonPointer: /properties/interface/properties/virtualHost
-                description: RabbitMQ access using the AMQP 0-9-1 client protocol.
+                description: |-
+                    Your workload connects to RabbitMQ with a normal AMQP 0-9-1 client library, the protocol that most
+                    RabbitMQ clients use.
+
+                    Example: a workload that reads messages from the order-emails queue to send order emails. The
+                    virtual host / is the default one.
+
+                    ```condition
+                    kind: rabbitmq.service
+                    interface:
+                      type: amqp_0_9_1
+                      virtualHost: /
+                      operations:
+                        - resource: queue
+                          action: consume
+                          queue: order-emails
+                    ```
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
 schemas:
-    - coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
-      owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+    - coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+      owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
       id: rabbitmq-amqp-0-9-1-interface
       kind: rabbitmq.service
       interfaceType: amqp_0_9_1
@@ -372,37 +416,37 @@ schemas:
                 additionalProperties: true
                 properties:
                     operations:
-                        description: Capabilities on literal exchanges and queues in this virtual host.
+                        description: The exchanges and queues in this virtual host that your workload uses. List at least one, and do not repeat a line.
                         items:
                             oneOf:
                                 - additionalProperties: false
-                                  description: Consume messages from an explicitly named queue.
+                                  description: Read messages from a queue with this exact name.
                                   properties:
                                     action:
                                         const: consume
-                                        description: RabbitMQ capability required on the named resource.
+                                        description: What the workload does with it.
                                     queue:
-                                        description: Exact name of the queue from which messages are received.
+                                        description: The exact name of the queue that the workload reads from.
                                         maxLength: 255
                                         minLength: 1
                                         pattern: ^[^\x00]*$
                                         type: string
                                     resource:
                                         const: queue
-                                        description: RabbitMQ resource category to which the capability applies.
+                                        description: What the line is about, an exchange or a queue.
                                   required:
                                     - action
                                     - queue
                                     - resource
                                   type: object
                                 - additionalProperties: false
-                                  description: Publish to an exchange using an explicit routing key.
+                                  description: Send messages to an exchange with the routing key given here.
                                   properties:
                                     action:
                                         const: publish
-                                        description: RabbitMQ capability required on the named resource.
+                                        description: What the workload does with it.
                                     exchange:
-                                        description: Exact exchange name; the empty string selects the default exchange.
+                                        description: The exact name of the exchange. Write an empty string for the default exchange.
                                         maxLength: 255
                                         not:
                                             const: amq.default
@@ -410,9 +454,9 @@ schemas:
                                         type: string
                                     resource:
                                         const: exchange
-                                        description: RabbitMQ resource category to which the capability applies.
+                                        description: What the line is about, an exchange or a queue.
                                     routingKey:
-                                        description: Literal publishing routing key, which may be empty.
+                                        description: The exact routing key that the workload sends with each message. It can be empty.
                                         maxLength: 255
                                         pattern: ^[^\x00]*$
                                         type: string
@@ -428,7 +472,7 @@ schemas:
                     type:
                         const: amqp_0_9_1
                     virtualHost:
-                        description: Exact virtual-host name; '/' explicitly selects the default virtual host.
+                        description: The exact name of the virtual host. Write / for the default virtual host.
                         maxLength: 255
                         minLength: 1
                         pattern: ^[^\x00]*$
@@ -474,19 +518,19 @@ schemas:
                                     scalar: string
                                     values:
                                         - value: consume
-                                          description: Receive messages from a named queue.
+                                          description: Read messages from a queue.
                                         - value: publish
-                                          description: Publish messages to an exchange with the declared routing key.
-                                    description: RabbitMQ capability required on the named resource.
+                                          description: Send messages to an exchange, with the routing key given in the same line.
+                                    description: What the workload does with it.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/action
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/action
                                 - name: exchange
                                   shape:
@@ -497,16 +541,16 @@ schemas:
                                         not:
                                             const: amq.default
                                         pattern: ^[^\x00]*$
-                                    description: Exact exchange name; the empty string selects the default exchange.
+                                    description: The exact name of the exchange. Write an empty string for the default exchange.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/exchange
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/exchange
                                 - name: queue
                                   shape:
@@ -516,16 +560,16 @@ schemas:
                                         maxLength: 255
                                         minLength: 1
                                         pattern: ^[^\x00]*$
-                                    description: Exact name of the queue from which messages are received.
+                                    description: The exact name of the queue that the workload reads from.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/queue
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/queue
                                 - name: resource
                                   required: true
@@ -534,19 +578,19 @@ schemas:
                                     scalar: string
                                     values:
                                         - value: exchange
-                                          description: A RabbitMQ exchange receiving published messages.
+                                          description: An exchange, which receives the messages that your workload sends.
                                         - value: queue
-                                          description: A RabbitMQ queue from which messages are consumed.
-                                    description: RabbitMQ resource category to which the capability applies.
+                                          description: A queue, which holds the messages that your workload reads.
+                                    description: What the line is about, an exchange or a queue.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/resource
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/resource
                                 - name: routingKey
                                   shape:
@@ -555,38 +599,38 @@ schemas:
                                     constraints:
                                         maxLength: 255
                                         pattern: ^[^\x00]*$
-                                    description: Literal publishing routing key, which may be empty.
+                                    description: The exact routing key that the workload sends with each message. It can be empty.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/routingKey
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/routingKey
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
                         description: |-
-                            Distinct publishing and consumption capabilities required by the workload.
+                            The exchanges that your workload sends to and the queues that it reads from. Each line names one of them.
 
-                            Capabilities on literal exchanges and queues in this virtual host.
+                            The exchanges and queues in this virtual host that your workload uses. List at least one, and do not repeat a line.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                         jsonPointer: /properties/interface/properties/operations
                     - name: virtualHost
                       required: true
@@ -598,35 +642,51 @@ schemas:
                             minLength: 1
                             pattern: ^[^\x00]*$
                         description: |-
-                            Literal virtual-host name containing every exchange and queue in this Condition.
+                            The exact name of the virtual host. Every exchange and queue in this Condition is inside it.
 
-                            Exact virtual-host name; '/' explicitly selects the default virtual host.
+                            The exact name of the virtual host. Write / for the default virtual host.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                             jsonPointer: /properties/interface/properties/virtualHost
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                         jsonPointer: /properties/interface/properties/virtualHost
-                description: RabbitMQ access using the AMQP 0-9-1 client protocol.
+                description: |-
+                    Your workload connects to RabbitMQ with a normal AMQP 0-9-1 client library, the protocol that most
+                    RabbitMQ clients use.
+
+                    Example: a workload that reads messages from the order-emails queue to send order emails. The
+                    virtual host / is the default one.
+
+                    ```condition
+                    kind: rabbitmq.service
+                    interface:
+                      type: amqp_0_9_1
+                      virtualHost: /
+                      operations:
+                        - resource: queue
+                          action: consume
+                          queue: order-emails
+                    ```
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                    owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                    coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+                owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+                coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+            owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+            coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
       provenance:
-        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-        extensionSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
-        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface
+        owner: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+        extensionSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
+        coordinate: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml#schema:rabbitmq-amqp-0-9-1-interface

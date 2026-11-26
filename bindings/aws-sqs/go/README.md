@@ -2,81 +2,104 @@
 
 # runtimeconditions.io/x/aws/sqs
 
-Amazon SQS queue configuration and canonical operation requirements. Use queue for queue access, service for creation and discovery, and message_move_task for redrive task access. Adapters resolve resources and dependent permissions. Supplied scalar configuration values require exact settings, except that maxMessagesPerSecond is an execution-rate ceiling. Omitted settings remain platform choices. Required tags and policy statements compose with platform controls; conflicts must be reported without silently changing requirements.
+Use this extension when your workload uses Amazon SQS, the message queue service from AWS.
+
+A queue holds messages. One part of a system sends messages to the queue. Another part receives them
+later, and deletes each message when it has finished with it. This lets the two parts work at their own
+speed.
+
+There are three interface types:
+
+- queue: your workload uses one queue. It can send, receive or delete messages, or manage the queue.
+  You can also ask for queue settings, such as FIFO order, encryption or a dead-letter queue.
+- service: your workload creates new queues, or lists the queues that exist. It does not need a queue
+  to exist first.
+- message_move_task: your workload moves failed messages out of a dead-letter queue, for example back
+  to the queue they came from.
+
+List the operations that your workload calls, by their SQS API names, such as SendMessage or
+ReceiveMessage. The platform turns them into the right AWS permissions, and finds or creates the queues.
+
+Every setting is optional. If you leave a setting out, the platform chooses. If you write a setting, the
+queue must have exactly that value, and a bigger or smaller value does not count. The one exception is
+maxMessagesPerSecond, which is an upper limit.
+
+Tags and access policy statements are added to the ones that the platform already uses. If they
+conflict, the platform reports the problem. It does not quietly change what you asked for.
 
 ```sh
 go get runtimeconditions.io/x/aws/sqs@v0.1.0
 ```
 
-Runtime Conditions extension: https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml
+Runtime Conditions extension: https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml
 
 ## Conditions
 
 Every Condition part this package defines, with the fields you can set. Select a line to open it.
 
 <details>
-<summary><b>aws.sqs</b> · <code>message_move_task</code>: Redrive task management for one source dead-letter queue; task handles remain runtime values.</summary>
+<summary><b>aws.sqs</b> · <code>message_move_task</code>: Your workload moves messages out of one dead-letter queue, for example back to the queue they came from.</summary>
 
 `sqs.MessageMoveTask` is the `interface` of an `aws.sqs` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `DestinationQueueRef` | `*string` | no | Optional destination queue Condition name; omission leaves destination selection to the platform and governed execution. Optional destination queue Condition name; requires start-task permission and matching queue types. Omission imposes no particular destination. |
-| `MaxMessagesPerSecond` | `*int64` | no | Redrive execution-rate ceiling; lower positive rates satisfy it, and omission leaves the rate to platform policy. Execution-rate ceiling from 1 through 500 messages per second; positive rates at or below it fulfill this field. Requires start-task permission and a platform-defined fulfillment mechanism. |
-| `Operations` | `MessageMoveTaskOperations` | yes | Canonical redrive task operations on the source dead-letter queue; the platform derives dependent authorization. A non-empty list of distinct canonical redrive task operations; authorization is determined by platform mapping. |
-| `Operations[].Name` | `MessageMoveTaskOperationsName` | yes | Must be CancelMessageMoveTask, ListMessageMoveTasks, or StartMessageMoveTask.<br>Values:<br>`CancelMessageMoveTask`: Cancel a running redrive task; platform mapping determines cancellation authorization.<br>`ListMessageMoveTasks`: Inspect recent redrive tasks for the source dead-letter queue.<br>`StartMessageMoveTask`: Start redrive; platform mapping derives source and destination authorization without inventing additional workload operations. |
-| `SourceQueueRef` | `*string` | no | Optional source queue Condition name; omission lets the platform bind this task Condition to one source dead-letter queue. Optional source queue Condition name; absent this reference, the platform binds this Condition to one source dead-letter queue without inferring account-wide access. |
+| `DestinationQueueRef` | `*string` | no | The name of the queue Condition to move messages to. If you leave it out, the platform, or the person who runs the move, decides. The name of the queue Condition to move messages to. It needs StartMessageMoveTask, and both queues must be the same kind. If you leave it out, any destination is fine. |
+| `MaxMessagesPerSecond` | `*int64` | no | The highest speed that the move may run at, in messages each second. A slower speed is fine. If you leave it out, the platform decides. The highest speed in messages each second, from 1 to 500. Any slower speed is fine. It needs StartMessageMoveTask, and the platform decides how to keep to it. |
+| `Operations` | `MessageMoveTaskOperations` | yes | The operations that your workload uses to manage moves out of the dead-letter queue. The platform works out the other AWS permissions that they need. The operations that your workload uses to manage the move. List at least one, each one once. The platform works out the AWS permissions. |
+| `Operations[].Name` | `MessageMoveTaskOperationsName` | yes | CancelMessageMoveTask, ListMessageMoveTasks or StartMessageMoveTask.<br>Values:<br>`CancelMessageMoveTask`: Stop a move that is running. The platform decides which permission this needs.<br>`ListMessageMoveTasks`: See the recent moves out of the dead-letter queue.<br>`StartMessageMoveTask`: Start moving messages. The platform works out the permissions needed on both queues, and does not add other operations for the workload. |
+| `SourceQueueRef` | `*string` | no | The name of the queue Condition for the dead-letter queue to move messages from. If you leave it out, the platform picks the one dead-letter queue for this task. The name of the queue Condition for the dead-letter queue. If you leave it out, the platform picks the one dead-letter queue for this task. It does not mean access to every queue in the account. |
 
 </details>
 
 <details>
-<summary><b>aws.sqs</b> · <code>queue</code>: Access to one logical SQS queue for messaging or queue administration.</summary>
+<summary><b>aws.sqs</b> · <code>queue</code>: Your workload uses one SQS queue.</summary>
 
 `sqs.Queue` is the `interface` of an `aws.sqs` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `AccessPolicy` | `*AccessPolicy` | no | Required queue resource-policy statements using platform-owned bindings; preserve platform controls and report conflicts. Requires non-empty policy statements composed with platform controls; effective authorization must satisfy both or fulfillment fails. |
-| `AccessPolicy.Statements` | `Statements` | yes | At least one required statement; additional platform statements remain permitted and must not be removed. |
-| `AccessPolicy.Statements[].ConditionRefs` | `ConditionRefs` | no | Platform-owned policy bindings applied together to this statement; unresolved names prevent fulfillment and names alone imply no standardized security guarantee. |
-| `AccessPolicy.Statements[].Effect` | `Effect` | yes | Must be Allow or Deny; explicit denies retain IAM denial semantics.<br>Values:<br>`Allow`: Require the selected operations to be allowed for the resolved principals under the bound conditions.<br>`Deny`: Require the selected operations to be denied for the resolved principals without silently blocking other required operations. |
-| `AccessPolicy.Statements[].Operations` | `StatementsOperations` | yes | Distinct canonical operation selectors; platform mapping must report shared-permission conflicts and must not blindly expand Deny dependencies. |
-| `AccessPolicy.Statements[].Operations[].Name` | `StatementsOperationsName` | yes | One queue, task, or CreateQueue operation name; platform mapping determines policy applicability and effective authorization.<br>Values:<br>`AddPermission`<br>`CancelMessageMoveTask`<br>`ChangeMessageVisibility`<br>`ChangeMessageVisibilityBatch`<br>`CreateQueue`<br>`DeleteMessage`<br>`DeleteMessageBatch`<br>`DeleteQueue`<br>`GetQueueAttributes`<br>`GetQueueUrl`<br>`ListDeadLetterSourceQueues`<br>`ListMessageMoveTasks`<br>`ListQueueTags`<br>`PurgeQueue`<br>`ReceiveMessage`<br>`RemovePermission`<br>`SendMessage`<br>`SendMessageBatch`<br>`SetQueueAttributes`<br>`StartMessageMoveTask`<br>`TagQueue`<br>`UntagQueue` |
-| `AccessPolicy.Statements[].PrincipalRefs` | `PrincipalRefs` | yes | Logical principal bindings; the adapter resolves identities and respects SQS cross-account restrictions. |
-| `ContentBasedDeduplication` | `*bool` | no | Whether the FIFO queue must derive deduplication IDs from message bodies. Boolean FIFO setting; supplying it requires queueType fifo. |
-| `DeadLetterQueue` | `*DeadLetterQueue` | no | Named queue Condition receiving failed messages and the exact configured receive threshold before transfer. Requires a named target queue and a positive receive threshold; the adapter checks matching queue types. |
-| `DeadLetterQueue.MaxReceiveCount` | `int64` | yes | Exact positive configured receive threshold before dead-letter transfer; a larger threshold does not fulfill it. |
-| `DeadLetterQueue.QueueRef` | `string` | yes | Name of the destination dead-letter queue Condition; the adapter checks existence, type compatibility, and cycles. |
-| `DeduplicationScope` | `*DeduplicationScope` | no | Required FIFO deduplication boundary, across the queue or within each message group. FIFO deduplication scope; supplying it requires queueType fifo.<br>Values:<br>`messageGroup`: Deduplicate matching IDs within each FIFO message group.<br>`queue`: Deduplicate matching IDs across the entire FIFO queue. |
-| `DelaySeconds` | `*int64` | no | Exact required queue default delay before newly sent messages become available. Exact queue delivery-delay default in seconds, from 0 through 900. |
-| `Encryption` | `*Encryption` | no | Exact required encryption mode with an optional logical KMS key binding and exact data-key reuse period. Requires a mode; KMS-specific settings are permitted only with mode kms. |
-| `Encryption.DataKeyReusePeriodSeconds` | `*int64` | no | Exact KMS data-key reuse period in seconds, from 60 through 86400. |
-| `Encryption.KeyRef` | `*string` | no | Non-empty logical KMS key binding resolved by the adapter; not a literal key ID or ARN and not a KMS permission grant. |
-| `Encryption.Mode` | `EncryptionMode` | yes | Must be none, sqs_managed, or kms; omission of the whole object imposes no encryption requirement.<br>Values:<br>`kms`: Require server-side encryption using KMS; the adapter selects a key unless keyRef constrains it.<br>`none`: Require server-side encryption to be disabled.<br>`sqs_managed`: Require server-side encryption using SQS-owned keys. |
-| `FifoThroughputLimit` | `*FifoThroughputLimit` | no | Required FIFO throughput quota boundary, per queue or per message group. FIFO quota boundary; perMessageGroupId requires messageGroup deduplication.<br>Values:<br>`perMessageGroupId`: Apply the FIFO throughput quota per message group; requires messageGroup deduplication.<br>`perQueue`: Apply the FIFO throughput quota to the entire queue. |
-| `MaximumMessageSizeBytes` | `*int64` | no | Exact required configured message-size limit in bytes; not a minimum supported message capacity. Exact configured message-size limit in bytes, from 1024 through 1048576. |
-| `MessageRetentionPeriodSeconds` | `*int64` | no | Exact required queue message retention period; longer retention does not automatically fulfill it. Exact message retention in seconds, from 60 through 1209600; neither a minimum nor a ceiling. |
-| `Operations` | `QueueOperations` | no | Canonical SQS operations required on this queue; individual and batch operations remain distinct. A non-empty list of distinct canonical queue operations; no IAM action selection is accepted. |
-| `Operations[].Name` | `QueueOperationsName` | yes | Canonical queue operation name, preserving individual and batch distinctions.<br>Values:<br>`AddPermission`: Add an account principal's queue policy permission.<br>`ChangeMessageVisibility`: Change one received message's visibility.<br>`ChangeMessageVisibilityBatch`: Change received-message visibility in a batch.<br>`DeleteMessage`: Delete one received message.<br>`DeleteMessageBatch`: Delete received messages in a batch.<br>`DeleteQueue`: Delete the queue and its contents.<br>`GetQueueAttributes`: Read queue attributes.<br>`GetQueueUrl`: Resolve an existing queue's URL.<br>`ListDeadLetterSourceQueues`: List queues using this dead-letter queue.<br>`ListQueueTags`: Read queue tags.<br>`PurgeQueue`: Remove all queue messages.<br>`ReceiveMessage`: Receive queue messages.<br>`RemovePermission`: Remove a labeled queue policy permission.<br>`SendMessage`: Send one message.<br>`SendMessageBatch`: Send messages in a batch.<br>`SetQueueAttributes`: Change queue attributes or policies.<br>`TagQueue`: Add or update queue tags.<br>`UntagQueue`: Remove queue tags. |
-| `QueueType` | `*QueueType` | no | Required queue delivery type when known; omission leaves Standard versus FIFO unconstrained. If present, must be standard or fifo; omission permits either queue type.<br>Values:<br>`fifo`: Require an SQS FIFO queue with ordering within each message group and FIFO deduplication semantics.<br>`standard`: Require an SQS Standard queue with at-least-once delivery and best-effort ordering. |
-| `ReceiveMessageWaitTimeSeconds` | `*int64` | no | Exact required queue default for how long receive calls wait for a message. Exact queue long-poll default in seconds, from 0 through 20. |
-| `RedriveAllowPolicy` | `*RedriveAllowPolicy` | no | Which source queues may use this queue as their dead-letter queue. Requires a mode; sourceQueueRefs is required only for byQueue and forbidden for other modes. |
-| `RedriveAllowPolicy.Mode` | `RedriveAllowPolicyMode` | yes | Must be allowAll, denyAll, or byQueue; allowAll is limited to the same account and Region.<br>Values:<br>`allowAll`: Allow source queues in the same AWS account and Region to use this dead-letter queue.<br>`byQueue`: Allow only the queues named in sourceQueueRefs to use this dead-letter queue.<br>`denyAll`: Prevent all source queues from using this queue as their dead-letter queue. |
-| `RedriveAllowPolicy.SourceQueueRefs` | `SourceQueueRefs` | no | One to ten distinct names of source queue Conditions allowed to use this dead-letter queue. |
-| `Tags` | `Tags` | no | Required workload-defined tag subset; platforms may add labels but must report conflicting values without silent replacement. Required tag subset; platform tags remain permitted. Conflicting values prevent fulfillment; provider character rules also apply. AWS recommends keeping a queue under 50 tags. |
-| `VisibilityTimeoutSeconds` | `*int64` | no | Exact required queue default for how long a received message stays hidden before redelivery. Exact queue visibility default in seconds, from 0 through 43200. |
+| `AccessPolicy` | `*AccessPolicy` | no | Statements that must be in the access policy of the queue. They use names that the platform turns into real values, not real account IDs. The platform keeps its own statements and reports any conflict. Statements that must be in the access policy of the queue. The platform keeps its own rules too. If both cannot be true together, the platform cannot provide the queue. |
+| `AccessPolicy.Statements` | `Statements` | yes | At least one statement. The platform may add more statements, and must not remove yours. |
+| `AccessPolicy.Statements[].ConditionRefs` | `ConditionRefs` | no | Names for policy conditions that the platform owns. They all apply to this statement. If a name cannot be turned into a real value, the platform cannot provide the queue. A name alone does not promise any level of security. |
+| `AccessPolicy.Statements[].Effect` | `Effect` | yes | Allow or Deny. A Deny works like a normal IAM deny.<br>Values:<br>`Allow`: The listed principals must be allowed to call the listed operations, under the listed conditions.<br>`Deny`: The listed principals must not be allowed to call the listed operations. This must not quietly block other operations that the workload needs. |
+| `AccessPolicy.Statements[].Operations` | `StatementsOperations` | yes | The operations that this statement covers, each one once. If operations share a permission, the platform reports the conflict. It must not quietly make a Deny cover more operations. |
+| `AccessPolicy.Statements[].Operations[].Name` | `StatementsOperationsName` | yes | The name of a queue, task or CreateQueue operation. The platform decides which policy permissions it needs.<br>Values:<br>`AddPermission`<br>`CancelMessageMoveTask`<br>`ChangeMessageVisibility`<br>`ChangeMessageVisibilityBatch`<br>`CreateQueue`<br>`DeleteMessage`<br>`DeleteMessageBatch`<br>`DeleteQueue`<br>`GetQueueAttributes`<br>`GetQueueUrl`<br>`ListDeadLetterSourceQueues`<br>`ListMessageMoveTasks`<br>`ListQueueTags`<br>`PurgeQueue`<br>`ReceiveMessage`<br>`RemovePermission`<br>`SendMessage`<br>`SendMessageBatch`<br>`SetQueueAttributes`<br>`StartMessageMoveTask`<br>`TagQueue`<br>`UntagQueue` |
+| `AccessPolicy.Statements[].PrincipalRefs` | `PrincipalRefs` | yes | Names for the principals, such as other AWS accounts or roles. The platform turns them into real identities, and follows the SQS rules for other accounts. |
+| `ContentBasedDeduplication` | `*bool` | no | For a FIFO queue, whether SQS finds duplicate messages by looking at the message body, so the sender does not have to give each message an ID. true or false. This is only for FIFO queues, so queueType must be fifo. |
+| `DeadLetterQueue` | `*DeadLetterQueue` | no | Where failed messages go. Give the name of another queue Condition in this profile, and how many times a message can be received before SQS moves it there. The dead-letter queue, and how many tries a message gets. The platform checks that both queues are the same kind. |
+| `DeadLetterQueue.MaxReceiveCount` | `int64` | yes | How many times a message can be received before SQS moves it to the dead-letter queue, from 1 to 1000. The queue must use exactly this number. A bigger number does not count. |
+| `DeadLetterQueue.QueueRef` | `string` | yes | The name of the queue Condition for the dead-letter queue. The platform checks that it exists, that it is the same kind of queue, and that the queues do not point at each other in a loop. |
+| `DeduplicationScope` | `*DeduplicationScope` | no | For a FIFO queue, where SQS looks for duplicate messages, in the whole queue or inside each message group. queue or messageGroup. This is only for FIFO queues, so queueType must be fifo.<br>Values:<br>`messageGroup`: Look for duplicates inside each message group.<br>`queue`: Look for duplicates in the whole queue. |
+| `DelaySeconds` | `*int64` | no | How long a new message waits before receivers can see it. The queue must use exactly this value. The wait for new messages in seconds, from 0 to 900 (15 minutes). The queue must use exactly this value. |
+| `Encryption` | `*Encryption` | no | How the messages in the queue are encrypted when they are stored. You can also name the KMS key to use, and say how long SQS reuses a data key. How the queue is encrypted. mode is required. keyRef and dataKeyReusePeriodSeconds work only with mode kms. |
+| `Encryption.DataKeyReusePeriodSeconds` | `*int64` | no | How long SQS reuses a data key from KMS, in seconds, from 60 to 86400 (24 hours). The queue must use exactly this value. |
+| `Encryption.KeyRef` | `*string` | no | A name for the KMS key, which the platform turns into a real key. It is not a key ID or ARN, and it does not give any KMS permission. |
+| `Encryption.Mode` | `EncryptionMode` | yes | none, sqs_managed or kms. Leave out the whole encryption field if any encryption is fine.<br>Values:<br>`kms`: Messages are encrypted with a key from AWS KMS. The platform picks the key, unless you set keyRef.<br>`none`: Messages are not encrypted when they are stored.<br>`sqs_managed`: Messages are encrypted with keys that SQS owns and manages. |
+| `FifoThroughputLimit` | `*FifoThroughputLimit` | no | For a FIFO queue, whether the speed limit applies to the whole queue or to each message group. perQueue or perMessageGroupId. perMessageGroupId needs deduplicationScope set to messageGroup.<br>Values:<br>`perMessageGroupId`: The speed limit applies to each message group. This needs deduplicationScope set to messageGroup.<br>`perQueue`: The speed limit applies to the whole queue. |
+| `MaximumMessageSizeBytes` | `*int64` | no | The size limit that the queue sets for each message, in bytes. The queue must use exactly this limit. It is not a promise that bigger messages fit. The size limit for each message in bytes, from 1024 to 1048576 (1 MiB). The queue must use exactly this value. |
+| `MessageRetentionPeriodSeconds` | `*int64` | no | How long the queue keeps a message that nobody deletes. The queue must use exactly this value. A longer time does not count. How long messages are kept, in seconds, from 60 to 1209600 (14 days). The queue must use exactly this value. A longer or shorter time does not count. |
+| `Operations` | `QueueOperations` | no | The SQS operations that your workload calls on this queue. A single operation and its batch version are different, so list both if your workload uses both, for example SendMessage and SendMessageBatch. The SQS operations that your workload calls on this queue. List at least one, each one once. Use the operation names, not IAM action names. |
+| `Operations[].Name` | `QueueOperationsName` | yes | The operation name. A single operation and its batch version have different names.<br>Values:<br>`AddPermission`: Give another AWS account permission to use the queue.<br>`ChangeMessageVisibility`: Change how long one received message stays hidden.<br>`ChangeMessageVisibilityBatch`: Change how long several received messages stay hidden, in one call.<br>`DeleteMessage`: Delete one message after it was received.<br>`DeleteMessageBatch`: Delete several received messages in one call.<br>`DeleteQueue`: Delete the queue and all its messages.<br>`GetQueueAttributes`: Read the queue settings.<br>`GetQueueUrl`: Find the URL of a queue that already exists.<br>`ListDeadLetterSourceQueues`: List the queues that use this queue as their dead-letter queue.<br>`ListQueueTags`: Read the queue tags.<br>`PurgeQueue`: Delete all messages in the queue.<br>`ReceiveMessage`: Receive messages from the queue.<br>`RemovePermission`: Take away a permission that AddPermission gave.<br>`SendMessage`: Send one message.<br>`SendMessageBatch`: Send several messages in one call.<br>`SetQueueAttributes`: Change the queue settings or its access policy.<br>`TagQueue`: Add tags to the queue, or change them.<br>`UntagQueue`: Remove tags from the queue. |
+| `QueueType` | `*QueueType` | no | The kind of queue that your workload needs, standard or fifo. Leave it out if either kind works. standard or fifo. Leave it out if either kind works.<br>Values:<br>`fifo`: A FIFO queue. Messages in the same message group arrive in order, and duplicates are removed.<br>`standard`: A Standard queue. Each message arrives at least once, and the order is not guaranteed. |
+| `ReceiveMessageWaitTimeSeconds` | `*int64` | no | How long a receive call waits for a message to arrive before it returns with nothing. The queue must use exactly this value. How long a receive call waits, in seconds, from 0 to 20. The queue must use exactly this value. |
+| `RedriveAllowPolicy` | `*RedriveAllowPolicy` | no | Which other queues may use this queue as their dead-letter queue. Which queues may use this queue as their dead-letter queue. sourceQueueRefs is needed with byQueue, and is not allowed with the other modes. |
+| `RedriveAllowPolicy.Mode` | `RedriveAllowPolicyMode` | yes | allowAll, denyAll or byQueue. allowAll only covers queues in the same AWS account and Region.<br>Values:<br>`allowAll`: Any queue in the same AWS account and Region may use this queue as its dead-letter queue.<br>`byQueue`: Only the queues named in sourceQueueRefs may use this queue as their dead-letter queue.<br>`denyAll`: No queue may use this queue as its dead-letter queue. |
+| `RedriveAllowPolicy.SourceQueueRefs` | `SourceQueueRefs` | no | The names of the queue Conditions that may use this queue as their dead-letter queue. List 1 to 10 names, each name once. |
+| `Tags` | `Tags` | no | Tags that the queue must have. The platform may add its own tags. If a tag has a different value, the platform reports the conflict instead of replacing your value. Tags that the queue must have. The platform may add more tags. If a tag has a different value, the platform cannot provide the queue. The AWS rules for tag characters also apply, and AWS suggests fewer than 50 tags on a queue. |
+| `VisibilityTimeoutSeconds` | `*int64` | no | How long a message stays hidden from other receivers after one receiver gets it. If the receiver does not delete the message in this time, the message comes back. The queue must use exactly this value. The visibility timeout in seconds, from 0 to 43200 (12 hours). The queue must use exactly this value. |
 
 </details>
 
 <details>
-<summary><b>aws.sqs</b> · <code>service</code>: Queue creation or account-and-Region queue discovery without requiring an existing queue.</summary>
+<summary><b>aws.sqs</b> · <code>service</code>: Your workload creates queues, or lists the queues in its AWS account and Region.</summary>
 
 `sqs.Service` is the `interface` of an `aws.sqs` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `Operations` | `ServiceOperations` | yes | Canonical queue creation or discovery operations; the platform supplies authorization mappings. A non-empty list of distinct creation or listing operations; wildcards are excluded. |
-| `Operations[].Name` | `ServiceOperationsName` | yes | Must be CreateQueue or ListQueues.<br>Values:<br>`CreateQueue`: Create queues; this operation alone does not request a pre-existing queue.<br>`ListQueues`: List queues in the target account and Region. |
+| `Operations` | `ServiceOperations` | yes | The operations that your workload uses to create or list queues. The platform works out the AWS permissions that they need. The operations that your workload uses to create or list queues. List at least one, each one once. Patterns are not allowed. |
+| `Operations[].Name` | `ServiceOperationsName` | yes | CreateQueue or ListQueues.<br>Values:<br>`CreateQueue`: Create new queues. This alone does not ask for a queue that already exists.<br>`ListQueues`: List the queues in the AWS account and Region. |
 
 </details>
 
@@ -84,6 +107,35 @@ Every Condition part this package defines, with the fields you can set. Select a
 
 `sqs.AwsSqs` declares a `aws.sqs` Condition.
 
-Requires Amazon SQS semantics and the declared configuration and canonical operations.
+Your workload needs Amazon SQS, with the settings and operations listed in the Condition.
+
+Example: a worker that receives orders from a queue, and deletes each message after it has handled
+the order.
+
+```go
+sqs.AwsSqs(
+	sqs.Queue{
+		Operations: sqs.QueueOperations{
+			sqs.QueueOperationsItem{
+				Name: sqs.QueueOperationsNameReceiveMessage,
+			},
+			sqs.QueueOperationsItem{
+				Name: sqs.QueueOperationsNameDeleteMessage,
+			},
+		},
+	},
+)
+```
+
+In a Profile, this declares:
+
+```yaml
+kind: aws.sqs
+interface:
+  type: queue
+  operations:
+    - name: ReceiveMessage
+    - name: DeleteMessage
+```
 
 The full API, with every type, field and constant documented, is in the Go package documentation.

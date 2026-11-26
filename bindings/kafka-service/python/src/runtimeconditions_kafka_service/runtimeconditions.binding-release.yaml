@@ -1,16 +1,16 @@
 apiVersion: runtimeconditions.io/binding-release/v1alpha1
 dependencyLock:
     extensions:
-        - id: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-          version: 0.1.0
-          sourceSha256: cbaee4ef1c7e270845ee69eb4d35deb93751795c26e4fba97b4237079bcb15a1
-          semanticSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+        - id: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+          version: 0.2.0
+          sourceSha256: bce155416a575395724fa8889232d3c7f2f1eeb2ceebd73fe9b49ef52dfda9a6
+          semanticSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
           sourceBackend: catalog
-          sourceLocator: catalog:kafka/service/releases/0.1.0/runtimeconditions.extension.yaml
+          sourceLocator: catalog:kafka/service/releases/0.2.0/runtimeconditions.extension.yaml
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: 7c8ca8ec8ea0adf5fc0caf2a92d2f48d0ed44d19ab86dae75a4e9211f16549b5
+    semanticSha256: e9d00a828bb83b7fd6711ef7e9fed0ef96edc6273b18312b4ba1d468116a0d11
 package:
     coordinate: runtimeconditions-kafka-service
     language: python
@@ -26,7 +26,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+        sha256: 23764404c2196c92518a6560cf511cf4def70ef2ef48a901b67380737754dea9
     profiler:
         name: python-rc-profiler
         version: 0.4.0
@@ -34,6 +34,6 @@ provenance:
     sourceDirectory: bindings/kafka-service/python
     targetReleaseTag: bindings/kafka-service/python/v0.1.0
 rootExtension:
-    id: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+    id: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be

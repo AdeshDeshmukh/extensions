@@ -1,10 +1,11 @@
 apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
-    package.json: 015ad05044b63dc1142ad88188c5f7d9f141d451504e8324ec97c72d72cdbd23
-    runtimeconditions/runtimeconditions.binding-model.yaml: bedc3356e3095576f2fb41569c541b80290ca67c8028c1a1a85b2e355ed1bf2b
-    runtimeconditions/runtimeconditions.bindings.yaml: 8920a8cd51b96e3a0f1a5e91d40b8d80ea9987807f4420dafc41fdce8a64985e
-    runtimeconditions/runtimeconditions.extension.yaml: fbb3b7aae22a43d25528a57ebfe691aa4685c719f020eb1c978d599fedfac059
-    src/bindings.ts: 90f5685ffd1c635b6223721cc7f4d3c4f187be94836d998ae63a2db878134630
-    src/index.ts: 17020f0c8c961dfb99b80bbe50b9aea4b3b2c4432001d4a963b26c68b33cb0fc
-    tsconfig.json: 03c10cdc487eaa84d67cb20573fd86c7816aa1e2d49f8c8e15da44c6baeb3b37
+    README.md: 14319d8961ab0ca8f2b608a366c3fc83caa5fc0fa6b6db48c136cd6635436b07
+    package.json: 163fc69b61a83a6a6fff4aa1cc562bc371f93c91df4a041e3f419f1a587a6110
+    runtimeconditions/runtimeconditions.binding-model.yaml: dfa5565a28e9e35a7298abe403cd0aa6ad616d36074d881b0155415eb467c494
+    runtimeconditions/runtimeconditions.bindings.yaml: d3e6441a51985879e7fa65a4f1139e1f8db1049ce8a9f6a4adb6f7d03c95b2d7
+    runtimeconditions/runtimeconditions.extension.yaml: 4171f8120792887d3088e30a7bcfb6bad58f887056cedd56416937e0c3842d1d
+    src/bindings.ts: da6ff367e83f44bfdb9e5b3ce313f21c6d8bed86884464e299a1654c8c4bcfea
+    src/index.ts: a4ebbede05fd6c302a62373473e174678b40ac7d3b0c2aa1784d216f8a578fb2
+    tsconfig.json: 56a099354ad81d85f6d2cfaae67febca805af9395267cdee47e7b452670eb5e2

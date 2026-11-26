@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/binding-model/v1alpha1
 kind: RuntimeConditionsBindingModel
 metadata:
-    semanticSha256: cc0194f13453df8c70297d93aec7f52a2f409844286adabf941cdae36a1f7a95
+    semanticSha256: e6e40d67658c06e4b7a0559b219e4d46121b049785f54d72fdf9051bddbc1b19
     normalizer:
         name: rc-binding-model
         version: 0.1.0
@@ -11,202 +11,261 @@ coreProfileSchema:
     version: 0.4.0
     semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
 rootExtension:
-    id: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+    id: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
 extensions:
-    - id: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-      version: 0.1.0
-      semanticSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+    - id: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+      version: 0.2.0
+      semanticSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+      description: |-
+        Use this extension when your workload needs a folder from the file system to be there when it starts,
+        for example a folder for its data, a folder for temporary files, or a folder of configuration files.
+
+        In a Condition, you say where the folder must be, and if the workload only reads it or also writes to
+        it. For a folder that the workload writes to, you also say if the files must still be there after the
+        workload restarts. You can also say if all copies of the workload must see the same files, and how much
+        space the folder needs.
+
+        The Condition does not say what kind of storage to use. A network file system, a cloud file service or
+        a local disk can all give the same folder. The platform chooses.
 vocabulary:
     owners:
         - coordinate: condition-field:rc.file_system:mount:env
           category: condition-field
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: env
         - coordinate: field-domain:rc.file_system:mount:env[].property:"path"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: env[].property
           value: path
         - coordinate: field-domain:rc.file_system:mount:interface.access:"read_only"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.access
           value: read_only
         - coordinate: field-domain:rc.file_system:mount:interface.access:"read_write"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.access
           value: read_write
         - coordinate: field-domain:rc.file_system:mount:interface.persistence:"ephemeral"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.persistence
           value: ephemeral
         - coordinate: field-domain:rc.file_system:mount:interface.persistence:"persistent"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.persistence
           value: persistent
         - coordinate: field-domain:rc.file_system:mount:interface.sharing:"exclusive"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.sharing
           value: exclusive
         - coordinate: field-domain:rc.file_system:mount:interface.sharing:"shared"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.sharing
           value: shared
         - coordinate: interface-field:rc.file_system:mount:access
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.access
         - coordinate: interface-field:rc.file_system:mount:minimumSize
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.minimumSize
         - coordinate: interface-field:rc.file_system:mount:path
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.path
         - coordinate: interface-field:rc.file_system:mount:persistence
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.persistence
         - coordinate: interface-field:rc.file_system:mount:sharing
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.sharing
         - coordinate: interface:rc.file_system:mount
           category: interface
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
         - coordinate: kind:rc.file_system
           category: kind
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
     ownedDeclarations:
         - coordinate: kind:rc.file_system
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
+          description: |-
+            Your workload needs a folder from the file system.
+
+            Example: a workload that keeps its media library in /var/lib/media-library. It writes there, the
+            files must still be there after a restart, and the folder needs at least 10 GiB of space.
+
+            ```condition
+            kind: rc.file_system
+            interface:
+              type: mount
+              path: /var/lib/media-library
+              access: read_write
+              persistence: persistent
+              minimumSize: 10Gi
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: kind:rc.file_system
     interfaces:
         - coordinate: interface:rc.file_system:mount
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           type: mount
+          description: |-
+            A folder that the platform mounts into your workload at a path.
+
+            Example: a workload that reads its settings from files in /etc/media-library. It never writes there.
+
+            ```condition
+            kind: rc.file_system
+            interface:
+              type: mount
+              path: /etc/media-library
+              access: read_only
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: interface:rc.file_system:mount
     conditionFields:
         - coordinate: condition-field:rc.file_system:mount:env
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
+          description: |-
+            The environment variable that tells your workload where the folder is. Use it when your workload
+            reads the path from a variable, so the platform can choose where to mount the folder. If you also
+            give interface.path, that path is the default and the variable can change it.
+
+            Example: a workload that reads its credential files from the folder named in CREDENTIALS_DIR.
+
+            ```condition
+            kind: rc.file_system
+            interface:
+              type: mount
+              access: read_only
+            env:
+              - property: path
+                name: CREDENTIALS_DIR
+            ```
           path: env
           segments:
             - name: env
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: condition-field:rc.file_system:mount:env
     interfaceFields:
         - coordinate: interface-field:rc.file_system:mount:access
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
+          description: Whether your workload only reads the folder, or also writes to it.
           path: interface.access
           segments:
             - name: interface
             - name: access
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: interface-field:rc.file_system:mount:access
         - coordinate: interface-field:rc.file_system:mount:minimumSize
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
+          description: The least space that the folder must have, such as 10Gi. Use a whole number with Mi, Gi or Ti.
           path: interface.minimumSize
           segments:
             - name: interface
             - name: minimumSize
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: interface-field:rc.file_system:mount:minimumSize
         - coordinate: interface-field:rc.file_system:mount:path
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
+          description: The full path where the folder must be, such as /var/lib/app. You need it unless env gives the path.
           path: interface.path
           segments:
             - name: interface
             - name: path
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: interface-field:rc.file_system:mount:path
         - coordinate: interface-field:rc.file_system:mount:persistence
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
+          description: Whether the files that your workload writes must still be there after it restarts or is replaced. You need it when access is read_write.
           path: interface.persistence
           segments:
             - name: interface
             - name: persistence
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: interface-field:rc.file_system:mount:persistence
         - coordinate: interface-field:rc.file_system:mount:sharing
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
+          description: Whether every copy of your workload must see the same files, or each copy must have its own. Leave it out if either works.
           path: interface.sharing
           segments:
             - name: interface
             - name: sharing
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: interface-field:rc.file_system:mount:sharing
     valueDomains:
         - coordinate: field-domain:rc.file_system:mount:env[].property
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: env[].property
@@ -216,12 +275,13 @@ vocabulary:
             - name: property
           values:
             - value: path
+              description: The variable holds the path of the folder.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: field-domain:rc.file_system:mount:env[].property
         - coordinate: field-domain:rc.file_system:mount:interface.access
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.access
@@ -230,13 +290,15 @@ vocabulary:
             - name: access
           values:
             - value: read_only
+              description: The workload only reads the folder. The platform puts the files there.
             - value: read_write
+              description: The workload also writes to the folder.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: field-domain:rc.file_system:mount:interface.access
         - coordinate: field-domain:rc.file_system:mount:interface.persistence
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.persistence
@@ -245,13 +307,15 @@ vocabulary:
             - name: persistence
           values:
             - value: ephemeral
+              description: The files can be lost when the workload restarts or is replaced.
             - value: persistent
+              description: The files must still be there after the workload restarts or is replaced.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: field-domain:rc.file_system:mount:interface.persistence
         - coordinate: field-domain:rc.file_system:mount:interface.sharing
-          owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
           kind: rc.file_system
           interfaceType: mount
           path: interface.sharing
@@ -260,17 +324,19 @@ vocabulary:
             - name: sharing
           values:
             - value: exclusive
+              description: Each copy of the workload has its own files.
             - value: shared
+              description: Every copy of the workload sees the same files.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
             coordinate: field-domain:rc.file_system:mount:interface.sharing
 scopes:
     - coordinate: rc.file_system:mount
       kind: rc.file_system
       interfaceType: mount
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+        - https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
       projection:
         kind: object
         required:
@@ -292,15 +358,16 @@ scopes:
                             scalar: string
                             constraints:
                                 pattern: ^[A-Za-z_][A-Za-z0-9_]*$
+                            description: The name of the variable, such as DATA_DIR. It uses letters, digits and underscores, and cannot start with a digit.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/name
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/name
                         - name: property
                           required: true
@@ -309,61 +376,83 @@ scopes:
                             scalar: string
                             values:
                                 - value: path
+                                  description: The variable holds the path of the folder.
+                            description: What the variable holds. Only path is allowed.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/property
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/property
                         - name: required
                           shape:
                             kind: scalar
                             scalar: boolean
+                            description: True when the workload cannot start without this variable.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/required
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/required
                         - name: sensitive
                           shape:
                             kind: scalar
                             scalar: boolean
+                            description: True when the value is a secret, so the platform can store and pass it securely.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/sensitive
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/sensitive
                     provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/env/items
                 constraints:
                     minItems: 1
                     uniqueItems: true
+                description: |-
+                    The environment variable that tells your workload where the folder is. Use it when your workload
+                    reads the path from a variable, so the platform can choose where to mount the folder. If you also
+                    give interface.path, that path is the default and the variable can change it.
+
+                    Example: a workload that reads its credential files from the folder named in CREDENTIALS_DIR.
+
+                    ```condition
+                    kind: rc.file_system
+                    interface:
+                      type: mount
+                      access: read_only
+                    env:
+                      - property: path
+                        name: CREDENTIALS_DIR
+                    ```
+
+                    The environment variables that tell your workload where the folder is. List at least one, each one once.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                     jsonPointer: /properties/env
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                 jsonPointer: /properties/env
             - name: interface
               required: true
@@ -379,16 +468,22 @@ scopes:
                         scalar: string
                         values:
                             - value: read_only
+                              description: The workload only reads the folder. The platform puts the files there.
                             - value: read_write
+                              description: The workload also writes to the folder.
+                        description: |-
+                            Whether your workload only reads the folder, or also writes to it.
+
+                            read_only or read_write.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/access
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/access
                     - name: minimumSize
                       shape:
@@ -396,15 +491,19 @@ scopes:
                         scalar: string
                         constraints:
                             pattern: ^[1-9][0-9]*(Mi|Gi|Ti)$
+                        description: |-
+                            The least space that the folder must have, such as 10Gi. Use a whole number with Mi, Gi or Ti.
+
+                            A whole number followed by Mi, Gi or Ti, such as 512Mi or 10Gi.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/minimumSize
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/minimumSize
                     - name: path
                       shape:
@@ -412,15 +511,19 @@ scopes:
                         scalar: string
                         constraints:
                             pattern: ^/.
+                        description: |-
+                            The full path where the folder must be, such as /var/lib/app. You need it unless env gives the path.
+
+                            The full path of the folder. It must start with / and cannot be only /.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/path
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/path
                     - name: persistence
                       shape:
@@ -428,16 +531,22 @@ scopes:
                         scalar: string
                         values:
                             - value: ephemeral
+                              description: The files can be lost when the workload restarts or is replaced.
                             - value: persistent
+                              description: The files must still be there after the workload restarts or is replaced.
+                        description: |-
+                            Whether the files that your workload writes must still be there after it restarts or is replaced. You need it when access is read_write.
+
+                            persistent or ephemeral.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/persistence
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/persistence
                     - name: sharing
                       shape:
@@ -445,16 +554,22 @@ scopes:
                         scalar: string
                         values:
                             - value: exclusive
+                              description: Each copy of the workload has its own files.
                             - value: shared
+                              description: Every copy of the workload sees the same files.
+                        description: |-
+                            Whether every copy of your workload must see the same files, or each copy must have its own. Leave it out if either works.
+
+                            shared or exclusive.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/sharing
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/sharing
                 constraints:
                     if:
@@ -466,15 +581,29 @@ scopes:
                     then:
                         required:
                             - persistence
+                description: |-
+                    A folder that the platform mounts into your workload at a path.
+
+                    Example: a workload that reads its settings from files in /etc/media-library. It never writes there.
+
+                    ```condition
+                    kind: rc.file_system
+                    interface:
+                      type: mount
+                      path: /etc/media-library
+                      access: read_only
+                    ```
+
+                    The folder that your workload needs. persistence is required when access is read_write.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                 jsonPointer: /properties/interface
         constraints:
             if:
@@ -487,12 +616,12 @@ scopes:
                         required:
                             - path
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
 schemas:
-    - coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
-      owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+    - coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
+      owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
       id: file-system-mount
       kind: rc.file_system
       interfaceType: mount
@@ -505,18 +634,23 @@ schemas:
                     - env
         properties:
             env:
+                description: The environment variables that tell your workload where the folder is. List at least one, each one once.
                 items:
                     additionalProperties: false
                     properties:
                         name:
+                            description: The name of the variable, such as DATA_DIR. It uses letters, digits and underscores, and cannot start with a digit.
                             pattern: ^[A-Za-z_][A-Za-z0-9_]*$
                             type: string
                         property:
+                            description: What the variable holds. Only path is allowed.
                             enum:
                                 - path
                         required:
+                            description: True when the workload cannot start without this variable.
                             type: boolean
                         sensitive:
+                            description: True when the value is a secret, so the platform can store and pass it securely.
                             type: boolean
                     required:
                         - name
@@ -527,6 +661,7 @@ schemas:
                 uniqueItems: true
             interface:
                 additionalProperties: false
+                description: The folder that your workload needs. persistence is required when access is read_write.
                 if:
                     properties:
                         access:
@@ -535,20 +670,25 @@ schemas:
                         - access
                 properties:
                     access:
+                        description: read_only or read_write.
                         enum:
                             - read_only
                             - read_write
                     minimumSize:
+                        description: A whole number followed by Mi, Gi or Ti, such as 512Mi or 10Gi.
                         pattern: ^[1-9][0-9]*(Mi|Gi|Ti)$
                         type: string
                     path:
+                        description: The full path of the folder. It must start with / and cannot be only /.
                         pattern: ^/.
                         type: string
                     persistence:
+                        description: persistent or ephemeral.
                         enum:
                             - ephemeral
                             - persistent
                     sharing:
+                        description: shared or exclusive.
                         enum:
                             - exclusive
                             - shared
@@ -593,15 +733,16 @@ schemas:
                             scalar: string
                             constraints:
                                 pattern: ^[A-Za-z_][A-Za-z0-9_]*$
+                            description: The name of the variable, such as DATA_DIR. It uses letters, digits and underscores, and cannot start with a digit.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/name
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/name
                         - name: property
                           required: true
@@ -610,61 +751,83 @@ schemas:
                             scalar: string
                             values:
                                 - value: path
+                                  description: The variable holds the path of the folder.
+                            description: What the variable holds. Only path is allowed.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/property
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/property
                         - name: required
                           shape:
                             kind: scalar
                             scalar: boolean
+                            description: True when the workload cannot start without this variable.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/required
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/required
                         - name: sensitive
                           shape:
                             kind: scalar
                             scalar: boolean
+                            description: True when the value is a secret, so the platform can store and pass it securely.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                                 jsonPointer: /properties/env/items/properties/sensitive
                           provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/env/items/properties/sensitive
                     provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/env/items
                 constraints:
                     minItems: 1
                     uniqueItems: true
+                description: |-
+                    The environment variable that tells your workload where the folder is. Use it when your workload
+                    reads the path from a variable, so the platform can choose where to mount the folder. If you also
+                    give interface.path, that path is the default and the variable can change it.
+
+                    Example: a workload that reads its credential files from the folder named in CREDENTIALS_DIR.
+
+                    ```condition
+                    kind: rc.file_system
+                    interface:
+                      type: mount
+                      access: read_only
+                    env:
+                      - property: path
+                        name: CREDENTIALS_DIR
+                    ```
+
+                    The environment variables that tell your workload where the folder is. List at least one, each one once.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                     jsonPointer: /properties/env
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                 jsonPointer: /properties/env
             - name: interface
               required: true
@@ -680,16 +843,22 @@ schemas:
                         scalar: string
                         values:
                             - value: read_only
+                              description: The workload only reads the folder. The platform puts the files there.
                             - value: read_write
+                              description: The workload also writes to the folder.
+                        description: |-
+                            Whether your workload only reads the folder, or also writes to it.
+
+                            read_only or read_write.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/access
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/access
                     - name: minimumSize
                       shape:
@@ -697,15 +866,19 @@ schemas:
                         scalar: string
                         constraints:
                             pattern: ^[1-9][0-9]*(Mi|Gi|Ti)$
+                        description: |-
+                            The least space that the folder must have, such as 10Gi. Use a whole number with Mi, Gi or Ti.
+
+                            A whole number followed by Mi, Gi or Ti, such as 512Mi or 10Gi.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/minimumSize
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/minimumSize
                     - name: path
                       shape:
@@ -713,15 +886,19 @@ schemas:
                         scalar: string
                         constraints:
                             pattern: ^/.
+                        description: |-
+                            The full path where the folder must be, such as /var/lib/app. You need it unless env gives the path.
+
+                            The full path of the folder. It must start with / and cannot be only /.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/path
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/path
                     - name: persistence
                       shape:
@@ -729,16 +906,22 @@ schemas:
                         scalar: string
                         values:
                             - value: ephemeral
+                              description: The files can be lost when the workload restarts or is replaced.
                             - value: persistent
+                              description: The files must still be there after the workload restarts or is replaced.
+                        description: |-
+                            Whether the files that your workload writes must still be there after it restarts or is replaced. You need it when access is read_write.
+
+                            persistent or ephemeral.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/persistence
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/persistence
                     - name: sharing
                       shape:
@@ -746,16 +929,22 @@ schemas:
                         scalar: string
                         values:
                             - value: exclusive
+                              description: Each copy of the workload has its own files.
                             - value: shared
+                              description: Every copy of the workload sees the same files.
+                        description: |-
+                            Whether every copy of your workload must see the same files, or each copy must have its own. Leave it out if either works.
+
+                            shared or exclusive.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                             jsonPointer: /properties/interface/properties/sharing
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                         jsonPointer: /properties/interface/properties/sharing
                 constraints:
                     if:
@@ -767,15 +956,29 @@ schemas:
                     then:
                         required:
                             - persistence
+                description: |-
+                    A folder that the platform mounts into your workload at a path.
+
+                    Example: a workload that reads its settings from files in /etc/media-library. It never writes there.
+
+                    ```condition
+                    kind: rc.file_system
+                    interface:
+                      type: mount
+                      path: /etc/media-library
+                      access: read_only
+                    ```
+
+                    The folder that your workload needs. persistence is required when access is read_write.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                    owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                    coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+                owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+                coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
                 jsonPointer: /properties/interface
         constraints:
             if:
@@ -788,10 +991,10 @@ schemas:
                         required:
                             - path
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+            owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+            coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount
       provenance:
-        owner: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
-        extensionSha256: ef0cd7e0ba07aeb7e705f99384d605ad8d3a2b4597bbca5a0c380692dd143394
-        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml#schema:file-system-mount
+        owner: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+        extensionSha256: 0773214ca12f57e205edfea7c446791de90936c0dd078ba6e29526bf799a1a3a
+        coordinate: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml#schema:file-system-mount

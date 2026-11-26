@@ -4,6 +4,6 @@ files:
     bindings.go: b4e2890e271ce13165da1e824d8b9e44d2e91bf229c6416399e983f9174e4f42
     go.mod: ba8c38e0128dd9d16fc198671e5d044e17a218cfd29b562a313ebb75bf4826cb
     runtimeconditions.binding-model.yaml: ba27e2cba88e2ddcc546bccadd9d94cb0a74b7e690e11a561492127894b5a319
-    runtimeconditions.binding-release.yaml: 15674dbe8d6a3f2f14deb01f150dfb43dce0e9537c6bd17417d4f71f70438c3e
-    runtimeconditions.bindings.yaml: c058c0ce397332be99fc35d6a95cfc874aa034e3e3e75be89eccc42c5c6a9e9e
+    runtimeconditions.binding-release.yaml: d432be9a9d54896b72a676c1d642d3b6a72c89cfec091617a3586f13d27961d9
+    runtimeconditions.bindings.yaml: d67833672c2d56afc1a3dfedafb42e5147bca9d35d6d608095f4bd57b208f70d
     runtimeconditions.extension.yaml: 777820d35404d8137ab96e3891d6c6d3c8b491d75accf94c7fdd6e89f6b4ce7b

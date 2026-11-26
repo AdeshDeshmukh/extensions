@@ -2,30 +2,41 @@
 
 # runtimeconditions.io/x/kafka/service
 
-Declares topic and consumer-group access required by a Kafka workload.
+Use this extension when your workload talks to Kafka.
+
+Kafka keeps messages in topics. A topic is like a named channel. Some workloads write messages to a
+topic, and some workloads read messages from it. Workloads that read together can join a consumer
+group. Kafka uses the group to share the messages between them and to remember how far each one has
+read.
+
+In a Condition, you list every topic and every consumer group that your workload uses, and say if it
+reads or writes. The platform then creates them or gives your workload access to them.
+
+Write the exact names. Patterns like orders-* are not allowed. Reading a topic does not give access to
+a consumer group, so if your workload uses a group, add the group as its own line.
 
 ```sh
 go get runtimeconditions.io/x/kafka/service@v0.1.0
 ```
 
-Runtime Conditions extension: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+Runtime Conditions extension: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
 
 ## Conditions
 
 Every Condition part this package defines, with the fields you can set. Select a line to open it.
 
 <details>
-<summary><b>kafka.service</b> · <code>service</code>: Kafka access through its native client protocol.</summary>
+<summary><b>kafka.service</b> · <code>service</code>: Your workload connects to Kafka with a normal Kafka client library.</summary>
 
 `service.Service` is the `interface` of a `kafka.service` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `Operations` | `Operations` | yes | Distinct topic and consumer-group capabilities required by the workload. Capabilities requested on exact topic and consumer-group identities. |
-| `Operations[].Action` | `Action` | yes | Kafka capability required on the named resource.<br>Values:<br>`read`: Read a topic, or use a consumer group for coordination or offset management.<br>`write`: Produce records to a topic without declaring transactional or idempotent privileges. |
-| `Operations[].GroupId` | `*string` | no | Nonempty literal consumer-group ID; wildcard matching is unsupported. |
-| `Operations[].Resource` | `Resource` | yes | Kafka resource category to which the capability applies.<br>Values:<br>`group`: A named Kafka consumer group used for coordination or offset management.<br>`topic`: A named Kafka topic to read from or write to. |
-| `Operations[].Topic` | `*string` | no | Literal Kafka topic name using ASCII letters, digits, dots, underscores, or hyphens; not '.' or '..'. |
+| `Operations` | `Operations` | yes | The topics and consumer groups that your workload uses. Each line names one of them and says what the workload does with it. The topics and consumer groups that your workload uses. List at least one, and do not repeat a line. |
+| `Operations[].Action` | `Action` | yes | What the workload does with it.<br>Values:<br>`read`: Read messages from the topic, or use the consumer group.<br>`write`: Send messages to the topic. This does not include transactions or idempotent writes. |
+| `Operations[].GroupId` | `*string` | no | The exact consumer group name. It cannot be empty and cannot use * as a pattern. |
+| `Operations[].Resource` | `Resource` | yes | What the line is about, a topic or a consumer group.<br>Values:<br>`group`: A Kafka consumer group, by its exact name.<br>`topic`: A Kafka topic, by its exact name. |
+| `Operations[].Topic` | `*string` | no | The exact topic name. It can use letters, digits, dots, underscores and hyphens, and it cannot be '.' or '..'. |
 
 </details>
 
@@ -33,6 +44,51 @@ Every Condition part this package defines, with the fields you can set. Select a
 
 `service.KafkaService` declares a `kafka.service` Condition.
 
-A Kafka service providing the declared topic and consumer-group access.
+Your workload needs a Kafka cluster with the topics and consumer groups listed in the Condition.
+
+Example: a billing workload. It reads new orders from the orders topic, as part of the billing
+consumer group. It writes a message to the invoices topic for each order.
+
+```go
+service.KafkaService(
+	service.Service{
+		Operations: service.Operations{
+			service.OperationsItem{
+				Action:   service.ActionRead,
+				Resource: service.ResourceTopic,
+				Topic:    &[]string{"orders"}[0],
+			},
+			service.OperationsItem{
+				Action:   service.ActionRead,
+				GroupId:  &[]string{"billing"}[0],
+				Resource: service.ResourceGroup,
+			},
+			service.OperationsItem{
+				Action:   service.ActionWrite,
+				Resource: service.ResourceTopic,
+				Topic:    &[]string{"invoices"}[0],
+			},
+		},
+	},
+)
+```
+
+In a Profile, this declares:
+
+```yaml
+kind: kafka.service
+interface:
+  type: service
+  operations:
+    - resource: topic
+      action: read
+      topic: orders
+    - resource: group
+      action: read
+      groupId: billing
+    - resource: topic
+      action: write
+      topic: invoices
+```
 
 The full API, with every type, field and constant documented, is in the Go package documentation.

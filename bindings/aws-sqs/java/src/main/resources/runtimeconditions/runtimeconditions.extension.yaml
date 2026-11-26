@@ -2,114 +2,194 @@ apiVersion: runtimeconditions.io/v1alpha1
 kind: RuntimeConditionsExtensionDefinition
 
 metadata:
-  id: https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml
-  version: "0.1.0"
-  description: >-
-    Amazon SQS queue configuration and canonical operation requirements. Use queue for
-    queue access, service for creation and discovery, and message_move_task for
-    redrive task access. Adapters resolve resources and dependent permissions.
-    Supplied scalar configuration values require exact settings, except that
-    maxMessagesPerSecond is an execution-rate ceiling. Omitted settings remain
-    platform choices. Required tags and policy statements compose with platform
-    controls; conflicts must be reported without silently changing requirements.
+  id: https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml
+  version: "0.2.0"
+  description: |-
+    Use this extension when your workload uses Amazon SQS, the message queue service from AWS.
+
+    A queue holds messages. One part of a system sends messages to the queue. Another part receives them
+    later, and deletes each message when it has finished with it. This lets the two parts work at their own
+    speed.
+
+    There are three interface types:
+
+    - queue: your workload uses one queue. It can send, receive or delete messages, or manage the queue.
+      You can also ask for queue settings, such as FIFO order, encryption or a dead-letter queue.
+    - service: your workload creates new queues, or lists the queues that exist. It does not need a queue
+      to exist first.
+    - message_move_task: your workload moves failed messages out of a dead-letter queue, for example back
+      to the queue they came from.
+
+    List the operations that your workload calls, by their SQS API names, such as SendMessage or
+    ReceiveMessage. The platform turns them into the right AWS permissions, and finds or creates the queues.
+
+    Every setting is optional. If you leave a setting out, the platform chooses. If you write a setting, the
+    queue must have exactly that value, and a bigger or smaller value does not count. The one exception is
+    maxMessagesPerSecond, which is an upper limit.
+
+    Tags and access policy statements are added to the ones that the platform already uses. If they
+    conflict, the platform reports the problem. It does not quietly change what you asked for.
 
 spec:
   kinds:
     - name: aws.sqs
-      description: Requires Amazon SQS semantics and the declared configuration and canonical operations.
+      description: |-
+        Your workload needs Amazon SQS, with the settings and operations listed in the Condition.
+
+        Example: a worker that receives orders from a queue, and deletes each message after it has handled
+        the order.
+
+        ```condition
+        kind: aws.sqs
+        interface:
+          type: queue
+          operations:
+            - name: ReceiveMessage
+            - name: DeleteMessage
+        ```
 
   interfaceTypes:
     - name: queue
       targetKind: aws.sqs
-      description: Access to one logical SQS queue for messaging or queue administration.
+      description: |-
+        Your workload uses one SQS queue. It sends or receives messages, or it manages the queue.
+
+        Example: a FIFO queue that is encrypted with keys that SQS manages. A message that fails five times
+        goes to the queue Condition named orders-dead-letter.
+
+        ```condition
+        kind: aws.sqs
+        interface:
+          type: queue
+          queueType: fifo
+          contentBasedDeduplication: true
+          visibilityTimeoutSeconds: 60
+          encryption:
+            mode: sqs_managed
+          deadLetterQueue:
+            queueRef: orders-dead-letter
+            maxReceiveCount: 5
+          operations:
+            - name: SendMessage
+        ```
     - name: service
       targetKind: aws.sqs
-      description: Queue creation or account-and-Region queue discovery without requiring an existing queue.
+      description: |-
+        Your workload creates queues, or lists the queues in its AWS account and Region. It does not need a
+        queue to exist first.
+
+        Example: a workload that creates its own queues while it runs.
+
+        ```condition
+        kind: aws.sqs
+        interface:
+          type: service
+          operations:
+            - name: CreateQueue
+        ```
     - name: message_move_task
       targetKind: aws.sqs
-      description: Redrive task management for one source dead-letter queue; task handles remain runtime values.
+      description: |-
+        Your workload moves messages out of one dead-letter queue, for example back to the queue they came
+        from. AWS calls this a redrive. AWS gives each move a task ID only while the workload runs, so the
+        task ID is not part of the Condition.
+
+        Example: an operations tool that moves failed messages from the orders-dead-letter queue back to
+        the orders queue, at most 50 messages each second.
+
+        ```condition
+        kind: aws.sqs
+        interface:
+          type: message_move_task
+          sourceQueueRef: orders-dead-letter
+          destinationQueueRef: orders
+          maxMessagesPerSecond: 50
+          operations:
+            - name: StartMessageMoveTask
+            - name: ListMessageMoveTasks
+        ```
 
   interfaceFields:
     - name: operations
       targetKind: aws.sqs
       targetType: queue
-      description: Canonical SQS operations required on this queue; individual and batch operations remain distinct.
+      description: "The SQS operations that your workload calls on this queue. A single operation and its batch version are different, so list both if your workload uses both, for example SendMessage and SendMessageBatch."
     - name: operations
       targetKind: aws.sqs
       targetType: service
-      description: Canonical queue creation or discovery operations; the platform supplies authorization mappings.
+      description: "The operations that your workload uses to create or list queues. The platform works out the AWS permissions that they need."
     - name: operations
       targetKind: aws.sqs
       targetType: message_move_task
-      description: Canonical redrive task operations on the source dead-letter queue; the platform derives dependent authorization.
+      description: "The operations that your workload uses to manage moves out of the dead-letter queue. The platform works out the other AWS permissions that they need."
     - name: queueType
       targetKind: aws.sqs
       targetType: queue
-      description: Required queue delivery type when known; omission leaves Standard versus FIFO unconstrained.
+      description: "The kind of queue that your workload needs, standard or fifo. Leave it out if either kind works."
     - name: visibilityTimeoutSeconds
       targetKind: aws.sqs
       targetType: queue
-      description: Exact required queue default for how long a received message stays hidden before redelivery.
+      description: "How long a message stays hidden from other receivers after one receiver gets it. If the receiver does not delete the message in this time, the message comes back. The queue must use exactly this value."
     - name: messageRetentionPeriodSeconds
       targetKind: aws.sqs
       targetType: queue
-      description: Exact required queue message retention period; longer retention does not automatically fulfill it.
+      description: "How long the queue keeps a message that nobody deletes. The queue must use exactly this value. A longer time does not count."
     - name: delaySeconds
       targetKind: aws.sqs
       targetType: queue
-      description: Exact required queue default delay before newly sent messages become available.
+      description: "How long a new message waits before receivers can see it. The queue must use exactly this value."
     - name: maximumMessageSizeBytes
       targetKind: aws.sqs
       targetType: queue
-      description: Exact required configured message-size limit in bytes; not a minimum supported message capacity.
+      description: "The size limit that the queue sets for each message, in bytes. The queue must use exactly this limit. It is not a promise that bigger messages fit."
     - name: receiveMessageWaitTimeSeconds
       targetKind: aws.sqs
       targetType: queue
-      description: Exact required queue default for how long receive calls wait for a message.
+      description: "How long a receive call waits for a message to arrive before it returns with nothing. The queue must use exactly this value."
     - name: contentBasedDeduplication
       targetKind: aws.sqs
       targetType: queue
-      description: Whether the FIFO queue must derive deduplication IDs from message bodies.
+      description: "For a FIFO queue, whether SQS finds duplicate messages by looking at the message body, so the sender does not have to give each message an ID."
     - name: deduplicationScope
       targetKind: aws.sqs
       targetType: queue
-      description: Required FIFO deduplication boundary, across the queue or within each message group.
+      description: "For a FIFO queue, where SQS looks for duplicate messages, in the whole queue or inside each message group."
     - name: fifoThroughputLimit
       targetKind: aws.sqs
       targetType: queue
-      description: Required FIFO throughput quota boundary, per queue or per message group.
+      description: "For a FIFO queue, whether the speed limit applies to the whole queue or to each message group."
     - name: encryption
       targetKind: aws.sqs
       targetType: queue
-      description: Exact required encryption mode with an optional logical KMS key binding and exact data-key reuse period.
+      description: "How the messages in the queue are encrypted when they are stored. You can also name the KMS key to use, and say how long SQS reuses a data key."
     - name: deadLetterQueue
       targetKind: aws.sqs
       targetType: queue
-      description: Named queue Condition receiving failed messages and the exact configured receive threshold before transfer.
+      description: "Where failed messages go. Give the name of another queue Condition in this profile, and how many times a message can be received before SQS moves it there."
     - name: redriveAllowPolicy
       targetKind: aws.sqs
       targetType: queue
-      description: Which source queues may use this queue as their dead-letter queue.
+      description: "Which other queues may use this queue as their dead-letter queue."
     - name: accessPolicy
       targetKind: aws.sqs
       targetType: queue
-      description: Required queue resource-policy statements using platform-owned bindings; preserve platform controls and report conflicts.
+      description: "Statements that must be in the access policy of the queue. They use names that the platform turns into real values, not real account IDs. The platform keeps its own statements and reports any conflict."
     - name: tags
       targetKind: aws.sqs
       targetType: queue
-      description: Required workload-defined tag subset; platforms may add labels but must report conflicting values without silent replacement.
+      description: "Tags that the queue must have. The platform may add its own tags. If a tag has a different value, the platform reports the conflict instead of replacing your value."
     - name: sourceQueueRef
       targetKind: aws.sqs
       targetType: message_move_task
-      description: Optional source queue Condition name; omission lets the platform bind this task Condition to one source dead-letter queue.
+      description: "The name of the queue Condition for the dead-letter queue to move messages from. If you leave it out, the platform picks the one dead-letter queue for this task."
     - name: destinationQueueRef
       targetKind: aws.sqs
       targetType: message_move_task
-      description: Optional destination queue Condition name; omission leaves destination selection to the platform and governed execution.
+      description: "The name of the queue Condition to move messages to. If you leave it out, the platform, or the person who runs the move, decides."
     - name: maxMessagesPerSecond
       targetKind: aws.sqs
       targetType: message_move_task
-      description: Redrive execution-rate ceiling; lower positive rates satisfy it, and omission leaves the rate to platform policy.
+      description: "The highest speed that the move may run at, in messages each second. A slower speed is fine. If you leave it out, the platform decides."
 
   fieldValues:
     - field: interface.operations[].name
@@ -122,95 +202,95 @@ spec:
          ReceiveMessage, RemovePermission, SendMessage, SendMessageBatch,
          SetQueueAttributes, TagQueue, UntagQueue]
       valueDescriptions:
-        {AddPermission: "Add an account principal's queue policy permission.",
-         ChangeMessageVisibility: "Change one received message's visibility.",
-         ChangeMessageVisibilityBatch: "Change received-message visibility in a batch.",
-         DeleteMessage: "Delete one received message.", DeleteMessageBatch: "Delete received messages in a batch.",
-         DeleteQueue: "Delete the queue and its contents.", GetQueueAttributes: "Read queue attributes.",
-         GetQueueUrl: "Resolve an existing queue's URL.", ListDeadLetterSourceQueues: "List queues using this dead-letter queue.",
-         ListQueueTags: "Read queue tags.", PurgeQueue: "Remove all queue messages.",
-         ReceiveMessage: "Receive queue messages.", RemovePermission: "Remove a labeled queue policy permission.",
-         SendMessage: "Send one message.", SendMessageBatch: "Send messages in a batch.",
-         SetQueueAttributes: "Change queue attributes or policies.", TagQueue: "Add or update queue tags.",
-         UntagQueue: "Remove queue tags."}
+        {AddPermission: "Give another AWS account permission to use the queue.",
+         ChangeMessageVisibility: "Change how long one received message stays hidden.",
+         ChangeMessageVisibilityBatch: "Change how long several received messages stay hidden, in one call.",
+         DeleteMessage: "Delete one message after it was received.", DeleteMessageBatch: "Delete several received messages in one call.",
+         DeleteQueue: "Delete the queue and all its messages.", GetQueueAttributes: "Read the queue settings.",
+         GetQueueUrl: "Find the URL of a queue that already exists.", ListDeadLetterSourceQueues: "List the queues that use this queue as their dead-letter queue.",
+         ListQueueTags: "Read the queue tags.", PurgeQueue: "Delete all messages in the queue.",
+         ReceiveMessage: "Receive messages from the queue.", RemovePermission: "Take away a permission that AddPermission gave.",
+         SendMessage: "Send one message.", SendMessageBatch: "Send several messages in one call.",
+         SetQueueAttributes: "Change the queue settings or its access policy.", TagQueue: "Add tags to the queue, or change them.",
+         UntagQueue: "Remove tags from the queue."}
     - field: interface.operations[].name
       targetKind: aws.sqs
       targetType: service
       values: &sqsServiceOperations [CreateQueue, ListQueues]
       valueDescriptions:
-        CreateQueue: Create queues; this operation alone does not request a pre-existing queue.
-        ListQueues: List queues in the target account and Region.
+        CreateQueue: "Create new queues. This alone does not ask for a queue that already exists."
+        ListQueues: "List the queues in the AWS account and Region."
     - field: interface.operations[].name
       targetKind: aws.sqs
       targetType: message_move_task
       values: &sqsTaskOperations [CancelMessageMoveTask, ListMessageMoveTasks, StartMessageMoveTask]
       valueDescriptions:
-        CancelMessageMoveTask: Cancel a running redrive task; platform mapping determines cancellation authorization.
-        ListMessageMoveTasks: Inspect recent redrive tasks for the source dead-letter queue.
-        StartMessageMoveTask: Start redrive; platform mapping derives source and destination authorization without inventing additional workload operations.
+        CancelMessageMoveTask: "Stop a move that is running. The platform decides which permission this needs."
+        ListMessageMoveTasks: "See the recent moves out of the dead-letter queue."
+        StartMessageMoveTask: "Start moving messages. The platform works out the permissions needed on both queues, and does not add other operations for the workload."
     - field: interface.queueType
       targetKind: aws.sqs
       targetType: queue
       values: [standard, fifo]
       valueDescriptions:
-        standard: Require an SQS Standard queue with at-least-once delivery and best-effort ordering.
-        fifo: Require an SQS FIFO queue with ordering within each message group and FIFO deduplication semantics.
+        standard: "A Standard queue. Each message arrives at least once, and the order is not guaranteed."
+        fifo: "A FIFO queue. Messages in the same message group arrive in order, and duplicates are removed."
     - field: interface.deduplicationScope
       targetKind: aws.sqs
       targetType: queue
       values: [queue, messageGroup]
       valueDescriptions:
-        queue: Deduplicate matching IDs across the entire FIFO queue.
-        messageGroup: Deduplicate matching IDs within each FIFO message group.
+        queue: "Look for duplicates in the whole queue."
+        messageGroup: "Look for duplicates inside each message group."
     - field: interface.fifoThroughputLimit
       targetKind: aws.sqs
       targetType: queue
       values: [perQueue, perMessageGroupId]
       valueDescriptions:
-        perQueue: Apply the FIFO throughput quota to the entire queue.
-        perMessageGroupId: Apply the FIFO throughput quota per message group; requires messageGroup deduplication.
+        perQueue: "The speed limit applies to the whole queue."
+        perMessageGroupId: "The speed limit applies to each message group. This needs deduplicationScope set to messageGroup."
     - field: interface.encryption.mode
       targetKind: aws.sqs
       targetType: queue
       values: [none, sqs_managed, kms]
       valueDescriptions:
-        none: Require server-side encryption to be disabled.
-        sqs_managed: Require server-side encryption using SQS-owned keys.
-        kms: Require server-side encryption using KMS; the adapter selects a key unless keyRef constrains it.
+        none: "Messages are not encrypted when they are stored."
+        sqs_managed: "Messages are encrypted with keys that SQS owns and manages."
+        kms: "Messages are encrypted with a key from AWS KMS. The platform picks the key, unless you set keyRef."
     - field: interface.redriveAllowPolicy.mode
       targetKind: aws.sqs
       targetType: queue
       values: [allowAll, denyAll, byQueue]
       valueDescriptions:
-        allowAll: Allow source queues in the same AWS account and Region to use this dead-letter queue.
-        denyAll: Prevent all source queues from using this queue as their dead-letter queue.
-        byQueue: Allow only the queues named in sourceQueueRefs to use this dead-letter queue.
+        allowAll: "Any queue in the same AWS account and Region may use this queue as its dead-letter queue."
+        denyAll: "No queue may use this queue as its dead-letter queue."
+        byQueue: "Only the queues named in sourceQueueRefs may use this queue as their dead-letter queue."
     - field: interface.accessPolicy.statements[].effect
       targetKind: aws.sqs
       targetType: queue
       values: [Allow, Deny]
       valueDescriptions:
-        Allow: Require the selected operations to be allowed for the resolved principals under the bound conditions.
-        Deny: Require the selected operations to be denied for the resolved principals without silently blocking other required operations.
+        Allow: "The listed principals must be allowed to call the listed operations, under the listed conditions."
+        Deny: "The listed principals must not be allowed to call the listed operations. This must not quietly block other operations that the workload needs."
 
   schemas:
     - id: aws-sqs-queue-interface
       appliesToKind: aws.sqs
       appliesToInterfaceType: queue
-      description: Validates queue configuration and canonical operation requirements; unrelated extension fields remain open.
+      description: "Checks a queue Condition. Fields from other extensions are allowed."
       schema:
         $schema: https://json-schema.org/draft/2020-12/schema
-        description: Requires an aws.sqs queue interface; configuration and operations are optional and have no defaults.
+        description: "A queue Condition for Amazon SQS. The settings and operations are optional and have no default values."
         $defs:
-          queueRef: {description: "Non-empty name of an aws.sqs/queue Condition in this profile; the adapter resolves and checks the reference.", type: string, minLength: 1}
-          bindingRefs: {description: "Distinct non-empty binding names resolved by the adapter; literal environment identities and policy values are excluded.", type: array, minItems: 1, uniqueItems: true, items: {type: string, minLength: 1}}
+          queueRef: {description: "The name of an aws.sqs queue Condition in this profile. The platform finds it and checks it.", type: string, minLength: 1}
+          bindingRefs: {description: "Names that the platform turns into real values. Do not write real account IDs or policy values here. List each name once.", type: array, minItems: 1, uniqueItems: true, items: {type: string, minLength: 1}}
           policyOperation:
-            description: Canonical operation selector using the same vocabulary as workload operations; regional ListQueues is outside queue policy scope.
+            description: "One operation, with the same names that operations uses. ListQueues cannot be used here, because it is not about one queue."
             type: object
             required: [name]
             properties:
               name:
-                description: One queue, task, or CreateQueue operation name; platform mapping determines policy applicability and effective authorization.
+                description: "The name of a queue, task or CreateQueue operation. The platform decides which policy permissions it needs."
                 type: string
                 enum:
                   - AddPermission
@@ -240,191 +320,191 @@ spec:
         required: [kind, interface]
         properties:
           kind:
-            description: Must be aws.sqs for this extension's queue vocabulary.
+            description: "Always aws.sqs."
             const: aws.sqs
           interface:
-            description: Requires the queue type; each supplied configuration or permission field constrains fulfillment.
+            description: "The queue that your workload needs. Every setting that you write must be true for the real queue."
             type: object
             required: [type]
             properties:
               type:
-                description: Must be queue for queue configuration and permission requirements.
+                description: "Always queue."
                 const: queue
               queueType:
-                description: If present, must be standard or fifo; omission permits either queue type.
+                description: "standard or fifo. Leave it out if either kind works."
                 type: string
                 enum: [standard, fifo]
-              visibilityTimeoutSeconds: {description: "Exact queue visibility default in seconds, from 0 through 43200.", type: integer, minimum: 0, maximum: 43200}
-              messageRetentionPeriodSeconds: {description: "Exact message retention in seconds, from 60 through 1209600; neither a minimum nor a ceiling.", type: integer, minimum: 60, maximum: 1209600}
-              delaySeconds: {description: "Exact queue delivery-delay default in seconds, from 0 through 900.", type: integer, minimum: 0, maximum: 900}
-              maximumMessageSizeBytes: {description: "Exact configured message-size limit in bytes, from 1024 through 1048576.", type: integer, minimum: 1024, maximum: 1048576}
-              receiveMessageWaitTimeSeconds: {description: "Exact queue long-poll default in seconds, from 0 through 20.", type: integer, minimum: 0, maximum: 20}
-              contentBasedDeduplication: {description: "Boolean FIFO setting; supplying it requires queueType fifo.", type: boolean}
-              deduplicationScope: {description: "FIFO deduplication scope; supplying it requires queueType fifo.", type: string, enum: [queue, messageGroup]}
-              fifoThroughputLimit: {description: "FIFO quota boundary; perMessageGroupId requires messageGroup deduplication.", type: string, enum: [perQueue, perMessageGroupId]}
+              visibilityTimeoutSeconds: {description: "The visibility timeout in seconds, from 0 to 43200 (12 hours). The queue must use exactly this value.", type: integer, minimum: 0, maximum: 43200}
+              messageRetentionPeriodSeconds: {description: "How long messages are kept, in seconds, from 60 to 1209600 (14 days). The queue must use exactly this value. A longer or shorter time does not count.", type: integer, minimum: 60, maximum: 1209600}
+              delaySeconds: {description: "The wait for new messages in seconds, from 0 to 900 (15 minutes). The queue must use exactly this value.", type: integer, minimum: 0, maximum: 900}
+              maximumMessageSizeBytes: {description: "The size limit for each message in bytes, from 1024 to 1048576 (1 MiB). The queue must use exactly this value.", type: integer, minimum: 1024, maximum: 1048576}
+              receiveMessageWaitTimeSeconds: {description: "How long a receive call waits, in seconds, from 0 to 20. The queue must use exactly this value.", type: integer, minimum: 0, maximum: 20}
+              contentBasedDeduplication: {description: "true or false. This is only for FIFO queues, so queueType must be fifo.", type: boolean}
+              deduplicationScope: {description: "queue or messageGroup. This is only for FIFO queues, so queueType must be fifo.", type: string, enum: [queue, messageGroup]}
+              fifoThroughputLimit: {description: "perQueue or perMessageGroupId. perMessageGroupId needs deduplicationScope set to messageGroup.", type: string, enum: [perQueue, perMessageGroupId]}
               encryption:
-                description: Requires a mode; KMS-specific settings are permitted only with mode kms.
+                description: "How the queue is encrypted. mode is required. keyRef and dataKeyReusePeriodSeconds work only with mode kms."
                 type: object
                 required: [mode]
                 properties:
-                  mode: {description: "Must be none, sqs_managed, or kms; omission of the whole object imposes no encryption requirement.", type: string, enum: [none, sqs_managed, kms]}
-                  keyRef: {description: "Non-empty logical KMS key binding resolved by the adapter; not a literal key ID or ARN and not a KMS permission grant.", type: string, minLength: 1}
-                  dataKeyReusePeriodSeconds: {description: "Exact KMS data-key reuse period in seconds, from 60 through 86400.", type: integer, minimum: 60, maximum: 86400}
+                  mode: {description: "none, sqs_managed or kms. Leave out the whole encryption field if any encryption is fine.", type: string, enum: [none, sqs_managed, kms]}
+                  keyRef: {description: "A name for the KMS key, which the platform turns into a real key. It is not a key ID or ARN, and it does not give any KMS permission.", type: string, minLength: 1}
+                  dataKeyReusePeriodSeconds: {description: "How long SQS reuses a data key from KMS, in seconds, from 60 to 86400 (24 hours). The queue must use exactly this value.", type: integer, minimum: 60, maximum: 86400}
                 allOf:
-                  - {description: "A key binding or data-key reuse period requires KMS encryption.", if: {anyOf: [{required: [keyRef]}, {required: [dataKeyReusePeriodSeconds]}]}, then: {properties: {mode: {const: kms}}}}
+                  - {description: "keyRef and dataKeyReusePeriodSeconds need mode kms.", if: {anyOf: [{required: [keyRef]}, {required: [dataKeyReusePeriodSeconds]}]}, then: {properties: {mode: {const: kms}}}}
                 additionalProperties: false
               deadLetterQueue:
-                description: Requires a named target queue and a positive receive threshold; the adapter checks matching queue types.
+                description: "The dead-letter queue, and how many tries a message gets. The platform checks that both queues are the same kind."
                 type: object
                 required: [queueRef, maxReceiveCount]
                 properties:
-                  queueRef: {$ref: '#/$defs/queueRef', description: "Name of the destination dead-letter queue Condition; the adapter checks existence, type compatibility, and cycles."}
-                  maxReceiveCount: {description: "Exact positive configured receive threshold before dead-letter transfer; a larger threshold does not fulfill it.", type: integer, minimum: 1, maximum: 1000}
+                  queueRef: {$ref: '#/$defs/queueRef', description: "The name of the queue Condition for the dead-letter queue. The platform checks that it exists, that it is the same kind of queue, and that the queues do not point at each other in a loop."}
+                  maxReceiveCount: {description: "How many times a message can be received before SQS moves it to the dead-letter queue, from 1 to 1000. The queue must use exactly this number. A bigger number does not count.", type: integer, minimum: 1, maximum: 1000}
                 additionalProperties: false
               redriveAllowPolicy:
-                description: Requires a mode; sourceQueueRefs is required only for byQueue and forbidden for other modes.
+                description: "Which queues may use this queue as their dead-letter queue. sourceQueueRefs is needed with byQueue, and is not allowed with the other modes."
                 type: object
                 required: [mode]
                 properties:
-                  mode: {description: "Must be allowAll, denyAll, or byQueue; allowAll is limited to the same account and Region.", type: string, enum: [allowAll, denyAll, byQueue]}
+                  mode: {description: "allowAll, denyAll or byQueue. allowAll only covers queues in the same AWS account and Region.", type: string, enum: [allowAll, denyAll, byQueue]}
                   sourceQueueRefs:
-                    description: One to ten distinct names of source queue Conditions allowed to use this dead-letter queue.
+                    description: "The names of the queue Conditions that may use this queue as their dead-letter queue. List 1 to 10 names, each name once."
                     type: array
                     minItems: 1
                     maxItems: 10
                     uniqueItems: true
                     items: {$ref: '#/$defs/queueRef'}
                 allOf:
-                  - {description: "Only byQueue accepts and requires an explicit source queue list.", if: {properties: {mode: {const: byQueue}}}, then: {required: [sourceQueueRefs]}, else: {not: {required: [sourceQueueRefs]}}}
+                  - {description: "sourceQueueRefs is needed with byQueue, and is not allowed with the other modes.", if: {properties: {mode: {const: byQueue}}}, then: {required: [sourceQueueRefs]}, else: {not: {required: [sourceQueueRefs]}}}
                 additionalProperties: false
               accessPolicy:
-                description: Requires non-empty policy statements composed with platform controls; effective authorization must satisfy both or fulfillment fails.
+                description: "Statements that must be in the access policy of the queue. The platform keeps its own rules too. If both cannot be true together, the platform cannot provide the queue."
                 type: object
                 required: [statements]
                 properties:
                   statements:
-                    description: At least one required statement; additional platform statements remain permitted and must not be removed.
+                    description: "At least one statement. The platform may add more statements, and must not remove yours."
                     type: array
                     minItems: 1
                     items:
-                      description: Requires effect, principals, and actions; the statement applies to this queue and permits no additional properties.
+                      description: "One statement. It needs effect, principalRefs and operations, and it always applies to this queue. No other fields are allowed."
                       type: object
                       required: [effect, principalRefs, operations]
                       properties:
-                        effect: {description: "Must be Allow or Deny; explicit denies retain IAM denial semantics.", type: string, enum: [Allow, Deny]}
-                        principalRefs: {$ref: '#/$defs/bindingRefs', description: "Logical principal bindings; the adapter resolves identities and respects SQS cross-account restrictions."}
+                        effect: {description: "Allow or Deny. A Deny works like a normal IAM deny.", type: string, enum: [Allow, Deny]}
+                        principalRefs: {$ref: '#/$defs/bindingRefs', description: "Names for the principals, such as other AWS accounts or roles. The platform turns them into real identities, and follows the SQS rules for other accounts."}
                         operations:
-                          description: Distinct canonical operation selectors; platform mapping must report shared-permission conflicts and must not blindly expand Deny dependencies.
+                          description: "The operations that this statement covers, each one once. If operations share a permission, the platform reports the conflict. It must not quietly make a Deny cover more operations."
                           type: array
                           minItems: 1
                           uniqueItems: true
                           items: {$ref: '#/$defs/policyOperation'}
-                        conditionRefs: {$ref: '#/$defs/bindingRefs', description: "Platform-owned policy bindings applied together to this statement; unresolved names prevent fulfillment and names alone imply no standardized security guarantee."}
+                        conditionRefs: {$ref: '#/$defs/bindingRefs', description: "Names for policy conditions that the platform owns. They all apply to this statement. If a name cannot be turned into a real value, the platform cannot provide the queue. A name alone does not promise any level of security."}
                       additionalProperties: false
                 additionalProperties: false
               tags:
-                description: Required tag subset; platform tags remain permitted. Conflicting values prevent fulfillment; provider character rules also apply. AWS recommends keeping a queue under 50 tags.
+                description: "Tags that the queue must have. The platform may add more tags. If a tag has a different value, the platform cannot provide the queue. The AWS rules for tag characters also apply, and AWS suggests fewer than 50 tags on a queue."
                 type: object
                 propertyNames:
-                  description: Non-empty tag key of at most 128 Unicode characters; the aws prefix followed by a colon is reserved.
+                  description: "A tag key, from 1 to 128 characters. It cannot start with aws: because AWS keeps that prefix for itself."
                   type: string
                   minLength: 1
                   maxLength: 128
                   not: {pattern: '^aws:'}
                 additionalProperties:
-                  description: Workload label of at most 256 Unicode characters, possibly empty; the aws prefix followed by a colon is reserved.
+                  description: "A tag value, up to 256 characters. It can be empty. It cannot start with aws: because AWS keeps that prefix for itself."
                   type: string
                   maxLength: 256
                   not: {pattern: '^aws:'}
               operations:
-                description: A non-empty list of distinct canonical queue operations; no IAM action selection is accepted.
+                description: "The SQS operations that your workload calls on this queue. List at least one, each one once. Use the operation names, not IAM action names."
                 type: array
                 minItems: 1
                 uniqueItems: true
                 items:
-                  description: One canonical operation object; only its required name is accepted.
+                  description: "One operation, given by its name. No other fields are allowed."
                   type: object
                   required: [name]
                   properties:
-                    name: {description: "Canonical queue operation name, preserving individual and batch distinctions.", type: string, enum: *sqsQueueOperations}
+                    name: {description: "The operation name. A single operation and its batch version have different names.", type: string, enum: *sqsQueueOperations}
                   additionalProperties: false
             allOf:
-              - {description: "FIFO-only settings require an explicit FIFO queue type.", if: {anyOf: [{required: [contentBasedDeduplication]}, {required: [deduplicationScope]}, {required: [fifoThroughputLimit]}]}, then: {required: [queueType], properties: {queueType: {const: fifo}}}}
-              - {description: "Per-message-group FIFO throughput requires messageGroup deduplication.", if: {required: [fifoThroughputLimit], properties: {fifoThroughputLimit: {const: perMessageGroupId}}}, then: {required: [deduplicationScope], properties: {deduplicationScope: {const: messageGroup}}}}
+              - {description: "contentBasedDeduplication, deduplicationScope and fifoThroughputLimit need queueType set to fifo.", if: {anyOf: [{required: [contentBasedDeduplication]}, {required: [deduplicationScope]}, {required: [fifoThroughputLimit]}]}, then: {required: [queueType], properties: {queueType: {const: fifo}}}}
+              - {description: "fifoThroughputLimit set to perMessageGroupId needs deduplicationScope set to messageGroup.", if: {required: [fifoThroughputLimit], properties: {fifoThroughputLimit: {const: perMessageGroupId}}}, then: {required: [deduplicationScope], properties: {deduplicationScope: {const: messageGroup}}}}
             additionalProperties: true
         additionalProperties: true
     - id: aws-sqs-service-interface
       appliesToKind: aws.sqs
       appliesToInterfaceType: service
-      description: Requires canonical creation or discovery operations; unrelated extension fields remain open.
+      description: "Checks a service Condition. Fields from other extensions are allowed."
       schema:
         $schema: https://json-schema.org/draft/2020-12/schema
-        description: A service Condition must declare aws.sqs and at least one distinct canonical service operation.
+        description: "A service Condition is for aws.sqs and lists at least one operation, each one once."
         type: object
         required: [kind, interface]
         properties:
           kind:
-            description: Must be aws.sqs for this extension's service vocabulary.
+            description: "Always aws.sqs."
             const: aws.sqs
           interface:
-            description: Requires the service type and operations without declaring an existing queue requirement.
+            description: "Creating or listing queues. This does not ask for a queue that already exists."
             type: object
             required: [type, operations]
             properties:
               type:
-                description: Must be service for queue creation or listing operations.
+                description: "Always service."
                 const: service
               operations:
-                description: A non-empty list of distinct creation or listing operations; wildcards are excluded.
+                description: "The operations that your workload uses to create or list queues. List at least one, each one once. Patterns are not allowed."
                 type: array
                 minItems: 1
                 uniqueItems: true
                 items:
-                  description: One canonical service operation object with a required name and no additional properties.
+                  description: "One operation, given by its name. No other fields are allowed."
                   type: object
                   required: [name]
                   properties:
-                    name: {description: "Must be CreateQueue or ListQueues.", type: string, enum: *sqsServiceOperations}
+                    name: {description: "CreateQueue or ListQueues.", type: string, enum: *sqsServiceOperations}
                   additionalProperties: false
             additionalProperties: true
         additionalProperties: true
     - id: aws-sqs-message-move-task-interface
       appliesToKind: aws.sqs
       appliesToInterfaceType: message_move_task
-      description: Requires source redrive task permissions; adapters resolve dependent rights and destination access separately.
+      description: "Checks a message_move_task Condition. The platform works out the other permissions, and the access to the destination queue."
       schema:
         $schema: https://json-schema.org/draft/2020-12/schema
-        description: A task Condition must declare aws.sqs and at least one distinct canonical redrive task operation.
+        description: "A message_move_task Condition is for aws.sqs and lists at least one operation, each one once."
         type: object
         required: [kind, interface]
         properties:
           kind:
-            description: Must be aws.sqs for this extension's redrive task vocabulary.
+            description: "Always aws.sqs."
             const: aws.sqs
           interface:
-            description: Requires the task type and operations for one source dead-letter queue; unrelated fields remain open.
+            description: "Moving messages out of one dead-letter queue. Fields from other extensions are allowed."
             type: object
             required: [type, operations]
             properties:
               type:
-                description: Must be message_move_task for redrive task management operations.
+                description: "Always message_move_task."
                 const: message_move_task
-              sourceQueueRef: {description: "Optional source queue Condition name; absent this reference, the platform binds this Condition to one source dead-letter queue without inferring account-wide access.", type: string, minLength: 1}
-              destinationQueueRef: {description: "Optional destination queue Condition name; requires start-task permission and matching queue types. Omission imposes no particular destination.", type: string, minLength: 1}
-              maxMessagesPerSecond: {description: "Execution-rate ceiling from 1 through 500 messages per second; positive rates at or below it fulfill this field. Requires start-task permission and a platform-defined fulfillment mechanism.", type: integer, minimum: 1, maximum: 500}
+              sourceQueueRef: {description: "The name of the queue Condition for the dead-letter queue. If you leave it out, the platform picks the one dead-letter queue for this task. It does not mean access to every queue in the account.", type: string, minLength: 1}
+              destinationQueueRef: {description: "The name of the queue Condition to move messages to. It needs StartMessageMoveTask, and both queues must be the same kind. If you leave it out, any destination is fine.", type: string, minLength: 1}
+              maxMessagesPerSecond: {description: "The highest speed in messages each second, from 1 to 500. Any slower speed is fine. It needs StartMessageMoveTask, and the platform decides how to keep to it.", type: integer, minimum: 1, maximum: 500}
               operations:
-                description: A non-empty list of distinct canonical redrive task operations; authorization is determined by platform mapping.
+                description: "The operations that your workload uses to manage the move. List at least one, each one once. The platform works out the AWS permissions."
                 type: array
                 minItems: 1
                 uniqueItems: true
                 items:
-                  description: One canonical redrive task operation object with a required name and no additional properties.
+                  description: "One operation, given by its name. No other fields are allowed."
                   type: object
                   required: [name]
                   properties:
-                    name: {description: "Must be CancelMessageMoveTask, ListMessageMoveTasks, or StartMessageMoveTask.", type: string, enum: *sqsTaskOperations}
+                    name: {description: "CancelMessageMoveTask, ListMessageMoveTasks or StartMessageMoveTask.", type: string, enum: *sqsTaskOperations}
                   additionalProperties: false
             allOf:
-              - {description: "Destination and rate requirements apply only when starting redrive tasks.", if: {anyOf: [{required: [destinationQueueRef]}, {required: [maxMessagesPerSecond]}]}, then: {properties: {operations: {contains: {type: object, required: [name], properties: {name: {const: StartMessageMoveTask}}}}}}}
+              - {description: "destinationQueueRef and maxMessagesPerSecond need StartMessageMoveTask in operations.", if: {anyOf: [{required: [destinationQueueRef]}, {required: [maxMessagesPerSecond]}]}, then: {properties: {operations: {contains: {type: object, required: [name], properties: {name: {const: StartMessageMoveTask}}}}}}}
             additionalProperties: true
         additionalProperties: true

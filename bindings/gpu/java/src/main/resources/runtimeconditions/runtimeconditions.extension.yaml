@@ -1,44 +1,75 @@
 apiVersion: runtimeconditions.io/v1alpha1
 kind: RuntimeConditionsExtensionDefinition
 metadata:
-  id: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
-  version: 0.1.0
-  description: Requests whole GPU devices with optional per-device memory and vendor constraints.
+  id: https://runtimeconditions.io/extensions/rc/gpu/0.2.0/runtimeconditions.extension.yaml
+  version: 0.2.0
+  description: |-
+    Use this extension when your workload needs one or more GPUs, for example to run a machine learning
+    model.
+
+    In a Condition, you say how many GPUs your workload needs. You can also say how much memory each GPU
+    must have, and which company must make the GPUs. The platform then runs your workload on a machine that
+    has these GPUs, or tells you that it cannot.
+
+    A GPU here always means a whole GPU. You cannot ask for part of a GPU. This extension does not say
+    which driver or CUDA version the machine must have.
 spec:
   kinds:
     - name: rc.gpu
-      description: GPU hardware that a workload requires.
+      description: |-
+        Your workload needs GPU hardware.
+
+        Example: a workload that runs a large model and needs two GPUs.
+
+        ```condition
+        kind: rc.gpu
+        interface:
+          type: device
+          count: 2
+        ```
   interfaceTypes:
     - name: device
       targetKind: rc.gpu
-      description: Whole GPU devices available to the workload.
+      description: |-
+        Whole GPUs that your workload can use.
+
+        Example: a workload built with CUDA. It needs one NVIDIA GPU with at least 16 GiB of memory.
+
+        ```condition
+        kind: rc.gpu
+        interface:
+          type: device
+          count: 1
+          minMemoryMiB: 16384
+          vendor: nvidia
+        ```
   interfaceFields:
     - name: count
       targetKind: rc.gpu
       targetType: device
-      description: Minimum number of whole GPU devices required.
+      description: How many whole GPUs your workload needs, at least.
     - name: minMemoryMiB
       targetKind: rc.gpu
       targetType: device
-      description: Minimum memory each GPU must provide, in mebibytes.
+      description: How much memory each GPU must have, at least, in MiB. For example, 16384 MiB is 16 GiB.
     - name: vendor
       targetKind: rc.gpu
       targetType: device
-      description: Hardware vendor each GPU must match when specified.
+      description: The company that must make the GPUs. Leave it out if any GPU works.
   fieldValues:
     - field: interface.vendor
       targetKind: rc.gpu
       targetType: device
       values: [nvidia, amd, intel]
       valueDescriptions:
-        nvidia: NVIDIA GPU hardware.
-        amd: AMD GPU hardware.
-        intel: Intel GPU hardware.
+        nvidia: GPUs made by NVIDIA.
+        amd: GPUs made by AMD.
+        intel: GPUs made by Intel.
   schemas:
     - id: rc-gpu-device
       appliesToKind: rc.gpu
       appliesToInterfaceType: device
-      description: Requires whole GPU devices with optional minimum memory and vendor constraints.
+      description: Checks how many GPUs a Condition asks for, and the memory and maker of each one.
       schema:
         $schema: https://json-schema.org/draft/2020-12/schema
         type: object
@@ -47,31 +78,31 @@ spec:
           name:
             type: string
             minLength: 1
-            description: A nonempty name for this GPU requirement.
+            description: A name for this GPU requirement. It cannot be empty.
           optional:
             type: boolean
-            description: Whether this requirement may be left unfulfilled.
+            description: Whether the workload can still run if the platform cannot give it these GPUs.
           kind:
             const: rc.gpu
-            description: Identifies a GPU requirement.
+            description: Always rc.gpu.
           interface:
             type: object
             required: [type, count]
             properties:
               type:
                 const: device
-                description: Requests whole GPU devices.
+                description: Always device, which means whole GPUs.
               count:
                 type: integer
                 minimum: 1
-                description: Minimum number of whole GPU devices; must be at least one.
+                description: How many whole GPUs, at least. It must be 1 or more.
               minMemoryMiB:
                 type: integer
                 minimum: 1
-                description: Minimum memory per GPU in mebibytes; must be at least one when provided.
+                description: How much memory each GPU must have, at least, in MiB. If you set it, it must be 1 or more.
               vendor:
                 enum: [nvidia, amd, intel]
-                description: Required GPU hardware vendor when the workload needs one of these vendors.
+                description: The company that must make the GPUs, if your workload needs one of these.
             additionalProperties: false
-            description: GPU device requirements for scheduling and availability checks.
+            description: The GPUs that your workload needs. The platform uses this to pick a machine, or to tell you that it cannot.
         additionalProperties: false

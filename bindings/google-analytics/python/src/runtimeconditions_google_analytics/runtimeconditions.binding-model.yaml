@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/binding-model/v1alpha1
 kind: RuntimeConditionsBindingModel
 metadata:
-    semanticSha256: dd823bb6d1a32cca2200f6bc4039e4a9fe9647d84d1172c37c5b10497d203c69
+    semanticSha256: 1dc17ddd7196183d26b593df977da968af1a6bf2414fa6e35dc921e78833d4c2
     normalizer:
         name: rc-binding-model
         version: 0.1.0
@@ -11,102 +11,143 @@ coreProfileSchema:
     version: 0.4.0
     semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
 rootExtension:
-    id: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+    id: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
 extensions:
-    - id: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-      version: 0.1.0
-      semanticSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+    - id: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+      version: 0.2.0
+      semanticSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+      description: |-
+        Use this extension when your website or web app sends events to Google Analytics from the browser.
+
+        In a Condition, you list the kinds of events that your site sends, such as page views. You also give the
+        environment variable that holds the Google Analytics measurement ID, the ID that starts with G-. The
+        platform then sets up a Google Analytics property and puts its measurement ID in that variable.
 vocabulary:
     owners:
         - coordinate: condition-field:google.analytics:web:configuration
           category: condition-field
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
           path: configuration
         - coordinate: field-domain:google.analytics:web:configuration.env[].property:"measurementId"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
           path: configuration.env[].property
           value: measurementId
         - coordinate: field-domain:google.analytics:web:interface.events[]:"custom_event"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
           path: interface.events[]
           value: custom_event
         - coordinate: field-domain:google.analytics:web:interface.events[]:"page_view"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
           path: interface.events[]
           value: page_view
         - coordinate: interface-field:google.analytics:web:events
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
           path: interface.events
         - coordinate: interface:google.analytics:web
           category: interface
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
         - coordinate: kind:google.analytics
           category: kind
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
     ownedDeclarations:
         - coordinate: kind:google.analytics
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
+          description: |-
+            Your workload sends events to Google Analytics.
+
+            Example: a website that records each page view, and reads its measurement ID from GA_MEASUREMENT_ID.
+
+            ```condition
+            kind: google.analytics
+            interface:
+              type: web
+              events: [page_view]
+            configuration:
+              env:
+                - property: measurementId
+                  name: GA_MEASUREMENT_ID
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
             coordinate: kind:google.analytics
     interfaces:
         - coordinate: interface:google.analytics:web
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           type: web
+          description: |-
+            Events sent from a web page in the browser.
+
+            Example: a web shop that records page views and its own events, such as add_to_cart. It reads its
+            measurement ID from NEXT_PUBLIC_GA_ID.
+
+            ```condition
+            kind: google.analytics
+            interface:
+              type: web
+              events: [page_view, custom_event]
+            configuration:
+              env:
+                - property: measurementId
+                  name: NEXT_PUBLIC_GA_ID
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
             coordinate: interface:google.analytics:web
     conditionFields:
         - coordinate: condition-field:google.analytics:web:configuration
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
+          description: |-
+            How your workload gets the Google Analytics measurement ID. List the environment variable that holds
+            it, with property set to measurementId.
           path: configuration
           segments:
             - name: configuration
           provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
             coordinate: condition-field:google.analytics:web:configuration
     interfaceFields:
         - coordinate: interface-field:google.analytics:web:events
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
+          description: The kinds of events that your site sends to Google Analytics. List at least one.
           path: interface.events
           segments:
             - name: interface
             - name: events
           provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
             coordinate: interface-field:google.analytics:web:events
     valueDomains:
         - coordinate: field-domain:google.analytics:web:configuration.env[].property
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
           path: configuration.env[].property
@@ -117,12 +158,13 @@ vocabulary:
             - name: property
           values:
             - value: measurementId
+              description: The variable holds the Google Analytics measurement ID, such as G-ABC123XYZ.
           provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
             coordinate: field-domain:google.analytics:web:configuration.env[].property
         - coordinate: field-domain:google.analytics:web:interface.events[]
-          owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
           kind: google.analytics
           interfaceType: web
           path: interface.events[]
@@ -132,17 +174,19 @@ vocabulary:
               array: true
           values:
             - value: custom_event
+              description: Events that your site defines itself, such as sign_up or add_to_cart.
             - value: page_view
+              description: A page view, sent each time someone opens a page.
           provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
             coordinate: field-domain:google.analytics:web:interface.events[]
 scopes:
     - coordinate: google.analytics:web
       kind: google.analytics
       interfaceType: web
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+        - https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
       projection:
         kind: object
         required:
@@ -163,22 +207,26 @@ scopes:
                         items:
                             kind: any
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                                 jsonPointer: /properties/configuration/properties/env
                         constraints:
                             contains:
                                 additionalProperties: false
                                 properties:
                                     name:
+                                        description: The name of the variable, such as GA_MEASUREMENT_ID. It uses letters, digits and underscores, and cannot start with a digit.
                                         pattern: ^[A-Za-z_][A-Za-z0-9_]*$
                                         type: string
                                     property:
                                         const: measurementId
+                                        description: Always measurementId.
                                     required:
+                                        description: True when the workload cannot start without this variable.
                                         type: boolean
                                     sensitive:
+                                        description: True when the value is a secret, so the platform can store and pass it securely.
                                         type: boolean
                                 required:
                                     - name
@@ -186,25 +234,31 @@ scopes:
                                 type: object
                             minItems: 1
                             uniqueItems: true
+                        description: The environment variables for Google Analytics. One of them must hold the measurementId.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                             jsonPointer: /properties/configuration/properties/env
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                        owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                         jsonPointer: /properties/configuration/properties/env
+                description: |-
+                    How your workload gets the Google Analytics measurement ID. List the environment variable that holds
+                    it, with property set to measurementId.
+
+                    How your workload gets the measurement ID.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/configuration
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/configuration
             - name: interface
               required: true
@@ -222,34 +276,58 @@ scopes:
                             scalar: string
                             values:
                                 - value: custom_event
+                                  description: Events that your site defines itself, such as sign_up or add_to_cart.
                                 - value: page_view
+                                  description: A page view, sent each time someone opens a page.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                                 jsonPointer: /properties/interface/properties/events/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
+                        description: |-
+                            The kinds of events that your site sends to Google Analytics. List at least one.
+
+                            page_view, custom_event or both, each one once.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                             jsonPointer: /properties/interface/properties/events
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                        owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                         jsonPointer: /properties/interface/properties/events
+                description: |-
+                    Events sent from a web page in the browser.
+
+                    Example: a web shop that records page views and its own events, such as add_to_cart. It reads its
+                    measurement ID from NEXT_PUBLIC_GA_ID.
+
+                    ```condition
+                    kind: google.analytics
+                    interface:
+                      type: web
+                      events: [page_view, custom_event]
+                    configuration:
+                      env:
+                        - property: measurementId
+                          name: NEXT_PUBLIC_GA_ID
+                    ```
+
+                    The events that your site sends.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/interface
             - name: name
               shape:
@@ -257,37 +335,39 @@ scopes:
                 scalar: string
                 constraints:
                     minLength: 1
+                description: A name for this requirement. It cannot be empty.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/name
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/name
             - name: optional
               shape:
                 kind: scalar
                 scalar: boolean
+                description: Whether the workload can still run if the platform cannot give it Google Analytics.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/optional
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/optional
         provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
 schemas:
-    - coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
-      owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+    - coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+      owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
       id: google-analytics-web
       kind: google.analytics
       interfaceType: web
@@ -297,24 +377,30 @@ schemas:
         properties:
             configuration:
                 additionalProperties: false
+                description: How your workload gets the measurement ID.
                 properties:
                     env:
                         contains:
                             additionalProperties: false
                             properties:
                                 name:
+                                    description: The name of the variable, such as GA_MEASUREMENT_ID. It uses letters, digits and underscores, and cannot start with a digit.
                                     pattern: ^[A-Za-z_][A-Za-z0-9_]*$
                                     type: string
                                 property:
                                     const: measurementId
+                                    description: Always measurementId.
                                 required:
+                                    description: True when the workload cannot start without this variable.
                                     type: boolean
                                 sensitive:
+                                    description: True when the value is a secret, so the platform can store and pass it securely.
                                     type: boolean
                             required:
                                 - name
                                 - property
                             type: object
+                        description: The environment variables for Google Analytics. One of them must hold the measurementId.
                         minItems: 1
                         type: array
                         uniqueItems: true
@@ -323,8 +409,10 @@ schemas:
                 type: object
             interface:
                 additionalProperties: false
+                description: The events that your site sends.
                 properties:
                     events:
+                        description: page_view, custom_event or both, each one once.
                         items:
                             enum:
                                 - custom_event
@@ -334,16 +422,20 @@ schemas:
                         uniqueItems: true
                     type:
                         const: web
+                        description: Always web.
                 required:
                     - events
                     - type
                 type: object
             kind:
                 const: google.analytics
+                description: Always google.analytics.
             name:
+                description: A name for this requirement. It cannot be empty.
                 minLength: 1
                 type: string
             optional:
+                description: Whether the workload can still run if the platform cannot give it Google Analytics.
                 type: boolean
         required:
             - configuration
@@ -370,22 +462,26 @@ schemas:
                         items:
                             kind: any
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                                 jsonPointer: /properties/configuration/properties/env
                         constraints:
                             contains:
                                 additionalProperties: false
                                 properties:
                                     name:
+                                        description: The name of the variable, such as GA_MEASUREMENT_ID. It uses letters, digits and underscores, and cannot start with a digit.
                                         pattern: ^[A-Za-z_][A-Za-z0-9_]*$
                                         type: string
                                     property:
                                         const: measurementId
+                                        description: Always measurementId.
                                     required:
+                                        description: True when the workload cannot start without this variable.
                                         type: boolean
                                     sensitive:
+                                        description: True when the value is a secret, so the platform can store and pass it securely.
                                         type: boolean
                                 required:
                                     - name
@@ -393,25 +489,31 @@ schemas:
                                 type: object
                             minItems: 1
                             uniqueItems: true
+                        description: The environment variables for Google Analytics. One of them must hold the measurementId.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                             jsonPointer: /properties/configuration/properties/env
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                        owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                         jsonPointer: /properties/configuration/properties/env
+                description: |-
+                    How your workload gets the Google Analytics measurement ID. List the environment variable that holds
+                    it, with property set to measurementId.
+
+                    How your workload gets the measurement ID.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/configuration
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/configuration
             - name: interface
               required: true
@@ -429,34 +531,58 @@ schemas:
                             scalar: string
                             values:
                                 - value: custom_event
+                                  description: Events that your site defines itself, such as sign_up or add_to_cart.
                                 - value: page_view
+                                  description: A page view, sent each time someone opens a page.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                                 jsonPointer: /properties/interface/properties/events/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
+                        description: |-
+                            The kinds of events that your site sends to Google Analytics. List at least one.
+
+                            page_view, custom_event or both, each one once.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                             jsonPointer: /properties/interface/properties/events
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                        owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                         jsonPointer: /properties/interface/properties/events
+                description: |-
+                    Events sent from a web page in the browser.
+
+                    Example: a web shop that records page views and its own events, such as add_to_cart. It reads its
+                    measurement ID from NEXT_PUBLIC_GA_ID.
+
+                    ```condition
+                    kind: google.analytics
+                    interface:
+                      type: web
+                      events: [page_view, custom_event]
+                    configuration:
+                      env:
+                        - property: measurementId
+                          name: NEXT_PUBLIC_GA_ID
+                    ```
+
+                    The events that your site sends.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/interface
             - name: name
               shape:
@@ -464,35 +590,37 @@ schemas:
                 scalar: string
                 constraints:
                     minLength: 1
+                description: A name for this requirement. It cannot be empty.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/name
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/name
             - name: optional
               shape:
                 kind: scalar
                 scalar: boolean
+                description: Whether the workload can still run if the platform cannot give it Google Analytics.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                    owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                    coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                     jsonPointer: /properties/optional
               provenance:
-                owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+                owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+                coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
                 jsonPointer: /properties/optional
         provenance:
-            owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+            owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+            coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web
       provenance:
-        owner: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-        extensionSha256: 3bace49d7e4b90c759c50ff95b8ad24bf613a6e0c1c37f591187a6963de7a6d9
-        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml#schema:google-analytics-web
+        owner: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+        extensionSha256: efa2fef15e604363834d7b3b3968039d85b637a4063e2e02c3b6f1728948872c
+        coordinate: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml#schema:google-analytics-web

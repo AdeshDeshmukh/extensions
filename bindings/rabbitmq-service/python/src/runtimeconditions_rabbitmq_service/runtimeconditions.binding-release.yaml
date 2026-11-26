@@ -1,16 +1,16 @@
 apiVersion: runtimeconditions.io/binding-release/v1alpha1
 dependencyLock:
     extensions:
-        - id: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-          version: 0.1.0
-          sourceSha256: d009a845b6d0b03caf01fbee33fa2d9bd48fb2af32fe249a52796460a957a8fd
-          semanticSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+        - id: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+          version: 0.2.0
+          sourceSha256: e339f653c2c30f9f61ebd318da692b9487c2ae7afad6540e9d8ba1a9d3e989de
+          semanticSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37
           sourceBackend: catalog
-          sourceLocator: catalog:rabbitmq/service/releases/0.1.0/runtimeconditions.extension.yaml
+          sourceLocator: catalog:rabbitmq/service/releases/0.2.0/runtimeconditions.extension.yaml
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: d1115cae41c8d6cd1f7e22cbdd592275f30a026e8a120a79fd366d699d062c17
+    semanticSha256: 0597c7cca9e3537705040fd3af4ea00e911a40e0445ffd5a7a775426ed8d96e9
 package:
     coordinate: runtimeconditions-rabbitmq-service
     language: python
@@ -26,7 +26,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+        sha256: 23764404c2196c92518a6560cf511cf4def70ef2ef48a901b67380737754dea9
     profiler:
         name: python-rc-profiler
         version: 0.4.0
@@ -34,6 +34,6 @@ provenance:
     sourceDirectory: bindings/rabbitmq-service/python
     targetReleaseTag: bindings/rabbitmq-service/python/v0.1.0
 rootExtension:
-    id: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: ce6a537c89b55941476081833b1f75ae0e3026e33773be25dc98ec4e94515306
+    id: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: e2a280bd526628d3882553bc2041e823e713147c6bd0bfe978cdf4efa51e7b37

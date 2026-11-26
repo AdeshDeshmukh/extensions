@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/binding-model/v1alpha1
 kind: RuntimeConditionsBindingModel
 metadata:
-    semanticSha256: 7c8ca8ec8ea0adf5fc0caf2a92d2f48d0ed44d19ab86dae75a4e9211f16549b5
+    semanticSha256: e9d00a828bb83b7fd6711ef7e9fed0ef96edc6273b18312b4ba1d468116a0d11
     normalizer:
         name: rc-binding-model
         version: 0.1.0
@@ -11,95 +11,140 @@ coreProfileSchema:
     version: 0.4.0
     semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
 rootExtension:
-    id: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+    id: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
 extensions:
-    - id: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-      version: 0.1.0
-      semanticSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-      description: Declares topic and consumer-group access required by a Kafka workload.
+    - id: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+      version: 0.2.0
+      semanticSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+      description: |-
+        Use this extension when your workload talks to Kafka.
+
+        Kafka keeps messages in topics. A topic is like a named channel. Some workloads write messages to a
+        topic, and some workloads read messages from it. Workloads that read together can join a consumer
+        group. Kafka uses the group to share the messages between them and to remember how far each one has
+        read.
+
+        In a Condition, you list every topic and every consumer group that your workload uses, and say if it
+        reads or writes. The platform then creates them or gives your workload access to them.
+
+        Write the exact names. Patterns like orders-* are not allowed. Reading a topic does not give access to
+        a consumer group, so if your workload uses a group, add the group as its own line.
 vocabulary:
     owners:
         - coordinate: field-domain:kafka.service:service:interface.operations[].action:"read"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
           path: interface.operations[].action
           value: read
         - coordinate: field-domain:kafka.service:service:interface.operations[].action:"write"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
           path: interface.operations[].action
           value: write
         - coordinate: field-domain:kafka.service:service:interface.operations[].resource:"group"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
           path: interface.operations[].resource
           value: group
         - coordinate: field-domain:kafka.service:service:interface.operations[].resource:"topic"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
           path: interface.operations[].resource
           value: topic
         - coordinate: interface-field:kafka.service:service:operations
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
           path: interface.operations
         - coordinate: interface:kafka.service:service
           category: interface
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
         - coordinate: kind:kafka.service
           category: kind
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
     ownedDeclarations:
         - coordinate: kind:kafka.service
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
-          description: A Kafka service providing the declared topic and consumer-group access.
+          description: |-
+            Your workload needs a Kafka cluster with the topics and consumer groups listed in the Condition.
+
+            Example: a billing workload. It reads new orders from the orders topic, as part of the billing
+            consumer group. It writes a message to the invoices topic for each order.
+
+            ```condition
+            kind: kafka.service
+            interface:
+              type: service
+              operations:
+                - resource: topic
+                  action: read
+                  topic: orders
+                - resource: group
+                  action: read
+                  groupId: billing
+                - resource: topic
+                  action: write
+                  topic: invoices
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
             coordinate: kind:kafka.service
     interfaces:
         - coordinate: interface:kafka.service:service
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           type: service
-          description: Kafka access through its native client protocol.
+          description: |-
+            Your workload connects to Kafka with a normal Kafka client library.
+
+            Example: a workload that only sends page-view events to Kafka and never reads them.
+
+            ```condition
+            kind: kafka.service
+            interface:
+              type: service
+              operations:
+                - resource: topic
+                  action: write
+                  topic: page-views
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
             coordinate: interface:kafka.service:service
     interfaceFields:
         - coordinate: interface-field:kafka.service:service:operations
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
-          description: Distinct topic and consumer-group capabilities required by the workload.
+          description: The topics and consumer groups that your workload uses. Each line names one of them and says what the workload does with it.
           path: interface.operations
           segments:
             - name: interface
             - name: operations
           provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
             coordinate: interface-field:kafka.service:service:operations
     valueDomains:
         - coordinate: field-domain:kafka.service:service:interface.operations[].action
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
           path: interface.operations[].action
@@ -110,15 +155,15 @@ vocabulary:
             - name: action
           values:
             - value: read
-              description: Read a topic, or use a consumer group for coordination or offset management.
+              description: Read messages from the topic, or use the consumer group.
             - value: write
-              description: Produce records to a topic without declaring transactional or idempotent privileges.
+              description: Send messages to the topic. This does not include transactions or idempotent writes.
           provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
             coordinate: field-domain:kafka.service:service:interface.operations[].action
         - coordinate: field-domain:kafka.service:service:interface.operations[].resource
-          owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
           kind: kafka.service
           interfaceType: service
           path: interface.operations[].resource
@@ -129,19 +174,19 @@ vocabulary:
             - name: resource
           values:
             - value: group
-              description: A named Kafka consumer group used for coordination or offset management.
+              description: A Kafka consumer group, by its exact name.
             - value: topic
-              description: A named Kafka topic to read from or write to.
+              description: A Kafka topic, by its exact name.
           provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
             coordinate: field-domain:kafka.service:service:interface.operations[].resource
 scopes:
     - coordinate: kafka.service:service
       kind: kafka.service
       interfaceType: service
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+        - https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
       projection:
         kind: object
         required:
@@ -171,19 +216,19 @@ scopes:
                                     scalar: string
                                     values:
                                         - value: read
-                                          description: Read a topic, or use a consumer group for coordination or offset management.
+                                          description: Read messages from the topic, or use the consumer group.
                                         - value: write
-                                          description: Produce records to a topic without declaring transactional or idempotent privileges.
-                                    description: Kafka capability required on the named resource.
+                                          description: Send messages to the topic. This does not include transactions or idempotent writes.
+                                    description: What the workload does with it.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/2/properties/action
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/action
                                 - name: groupId
                                   shape:
@@ -192,17 +237,17 @@ scopes:
                                     constraints:
                                         minLength: 1
                                         pattern: ^[^*]+$
-                                    description: Nonempty literal consumer-group ID; wildcard matching is unsupported.
+                                    description: The exact consumer group name. It cannot be empty and cannot use * as a pattern.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                         jsonPointer: /$defs/groupId
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
-                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/groupId
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/2/properties/groupId
                                 - name: resource
                                   required: true
                                   shape:
@@ -210,19 +255,19 @@ scopes:
                                     scalar: string
                                     values:
                                         - value: group
-                                          description: A named Kafka consumer group used for coordination or offset management.
+                                          description: A Kafka consumer group, by its exact name.
                                         - value: topic
-                                          description: A named Kafka topic to read from or write to.
-                                    description: Kafka resource category to which the capability applies.
+                                          description: A Kafka topic, by its exact name.
+                                    description: What the line is about, a topic or a consumer group.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
-                                        jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/resource
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        jsonPointer: /properties/interface/properties/operations/items/oneOf/2/properties/resource
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/resource
                                 - name: topic
                                   shape:
@@ -237,69 +282,82 @@ scopes:
                                                     - .
                                                     - ..
                                                 - pattern: '[^a-zA-Z0-9._-]'
-                                    description: Literal Kafka topic name using ASCII letters, digits, dots, underscores, or hyphens; not '.' or '..'.
+                                    description: The exact topic name. It can use letters, digits, dots, underscores and hyphens, and it cannot be '.' or '..'.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                         jsonPointer: /$defs/topicName
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
-                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/topic
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/topic
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
                         description: |-
-                            Distinct topic and consumer-group capabilities required by the workload.
+                            The topics and consumer groups that your workload uses. Each line names one of them and says what the workload does with it.
 
-                            Capabilities requested on exact topic and consumer-group identities.
+                            The topics and consumer groups that your workload uses. List at least one, and do not repeat a line.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                         jsonPointer: /properties/interface/properties/operations
-                description: Kafka access through its native client protocol.
+                description: |-
+                    Your workload connects to Kafka with a normal Kafka client library.
+
+                    Example: a workload that only sends page-view events to Kafka and never reads them.
+
+                    ```condition
+                    kind: kafka.service
+                    interface:
+                      type: service
+                      operations:
+                        - resource: topic
+                          action: write
+                          topic: page-views
+                    ```
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
 schemas:
-    - coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
-      owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+    - coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+      owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
       id: kafka-service-interface
       kind: kafka.service
       interfaceType: service
       exact:
         $defs:
             groupId:
-                description: Nonempty literal consumer-group ID; wildcard matching is unsupported.
+                description: The exact consumer group name. It cannot be empty and cannot use * as a pattern.
                 minLength: 1
                 pattern: ^[^*]+$
                 type: string
             topicName:
-                description: Literal Kafka topic name using ASCII letters, digits, dots, underscores, or hyphens; not '.' or '..'.
+                description: The exact topic name. It can use letters, digits, dots, underscores and hyphens, and it cannot be '.' or '..'.
                 maxLength: 249
                 minLength: 1
                 not:
@@ -316,56 +374,56 @@ schemas:
                 additionalProperties: true
                 properties:
                     operations:
-                        description: Capabilities requested on exact topic and consumer-group identities.
+                        description: The topics and consumer groups that your workload uses. List at least one, and do not repeat a line.
                         items:
                             oneOf:
                                 - additionalProperties: false
-                                  description: Coordinate consumption or commit and fetch offsets for a named group without implying topic access.
+                                  description: Read messages from a topic. This does not give access to a consumer group.
                                   properties:
                                     action:
                                         const: read
-                                        description: Kafka capability required on the named resource.
+                                        description: What the workload does with it.
+                                    resource:
+                                        const: topic
+                                        description: What the line is about, a topic or a consumer group.
+                                    topic:
+                                        $ref: '#/$defs/topicName'
+                                  required:
+                                    - action
+                                    - resource
+                                    - topic
+                                  type: object
+                                - additionalProperties: false
+                                  description: Send messages to a topic. This does not ask the platform to let the workload create topics.
+                                  properties:
+                                    action:
+                                        const: write
+                                        description: What the workload does with it.
+                                    resource:
+                                        const: topic
+                                        description: What the line is about, a topic or a consumer group.
+                                    topic:
+                                        $ref: '#/$defs/topicName'
+                                  required:
+                                    - action
+                                    - resource
+                                    - topic
+                                  type: object
+                                - additionalProperties: false
+                                  description: Use a consumer group to share messages with other readers and to save how far the workload has read. This does not give access to any topic.
+                                  properties:
+                                    action:
+                                        const: read
+                                        description: What the workload does with it.
                                     groupId:
                                         $ref: '#/$defs/groupId'
                                     resource:
                                         const: group
-                                        description: Kafka resource category to which the capability applies.
+                                        description: What the line is about, a topic or a consumer group.
                                   required:
                                     - action
                                     - groupId
                                     - resource
-                                  type: object
-                                - additionalProperties: false
-                                  description: Produce records to a named topic without implying topic creation.
-                                  properties:
-                                    action:
-                                        const: write
-                                        description: Kafka capability required on the named resource.
-                                    resource:
-                                        const: topic
-                                        description: Kafka resource category to which the capability applies.
-                                    topic:
-                                        $ref: '#/$defs/topicName'
-                                  required:
-                                    - action
-                                    - resource
-                                    - topic
-                                  type: object
-                                - additionalProperties: false
-                                  description: Read records from a named topic without implying consumer-group access.
-                                  properties:
-                                    action:
-                                        const: read
-                                        description: Kafka capability required on the named resource.
-                                    resource:
-                                        const: topic
-                                        description: Kafka resource category to which the capability applies.
-                                    topic:
-                                        $ref: '#/$defs/topicName'
-                                  required:
-                                    - action
-                                    - resource
-                                    - topic
                                   type: object
                         minItems: 1
                         type: array
@@ -411,19 +469,19 @@ schemas:
                                     scalar: string
                                     values:
                                         - value: read
-                                          description: Read a topic, or use a consumer group for coordination or offset management.
+                                          description: Read messages from the topic, or use the consumer group.
                                         - value: write
-                                          description: Produce records to a topic without declaring transactional or idempotent privileges.
-                                    description: Kafka capability required on the named resource.
+                                          description: Send messages to the topic. This does not include transactions or idempotent writes.
+                                    description: What the workload does with it.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                         jsonPointer: /properties/interface/properties/operations/items/oneOf/2/properties/action
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/action
                                 - name: groupId
                                   shape:
@@ -432,17 +490,17 @@ schemas:
                                     constraints:
                                         minLength: 1
                                         pattern: ^[^*]+$
-                                    description: Nonempty literal consumer-group ID; wildcard matching is unsupported.
+                                    description: The exact consumer group name. It cannot be empty and cannot use * as a pattern.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                         jsonPointer: /$defs/groupId
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
-                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/groupId
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/2/properties/groupId
                                 - name: resource
                                   required: true
                                   shape:
@@ -450,19 +508,19 @@ schemas:
                                     scalar: string
                                     values:
                                         - value: group
-                                          description: A named Kafka consumer group used for coordination or offset management.
+                                          description: A Kafka consumer group, by its exact name.
                                         - value: topic
-                                          description: A named Kafka topic to read from or write to.
-                                    description: Kafka resource category to which the capability applies.
+                                          description: A Kafka topic, by its exact name.
+                                    description: What the line is about, a topic or a consumer group.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
-                                        jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/resource
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        jsonPointer: /properties/interface/properties/operations/items/oneOf/2/properties/resource
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                     jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/resource
                                 - name: topic
                                   shape:
@@ -477,54 +535,67 @@ schemas:
                                                     - .
                                                     - ..
                                                 - pattern: '[^a-zA-Z0-9._-]'
-                                    description: Literal Kafka topic name using ASCII letters, digits, dots, underscores, or hyphens; not '.' or '..'.
+                                    description: The exact topic name. It can use letters, digits, dots, underscores and hyphens, and it cannot be '.' or '..'.
                                     provenance:
-                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                         jsonPointer: /$defs/topicName
                                   provenance:
-                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
-                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/1/properties/topic
+                                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                    jsonPointer: /properties/interface/properties/operations/items/oneOf/0/properties/topic
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                                owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                                 jsonPointer: /properties/interface/properties/operations/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
                         description: |-
-                            Distinct topic and consumer-group capabilities required by the workload.
+                            The topics and consumer groups that your workload uses. Each line names one of them and says what the workload does with it.
 
-                            Capabilities requested on exact topic and consumer-group identities.
+                            The topics and consumer groups that your workload uses. List at least one, and do not repeat a line.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                             jsonPointer: /properties/interface/properties/operations
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                         jsonPointer: /properties/interface/properties/operations
-                description: Kafka access through its native client protocol.
+                description: |-
+                    Your workload connects to Kafka with a normal Kafka client library.
+
+                    Example: a workload that only sends page-view events to Kafka and never reads them.
+
+                    ```condition
+                    kind: kafka.service
+                    interface:
+                      type: service
+                      operations:
+                        - resource: topic
+                          action: write
+                          topic: page-views
+                    ```
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                    owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                    coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                 jsonPointer: /properties/interface
         provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
       definitions:
         - name: groupId
           jsonPointer: /$defs/groupId
@@ -534,16 +605,16 @@ schemas:
             constraints:
                 minLength: 1
                 pattern: ^[^*]+$
-            description: Nonempty literal consumer-group ID; wildcard matching is unsupported.
+            description: The exact consumer group name. It cannot be empty and cannot use * as a pattern.
             provenance:
-                owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                 jsonPointer: /$defs/groupId
           provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
             jsonPointer: /$defs/groupId
         - name: topicName
           jsonPointer: /$defs/topicName
@@ -559,18 +630,18 @@ schemas:
                             - .
                             - ..
                         - pattern: '[^a-zA-Z0-9._-]'
-            description: Literal Kafka topic name using ASCII letters, digits, dots, underscores, or hyphens; not '.' or '..'.
+            description: The exact topic name. It can use letters, digits, dots, underscores and hyphens, and it cannot be '.' or '..'.
             provenance:
-                owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+                owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+                coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
                 jsonPointer: /$defs/topicName
           provenance:
-            owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+            owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+            coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
             jsonPointer: /$defs/topicName
       provenance:
-        owner: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
-        extensionSha256: ef9658458f0c2f1411e5005db00b0e686b2319d81121df67e67124892fdb1eb2
-        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml#schema:kafka-service-interface
+        owner: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+        extensionSha256: a7982b8e4f25bfc1e22c545152cd8767e2282bf6140039d32fb1eeceb8ab79be
+        coordinate: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml#schema:kafka-service-interface

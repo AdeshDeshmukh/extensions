@@ -2,32 +2,42 @@
 
 # runtimeconditions.io/x/rabbitmq/service
 
-Declares RabbitMQ exchange publishing and queue consumption through AMQP 0-9-1.
+Use this extension when your workload sends or receives messages with RabbitMQ.
+
+In RabbitMQ, a workload sends a message to an exchange, together with a routing key. The exchange uses
+the routing key to put the message into one or more queues. Other workloads then read the messages from
+those queues. Exchanges and queues live inside a virtual host, which is like a separate space on the
+RabbitMQ server.
+
+In a Condition, you give the virtual host, and you list every exchange that your workload sends to and
+every queue that it reads from. The platform then creates them or gives your workload access to them.
+
+Write the exact names. Patterns are not allowed.
 
 ```sh
 go get runtimeconditions.io/x/rabbitmq/service@v0.1.0
 ```
 
-Runtime Conditions extension: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+Runtime Conditions extension: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
 
 ## Conditions
 
 Every Condition part this package defines, with the fields you can set. Select a line to open it.
 
 <details>
-<summary><b>rabbitmq.service</b> · <code>amqp_0_9_1</code>: RabbitMQ access using the AMQP 0-9-1 client protocol.</summary>
+<summary><b>rabbitmq.service</b> · <code>amqp_0_9_1</code>: Your workload connects to RabbitMQ with a normal AMQP 0-9-1 client library, the protocol that most RabbitMQ clients use.</summary>
 
 `service.Amqp091` is the `interface` of a `rabbitmq.service` Condition.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `Operations` | `Operations` | yes | Distinct publishing and consumption capabilities required by the workload. Capabilities on literal exchanges and queues in this virtual host. |
-| `Operations[].Action` | `Action` | yes | RabbitMQ capability required on the named resource.<br>Values:<br>`consume`: Receive messages from a named queue.<br>`publish`: Publish messages to an exchange with the declared routing key. |
-| `Operations[].Exchange` | `*string` | no | Exact exchange name; the empty string selects the default exchange. |
-| `Operations[].Queue` | `*string` | no | Exact name of the queue from which messages are received. |
-| `Operations[].Resource` | `Resource` | yes | RabbitMQ resource category to which the capability applies.<br>Values:<br>`exchange`: A RabbitMQ exchange receiving published messages.<br>`queue`: A RabbitMQ queue from which messages are consumed. |
-| `Operations[].RoutingKey` | `*string` | no | Literal publishing routing key, which may be empty. |
-| `VirtualHost` | `string` | yes | Literal virtual-host name containing every exchange and queue in this Condition. Exact virtual-host name; '/' explicitly selects the default virtual host. |
+| `Operations` | `Operations` | yes | The exchanges that your workload sends to and the queues that it reads from. Each line names one of them. The exchanges and queues in this virtual host that your workload uses. List at least one, and do not repeat a line. |
+| `Operations[].Action` | `Action` | yes | What the workload does with it.<br>Values:<br>`consume`: Read messages from a queue.<br>`publish`: Send messages to an exchange, with the routing key given in the same line. |
+| `Operations[].Exchange` | `*string` | no | The exact name of the exchange. Write an empty string for the default exchange. |
+| `Operations[].Queue` | `*string` | no | The exact name of the queue that the workload reads from. |
+| `Operations[].Resource` | `Resource` | yes | What the line is about, an exchange or a queue.<br>Values:<br>`exchange`: An exchange, which receives the messages that your workload sends.<br>`queue`: A queue, which holds the messages that your workload reads. |
+| `Operations[].RoutingKey` | `*string` | no | The exact routing key that the workload sends with each message. It can be empty. |
+| `VirtualHost` | `string` | yes | The exact name of the virtual host. Every exchange and queue in this Condition is inside it. The exact name of the virtual host. Write / for the default virtual host. |
 
 </details>
 
@@ -35,9 +45,10 @@ Every Condition part this package defines, with the fields you can set. Select a
 
 `service.RabbitmqService` declares a `rabbitmq.service` Condition.
 
-A RabbitMQ service providing access to exchanges and queues in a virtual host.
+Your workload needs a RabbitMQ server with the exchanges and queues listed in the Condition.
 
-Example: publish order events through a named exchange.
+Example: a workload that sends an event to the order-events exchange, with the routing key
+orders.created, each time someone places an order.
 
 ```go
 service.RabbitmqService(

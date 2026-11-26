@@ -1,16 +1,16 @@
 apiVersion: runtimeconditions.io/binding-release/v1alpha1
 dependencyLock:
     extensions:
-        - id: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
-          version: 0.1.0
-          sourceSha256: 0927ac5e79957cc86bcfbbd2cc31c5bc4a68573673594fa568219ad557ae7310
-          semanticSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+        - id: https://runtimeconditions.io/extensions/rc/observability/0.2.0/runtimeconditions.extension.yaml
+          version: 0.2.0
+          sourceSha256: ca40af3f41193f01d0eec2c60361babb5d2a51b6e11a1530b2ecb0a853e9eed4
+          semanticSha256: 3d6e3c01815f7313aa32459c76a5b7d72fede24113f31d81a4f60edee3d231e7
           sourceBackend: catalog
-          sourceLocator: catalog:rc/observability/releases/0.1.0/runtimeconditions.extension.yaml
+          sourceLocator: catalog:rc/observability/releases/0.2.0/runtimeconditions.extension.yaml
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: cc2d8036c64aec1c708b1fd4f05392c4bde260090eb899ea069e36775ab1e7df
+    semanticSha256: 4be77a5ea83ff14ba2cb09e6200bf2d599d96cbc91233036edc85a0813d2bddc
 package:
     coordinate: runtimeconditions.io/x/rc/observability
     language: go
@@ -25,7 +25,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+        sha256: 23764404c2196c92518a6560cf511cf4def70ef2ef48a901b67380737754dea9
     profiler:
         name: go-rc-profiler
         version: v0.4.0
@@ -33,6 +33,6 @@ provenance:
     sourceDirectory: bindings/observability/go
     targetReleaseTag: bindings/observability/go/v0.1.0
 rootExtension:
-    id: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: aa25385093f5120bc6bbd9bbb40df631e2e2d89b99b0cc49324c5f19c058d9a9
+    id: https://runtimeconditions.io/extensions/rc/observability/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: 3d6e3c01815f7313aa32459c76a5b7d72fede24113f31d81a4f60edee3d231e7

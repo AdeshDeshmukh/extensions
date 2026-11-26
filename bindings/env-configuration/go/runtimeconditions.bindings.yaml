@@ -5,7 +5,7 @@ apiVersion: runtimeconditions.io/bindings/v1alpha2
 kind: RuntimeConditionsBindingManifest
 generated:
     nonEditable: true
-    emitter: rc-go-bindings@sha256:de308cd04a637e2e7f59c4824cd7e2da38aa631d5e62eb7e543c3d26021e2858
+    emitter: rc-go-bindings@sha256:f8a960db7374b1be2f3a4a4504cede0b1153fa1161a9a9baf845d50216bb750a
     version: 0.1.0
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1

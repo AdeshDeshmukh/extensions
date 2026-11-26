@@ -1,17 +1,18 @@
 apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
-    pom.xml: 15c670111da260c3b00b19bc0dbd09556973d81fa89beefe121905dcd1e11ccc
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Access.java: fa6bd19d53c9ab15e527b7af8ab62b7415cb2e9dbbfdfcfef3023b3a0574789e
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/AccessItem.java: 2d607bab14095e9d4d1b0c1cefeccef48fd9b094140ddf9ef69d28e9d4c58c12
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Bindings.java: 0e3279528692c61f6939a8165f74eb936353dee492b051d12cba8501dd196ce2
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Declaration.java: e67acba1923d472411713285fa7937775ce00320d5fc592cc9ffcb3ccd9ffb7f
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Git.java: 2c06ed32097fe55b497b6d7dfb227136ad2d74d977a850e4a34c23faee3ed01c
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/GitOptional.java: d2a10c8f0c9b8a18e35baf2b2d303fb80a5e8b3a5d4ef551eab37f75c92663e6
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Name.java: 1484e0d503299efed4d6192bb237a1c08db197e0c8edf1ec44223e08b2d7dde2
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Provider.java: 8866a29027b46177b463548c144aa2985f762f289e2569852f8cb4050a1138aa
-    src/main/java/io/runtimeconditions/bindings/sourcecontrol/RcSourceControlField.java: b704e3779b2d13b205b27a4da1551fce34090efc71427be6c99ae2b824944320
-    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: bedc3356e3095576f2fb41569c541b80290ca67c8028c1a1a85b2e355ed1bf2b
-    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: bccfd8f89dd958e44b6bba04f9839b9835679c9148b297826cb00a959f4cf1b8
-    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: fbb3b7aae22a43d25528a57ebfe691aa4685c719f020eb1c978d599fedfac059
-    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 3fa58723ae9f0267208276c4c7b81887f329d2762f6a0abf70989348891cc149
+    README.md: 4902b8828761480baaab969b585569350136d13c171bba6e37c3578b036843ec
+    pom.xml: 8876ea725363ade1af55628565dd13704362f4bec3abeebc714078aaf97cd322
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Access.java: 2d922776105a572a5eed56f06439f4a0ae4037d11536022241ad064149a80f71
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/AccessItem.java: 5303828fdbcdc1273be71de0d3e2e7cd7fac1bc103d540e3170277700b903085
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Bindings.java: 001438012b32563c0a3ed111b0581851605bb2eafc807d2aa151d63f6ae65326
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Declaration.java: ea9bf27ce8b0d701a60137d43c8aa3e2013bf7d6b7cae4cd8b4ccdec0974883c
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Git.java: b0b06bcb4dba3285625d8685f48aa36930a1ca8a15b89f5d0cd2b2ac11ace6ee
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/GitOptional.java: bbb5fa812fb0557dc70d50706708399f65c695b69f2d1b5b9fe0d6e7545fbffa
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Name.java: 88b54e3696cc7e4c3dba2623b103a78edf1d81331edd93851585a69c30f5cbf1
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/Provider.java: 0cd286df5ceb2397d5ab0ce707fda6968f0d300066c3e61c6f1ce303a46a9b04
+    src/main/java/io/runtimeconditions/bindings/sourcecontrol/RcSourceControlField.java: 2401693c36929e7b5ceb439d54b8410f7716ebf91c8f1e0056f862e84a1f50f3
+    src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: dfa5565a28e9e35a7298abe403cd0aa6ad616d36074d881b0155415eb467c494
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 645f669b9fd3f56737d22f1f3a4848d891f73e4642b3cfeefae750922f4b63eb
+    src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: 4171f8120792887d3088e30a7bcfb6bad58f887056cedd56416937e0c3842d1d
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: a0aaa618e365fb2245f96fe9c919a8a5e95ab7172c0311fa57b84e35cf3205c5

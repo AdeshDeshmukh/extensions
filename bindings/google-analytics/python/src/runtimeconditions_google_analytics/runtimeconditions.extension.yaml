@@ -2,16 +2,52 @@ apiVersion: runtimeconditions.io/v1alpha1
 kind: RuntimeConditionsExtensionDefinition
 
 metadata:
-  id: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
-  version: 0.1.0
+  id: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
+  version: 0.2.0
+  description: |-
+    Use this extension when your website or web app sends events to Google Analytics from the browser.
 
+    In a Condition, you list the kinds of events that your site sends, such as page views. You also give the
+    environment variable that holds the Google Analytics measurement ID, the ID that starts with G-. The
+    platform then sets up a Google Analytics property and puts its measurement ID in that variable.
 spec:
   kinds:
     - name: google.analytics
+      description: |-
+        Your workload sends events to Google Analytics.
+
+        Example: a website that records each page view, and reads its measurement ID from GA_MEASUREMENT_ID.
+
+        ```condition
+        kind: google.analytics
+        interface:
+          type: web
+          events: [page_view]
+        configuration:
+          env:
+            - property: measurementId
+              name: GA_MEASUREMENT_ID
+        ```
 
   interfaceTypes:
     - name: web
       targetKind: google.analytics
+      description: |-
+        Events sent from a web page in the browser.
+
+        Example: a web shop that records page views and its own events, such as add_to_cart. It reads its
+        measurement ID from NEXT_PUBLIC_GA_ID.
+
+        ```condition
+        kind: google.analytics
+        interface:
+          type: web
+          events: [page_view, custom_event]
+        configuration:
+          env:
+            - property: measurementId
+              name: NEXT_PUBLIC_GA_ID
+        ```
 
   conditionFields:
     - name: configuration
@@ -19,11 +55,15 @@ spec:
         - google.analytics
       appliesToInterfaceTypes:
         - web
+      description: |-
+        How your workload gets the Google Analytics measurement ID. List the environment variable that holds
+        it, with property set to measurementId.
 
   interfaceFields:
     - name: events
       targetKind: google.analytics
       targetType: web
+      description: The kinds of events that your site sends to Google Analytics. List at least one.
 
   fieldValues:
     - field: interface.events[]
@@ -32,17 +72,22 @@ spec:
       values:
         - page_view
         - custom_event
+      valueDescriptions:
+        page_view: A page view, sent each time someone opens a page.
+        custom_event: Events that your site defines itself, such as sign_up or add_to_cart.
     - field: configuration.env[].property
       targetKind: google.analytics
       targetType: web
       values:
         - measurementId
+      valueDescriptions:
+        measurementId: The variable holds the Google Analytics measurement ID, such as G-ABC123XYZ.
 
   schemas:
     - id: google-analytics-web
       appliesToKind: google.analytics
       appliesToInterfaceType: web
-      description: Validates browser-side Google Analytics event collection requirements.
+      description: Checks a Google Analytics Condition. It needs the events and the measurement ID variable.
       schema:
         $schema: https://json-schema.org/draft/2020-12/schema
         type: object
@@ -54,22 +99,28 @@ spec:
           name:
             type: string
             minLength: 1
+            description: A name for this requirement. It cannot be empty.
           optional:
             type: boolean
+            description: Whether the workload can still run if the platform cannot give it Google Analytics.
           kind:
             const: google.analytics
+            description: Always google.analytics.
           interface:
             type: object
+            description: The events that your site sends.
             required:
               - type
               - events
             properties:
               type:
                 const: web
+                description: Always web.
               events:
                 type: array
                 minItems: 1
                 uniqueItems: true
+                description: page_view, custom_event or both, each one once.
                 items:
                   enum:
                     - page_view
@@ -77,6 +128,7 @@ spec:
             additionalProperties: false
           configuration:
             type: object
+            description: How your workload gets the measurement ID.
             required:
               - env
             properties:
@@ -84,6 +136,7 @@ spec:
                 type: array
                 minItems: 1
                 uniqueItems: true
+                description: The environment variables for Google Analytics. One of them must hold the measurementId.
                 contains:
                   type: object
                   required:
@@ -92,14 +145,17 @@ spec:
                   properties:
                     property:
                       const: measurementId
+                      description: Always measurementId.
                     name:
                       type: string
                       pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
+                      description: The name of the variable, such as GA_MEASUREMENT_ID. It uses letters, digits and underscores, and cannot start with a digit.
                     sensitive:
                       type: boolean
+                      description: True when the value is a secret, so the platform can store and pass it securely.
                     required:
                       type: boolean
+                      description: True when the workload cannot start without this variable.
                   additionalProperties: false
             additionalProperties: false
         additionalProperties: false
-

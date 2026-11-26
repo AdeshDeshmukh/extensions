@@ -56,6 +56,6 @@ files:
     src/main/java/io/runtimeconditions/bindings/envconfiguration/SmtpConfigurationEnvItem.java: 41bf6b0b5ff4052d70deb89693c20c05e74d98238424eb0f578332dfbbf024aa
     src/main/java/io/runtimeconditions/bindings/envconfiguration/SmtpConfigurationEnvItemProperty.java: 2b278fb6f46e42f3b6b590113aa1c54d1dde603143f46d5dd6a4f9d73b76ea06
     src/main/resources/runtimeconditions/runtimeconditions.binding-model.yaml: e1efd07c3be346bc7c65f7117133d06ce7dda54b803cedd61235aaf356f75f3d
-    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 7a1303409fc13a2f7cdf51fd93d727c5d85df6c129d837c2d4a944e795496578
+    src/main/resources/runtimeconditions/runtimeconditions.bindings.yaml: 549e9b179b1ae64722b85168f52e3d46b5393498bfb88e5ded72eff1a8f1018a
     src/main/resources/runtimeconditions/runtimeconditions.extension.yaml: b11b258caa8d9e1a3a07710dba6724f329b861efa0ba27807af79505864b1b04
-    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 2926ec3dbf6e4a5f8cefcd1ef434bc7b6d7daea8970bd18d9fdeb703e5098931
+    src/main/resources/runtimeconditions/runtimeconditions.file-manifest.yaml: 1ffb09908fe3112f2a7cab710ac6b41b97a00320f9c0bc1ca94422f2af6e2d44

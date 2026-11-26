@@ -2,11 +2,12 @@ apiVersion: runtimeconditions.io/file-manifest/v1alpha1
 kind: RuntimeConditionsFileManifest
 files:
     MANIFEST.in: d51e89c4c7c5e16c06d543c7aac32df945dd4f536e578b6ad089b68a6f489fca
-    pyproject.toml: e3f795f31c8afb3013450dfb5b62b98c2a67fa9641643d524deff90237f25dc6
-    src/runtimeconditions_file_system/__init__.py: 7da926e51da97048f481170651d9f2c0120f201ddfcf6c24a50204126786664a
-    src/runtimeconditions_file_system/bindings.py: 0f831ba03b14b7a94f5700325639fda677644f121ffaaba9ae32d8163d549a21
+    README.md: 971670268d7d8b2e31d14e763972a9a12bf89a946ec6eb7b92d9371c5533e6bd
+    pyproject.toml: 27fa9a66a41ae38e0bf8e7379c9046fe5098324b01decf2d5fb595dc78209ff3
+    src/runtimeconditions_file_system/__init__.py: 1d677234c43cb66183446f5cac257574afbfd481d0c2749bf766157ff7e5415b
+    src/runtimeconditions_file_system/bindings.py: cf0cfb84f5a821d18910e19692ed50748094bcb0a54c090fe87f46a932e9855a
     src/runtimeconditions_file_system/py.typed: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-    src/runtimeconditions_file_system/runtimeconditions.binding-model.yaml: b2bfef890f36cea8d3cd248d139dec2f627c870c6a0772f15a73f46eff3f2c06
-    src/runtimeconditions_file_system/runtimeconditions.binding-release.yaml: 92debe1db71cd5d9d842f03737f3301fd5890872cbcfef6549e05c69c5d5a439
-    src/runtimeconditions_file_system/runtimeconditions.bindings.yaml: 1a837f55609dc623f3436542c00d1b07671dc6828cb4aa78f0cf464511475707
-    src/runtimeconditions_file_system/runtimeconditions.extension.yaml: 9216eb22d6b43b0385996dfa4fb38de2853681006b19de490b9657e476f67e52
+    src/runtimeconditions_file_system/runtimeconditions.binding-model.yaml: 6a72c3965661251744fd8ef72c793b5c05148f98656a833eb25b8f9c40949399
+    src/runtimeconditions_file_system/runtimeconditions.binding-release.yaml: 2b1df80b15c0a7fd82f3c730538b93e704d0ab2d2ff7cd34e797323fa90d2900
+    src/runtimeconditions_file_system/runtimeconditions.bindings.yaml: a96691eb45e44d0c45aaf1f521a172247dd2a4821e10591e1defa358bab76f6b
+    src/runtimeconditions_file_system/runtimeconditions.extension.yaml: db5659d187c46f1ce6f0ce3920053ae76f9beadda8b2c8c456d3af6692c98e47

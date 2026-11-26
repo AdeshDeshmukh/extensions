@@ -1,16 +1,28 @@
 apiVersion: runtimeconditions.io/v1alpha1
 kind: RuntimeConditionsExtensionDefinition
 metadata:
-  id: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
-  version: 0.1.0
-  description: Declares RabbitMQ exchange publishing and queue consumption through AMQP 0-9-1.
+  id: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
+  version: 0.2.0
+  description: |-
+    Use this extension when your workload sends or receives messages with RabbitMQ.
+
+    In RabbitMQ, a workload sends a message to an exchange, together with a routing key. The exchange uses
+    the routing key to put the message into one or more queues. Other workloads then read the messages from
+    those queues. Exchanges and queues live inside a virtual host, which is like a separate space on the
+    RabbitMQ server.
+
+    In a Condition, you give the virtual host, and you list every exchange that your workload sends to and
+    every queue that it reads from. The platform then creates them or gives your workload access to them.
+
+    Write the exact names. Patterns are not allowed.
 spec:
   kinds:
     - name: rabbitmq.service
       description: |-
-        A RabbitMQ service providing access to exchanges and queues in a virtual host.
+        Your workload needs a RabbitMQ server with the exchanges and queues listed in the Condition.
 
-        Example: publish order events through a named exchange.
+        Example: a workload that sends an event to the order-events exchange, with the routing key
+        orders.created, each time someone places an order.
 
         ```condition
         kind: rabbitmq.service
@@ -26,36 +38,52 @@ spec:
   interfaceTypes:
     - name: amqp_0_9_1
       targetKind: rabbitmq.service
-      description: RabbitMQ access using the AMQP 0-9-1 client protocol.
+      description: |-
+        Your workload connects to RabbitMQ with a normal AMQP 0-9-1 client library, the protocol that most
+        RabbitMQ clients use.
+
+        Example: a workload that reads messages from the order-emails queue to send order emails. The
+        virtual host / is the default one.
+
+        ```condition
+        kind: rabbitmq.service
+        interface:
+          type: amqp_0_9_1
+          virtualHost: /
+          operations:
+            - resource: queue
+              action: consume
+              queue: order-emails
+        ```
   interfaceFields:
     - name: virtualHost
       targetKind: rabbitmq.service
       targetType: amqp_0_9_1
-      description: Literal virtual-host name containing every exchange and queue in this Condition.
+      description: The exact name of the virtual host. Every exchange and queue in this Condition is inside it.
     - name: operations
       targetKind: rabbitmq.service
       targetType: amqp_0_9_1
-      description: Distinct publishing and consumption capabilities required by the workload.
+      description: The exchanges that your workload sends to and the queues that it reads from. Each line names one of them.
   fieldValues:
     - field: interface.operations[].resource
       targetKind: rabbitmq.service
       targetType: amqp_0_9_1
       values: [exchange, queue]
       valueDescriptions:
-        exchange: A RabbitMQ exchange receiving published messages.
-        queue: A RabbitMQ queue from which messages are consumed.
+        exchange: An exchange, which receives the messages that your workload sends.
+        queue: A queue, which holds the messages that your workload reads.
     - field: interface.operations[].action
       targetKind: rabbitmq.service
       targetType: amqp_0_9_1
       values: [publish, consume]
       valueDescriptions:
-        publish: Publish messages to an exchange with the declared routing key.
-        consume: Receive messages from a named queue.
+        publish: Send messages to an exchange, with the routing key given in the same line.
+        consume: Read messages from a queue.
   schemas:
     - id: rabbitmq-amqp-0-9-1-interface
       appliesToKind: rabbitmq.service
       appliesToInterfaceType: amqp_0_9_1
-      description: Validates exchange publishing and queue consumption in an explicit virtual host.
+      description: Checks the virtual host, exchanges and queues in a RabbitMQ Condition.
       schema:
         $schema: https://json-schema.org/draft/2020-12/schema
         type: object
@@ -74,53 +102,53 @@ spec:
                 minLength: 1
                 maxLength: 255
                 pattern: '^[^\x00]*$'
-                description: Exact virtual-host name; '/' explicitly selects the default virtual host.
+                description: The exact name of the virtual host. Write / for the default virtual host.
               operations:
                 type: array
                 minItems: 1
                 uniqueItems: true
-                description: Capabilities on literal exchanges and queues in this virtual host.
+                description: The exchanges and queues in this virtual host that your workload uses. List at least one, and do not repeat a line.
                 items:
                   oneOf:
                     - type: object
-                      description: Publish to an exchange using an explicit routing key.
+                      description: Send messages to an exchange with the routing key given here.
                       required: [resource, action, exchange, routingKey]
                       properties:
                         resource:
                           const: exchange
-                          description: RabbitMQ resource category to which the capability applies.
+                          description: What the line is about, an exchange or a queue.
                         action:
                           const: publish
-                          description: RabbitMQ capability required on the named resource.
+                          description: What the workload does with it.
                         exchange:
                           type: string
                           maxLength: 255
                           pattern: '^[^\x00]*$'
                           not:
                             const: amq.default
-                          description: Exact exchange name; the empty string selects the default exchange.
+                          description: The exact name of the exchange. Write an empty string for the default exchange.
                         routingKey:
                           type: string
                           maxLength: 255
                           pattern: '^[^\x00]*$'
-                          description: Literal publishing routing key, which may be empty.
+                          description: The exact routing key that the workload sends with each message. It can be empty.
                       additionalProperties: false
                     - type: object
-                      description: Consume messages from an explicitly named queue.
+                      description: Read messages from a queue with this exact name.
                       required: [resource, action, queue]
                       properties:
                         resource:
                           const: queue
-                          description: RabbitMQ resource category to which the capability applies.
+                          description: What the line is about, an exchange or a queue.
                         action:
                           const: consume
-                          description: RabbitMQ capability required on the named resource.
+                          description: What the workload does with it.
                         queue:
                           type: string
                           minLength: 1
                           maxLength: 255
                           pattern: '^[^\x00]*$'
-                          description: Exact name of the queue from which messages are received.
+                          description: The exact name of the queue that the workload reads from.
                       additionalProperties: false
             additionalProperties: true
         additionalProperties: true

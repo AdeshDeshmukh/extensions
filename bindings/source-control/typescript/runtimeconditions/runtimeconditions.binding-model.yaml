@@ -1,7 +1,7 @@
 apiVersion: runtimeconditions.io/binding-model/v1alpha1
 kind: RuntimeConditionsBindingModel
 metadata:
-    semanticSha256: cb752c5a49695cdc7b4b8f3f6d673b6ab0b03c325639c8d40b0ada8bbf2fe807
+    semanticSha256: 0587390836b2e4fd2e42eed88ff35780c2ea1762acd6a4f8966e92d3b7696c50
     normalizer:
         name: rc-binding-model
         version: 0.1.0
@@ -11,116 +11,149 @@ coreProfileSchema:
     version: 0.4.0
     semanticSha256: ed447dccefd7507d905b0b6177b1386d8ee96a1d053b731939a9a7ae973d5af1
 rootExtension:
-    id: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+    id: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
 extensions:
-    - id: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-      version: 0.1.0
-      semanticSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+    - id: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+      version: 0.2.0
+      semanticSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+      description: |-
+        Use this extension when your workload works with a Git repository while it runs, for example a build
+        tool that clones code, or a bot that pushes changes.
+
+        In a Condition, you say which Git host the workload uses, and what it does with the repository: clone,
+        fetch, pull or push. The platform then gives the workload access that allows exactly these actions.
+        Right now the only host is GitHub.
 vocabulary:
     owners:
         - coordinate: field-domain:rc.source_control:git:interface.access[]:"clone"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.access[]
           value: clone
         - coordinate: field-domain:rc.source_control:git:interface.access[]:"fetch"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.access[]
           value: fetch
         - coordinate: field-domain:rc.source_control:git:interface.access[]:"pull"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.access[]
           value: pull
         - coordinate: field-domain:rc.source_control:git:interface.access[]:"push"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.access[]
           value: push
         - coordinate: field-domain:rc.source_control:git:interface.provider:"github"
           category: field-value
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.provider
           value: github
         - coordinate: interface-field:rc.source_control:git:access
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.access
         - coordinate: interface-field:rc.source_control:git:provider
           category: interface-field
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.provider
         - coordinate: interface:rc.source_control:git
           category: interface
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
         - coordinate: kind:rc.source_control
           category: kind
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
     ownedDeclarations:
         - coordinate: kind:rc.source_control
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
+          description: |-
+            Your workload needs access to a Git repository.
+
+            Example: a build tool that clones a repository on GitHub and fetches new changes.
+
+            ```condition
+            kind: rc.source_control
+            interface:
+              type: git
+              provider: github
+              access: [clone, fetch]
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
             coordinate: kind:rc.source_control
     interfaces:
         - coordinate: interface:rc.source_control:git
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           type: git
+          description: |-
+            Access to a repository through Git.
+
+            Example: a bot that pulls the latest code, changes files and pushes the changes back to GitHub.
+
+            ```condition
+            kind: rc.source_control
+            interface:
+              type: git
+              provider: github
+              access: [pull, push]
+            ```
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
             coordinate: interface:rc.source_control:git
     interfaceFields:
         - coordinate: interface-field:rc.source_control:git:access
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
+          description: What your workload does with the repository. List every action that it needs.
           path: interface.access
           segments:
             - name: interface
             - name: access
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
             coordinate: interface-field:rc.source_control:git:access
         - coordinate: interface-field:rc.source_control:git:provider
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
+          description: The service that hosts the repository. Right now this is always github.
           path: interface.provider
           segments:
             - name: interface
             - name: provider
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
             coordinate: interface-field:rc.source_control:git:provider
     valueDomains:
         - coordinate: field-domain:rc.source_control:git:interface.access[]
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.access[]
@@ -130,15 +163,19 @@ vocabulary:
               array: true
           values:
             - value: clone
+              description: Make a copy of the repository.
             - value: fetch
+              description: Download new changes, without changing the local files.
             - value: pull
+              description: Download new changes and add them to the local files.
             - value: push
+              description: Send local changes back to the repository.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
             coordinate: field-domain:rc.source_control:git:interface.access[]
         - coordinate: field-domain:rc.source_control:git:interface.provider
-          owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+          owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
           kind: rc.source_control
           interfaceType: git
           path: interface.provider
@@ -147,16 +184,17 @@ vocabulary:
             - name: provider
           values:
             - value: github
+              description: The repository is on GitHub.
           provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
             coordinate: field-domain:rc.source_control:git:interface.provider
 scopes:
     - coordinate: rc.source_control:git
       kind: rc.source_control
       interfaceType: git
       applicableSchemas:
-        - https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+        - https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
       projection:
         kind: object
         required:
@@ -179,26 +217,34 @@ scopes:
                             scalar: string
                             values:
                                 - value: clone
+                                  description: Make a copy of the repository.
                                 - value: fetch
+                                  description: Download new changes, without changing the local files.
                                 - value: pull
+                                  description: Download new changes and add them to the local files.
                                 - value: push
+                                  description: Send local changes back to the repository.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                                 jsonPointer: /properties/interface/properties/access/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
+                        description: |-
+                            What your workload does with the repository. List every action that it needs.
+
+                            clone, fetch, pull or push. List at least one, each one once.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                             jsonPointer: /properties/interface/properties/access
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                         jsonPointer: /properties/interface/properties/access
                     - name: provider
                       required: true
@@ -207,25 +253,44 @@ scopes:
                         scalar: string
                         values:
                             - value: github
+                              description: The repository is on GitHub.
+                        description: |-
+                            The service that hosts the repository. Right now this is always github.
+
+                            Always github.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                             jsonPointer: /properties/interface/properties/provider
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                         jsonPointer: /properties/interface/properties/provider
+                description: |-
+                    Access to a repository through Git.
+
+                    Example: a bot that pulls the latest code, changes files and pushes the changes back to GitHub.
+
+                    ```condition
+                    kind: rc.source_control
+                    interface:
+                      type: git
+                      provider: github
+                      access: [pull, push]
+                    ```
+
+                    The Git host and the actions that your workload needs.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                 jsonPointer: /properties/interface
             - name: name
               shape:
@@ -233,37 +298,39 @@ scopes:
                 scalar: string
                 constraints:
                     minLength: 1
+                description: A name for this requirement. It cannot be empty.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                     jsonPointer: /properties/name
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                 jsonPointer: /properties/name
             - name: optional
               shape:
                 kind: scalar
                 scalar: boolean
+                description: Whether the workload can still run if the platform cannot give it this access.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                     jsonPointer: /properties/optional
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                 jsonPointer: /properties/optional
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
 schemas:
-    - coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
-      owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+    - coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
+      owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
       id: source-control-git
       kind: rc.source_control
       interfaceType: git
@@ -273,8 +340,10 @@ schemas:
         properties:
             interface:
                 additionalProperties: false
+                description: The Git host and the actions that your workload needs.
                 properties:
                     access:
+                        description: clone, fetch, pull or push. List at least one, each one once.
                         items:
                             enum:
                                 - clone
@@ -286,8 +355,10 @@ schemas:
                         uniqueItems: true
                     provider:
                         const: github
+                        description: Always github.
                     type:
                         const: git
+                        description: Always git.
                 required:
                     - access
                     - provider
@@ -295,10 +366,13 @@ schemas:
                 type: object
             kind:
                 const: rc.source_control
+                description: Always rc.source_control.
             name:
+                description: A name for this requirement. It cannot be empty.
                 minLength: 1
                 type: string
             optional:
+                description: Whether the workload can still run if the platform cannot give it this access.
                 type: boolean
         required:
             - interface
@@ -326,26 +400,34 @@ schemas:
                             scalar: string
                             values:
                                 - value: clone
+                                  description: Make a copy of the repository.
                                 - value: fetch
+                                  description: Download new changes, without changing the local files.
                                 - value: pull
+                                  description: Download new changes and add them to the local files.
                                 - value: push
+                                  description: Send local changes back to the repository.
                             provenance:
-                                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                                 jsonPointer: /properties/interface/properties/access/items
                         constraints:
                             minItems: 1
                             uniqueItems: true
+                        description: |-
+                            What your workload does with the repository. List every action that it needs.
+
+                            clone, fetch, pull or push. List at least one, each one once.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                             jsonPointer: /properties/interface/properties/access
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                         jsonPointer: /properties/interface/properties/access
                     - name: provider
                       required: true
@@ -354,25 +436,44 @@ schemas:
                         scalar: string
                         values:
                             - value: github
+                              description: The repository is on GitHub.
+                        description: |-
+                            The service that hosts the repository. Right now this is always github.
+
+                            Always github.
                         provenance:
-                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                             jsonPointer: /properties/interface/properties/provider
                       provenance:
-                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                        extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                        owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                        extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                         jsonPointer: /properties/interface/properties/provider
+                description: |-
+                    Access to a repository through Git.
+
+                    Example: a bot that pulls the latest code, changes files and pushes the changes back to GitHub.
+
+                    ```condition
+                    kind: rc.source_control
+                    interface:
+                      type: git
+                      provider: github
+                      access: [pull, push]
+                    ```
+
+                    The Git host and the actions that your workload needs.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                     jsonPointer: /properties/interface
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                 jsonPointer: /properties/interface
             - name: name
               shape:
@@ -380,35 +481,37 @@ schemas:
                 scalar: string
                 constraints:
                     minLength: 1
+                description: A name for this requirement. It cannot be empty.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                     jsonPointer: /properties/name
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                 jsonPointer: /properties/name
             - name: optional
               shape:
                 kind: scalar
                 scalar: boolean
+                description: Whether the workload can still run if the platform cannot give it this access.
                 provenance:
-                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                    extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                    owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                    extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                    coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                     jsonPointer: /properties/optional
               provenance:
-                owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-                extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+                owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+                extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+                coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
                 jsonPointer: /properties/optional
         provenance:
-            owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-            extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+            owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+            extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+            coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git
       provenance:
-        owner: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
-        extensionSha256: ea78a3c4cf769901c91a0e56ce621d9207c8cbef7b6db10db744082f5bcf43d9
-        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml#schema:source-control-git
+        owner: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+        extensionSha256: ba7c7abf2a78d9b11d4c10bba0d0d87d1dd6f4e229f09fd7555a77b5b356462e
+        coordinate: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml#schema:source-control-git

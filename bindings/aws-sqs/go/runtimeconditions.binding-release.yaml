@@ -1,16 +1,16 @@
 apiVersion: runtimeconditions.io/binding-release/v1alpha1
 dependencyLock:
     extensions:
-        - id: https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml
-          version: 0.1.0
-          sourceSha256: e4c468e813d2c42f52e7311555d78d77034843d4e85cf514c993e8aeb8fb3857
-          semanticSha256: 3d897aaf6c7497615d9f04efacacbbf0e0a34e5cad1c30c81d9ca553792ad903
+        - id: https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml
+          version: 0.2.0
+          sourceSha256: 17ef39f5104d63de7dfd84f5878573eb5ea40a445212402d8a9d2bb518b343af
+          semanticSha256: 442ab39e646bfb5242cc7e1aeddea4a998a0b7a3082a6b34fc5b36c6e443804f
           sourceBackend: catalog
-          sourceLocator: catalog:aws/sqs/releases/0.1.0/runtimeconditions.extension.yaml
+          sourceLocator: catalog:aws/sqs/releases/0.2.0/runtimeconditions.extension.yaml
 kind: RuntimeConditionsBindingRelease
 model:
     apiVersion: runtimeconditions.io/binding-model/v1alpha1
-    semanticSha256: 7f106ba69f39de09c911247af99cb3aa2ee670042f57b7c2ac7aa577e08ba6c2
+    semanticSha256: 97d98d821cdbaa18356381c4ecfcbdc5271d0e0462379adf35f2bb6b6a9b10fb
 package:
     coordinate: runtimeconditions.io/x/aws/sqs
     language: go
@@ -25,7 +25,7 @@ provenance:
     orchestrator:
         name: rc
         version: 0.1.0
-        sha256: 2684c38a66c0f90a9cb587c9538005988218965fa98dfadea1e6586925439b5e
+        sha256: 23764404c2196c92518a6560cf511cf4def70ef2ef48a901b67380737754dea9
     profiler:
         name: go-rc-profiler
         version: v0.4.0
@@ -33,6 +33,6 @@ provenance:
     sourceDirectory: bindings/aws-sqs/go
     targetReleaseTag: bindings/aws-sqs/go/v0.1.0
 rootExtension:
-    id: https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml
-    version: 0.1.0
-    semanticSha256: 3d897aaf6c7497615d9f04efacacbbf0e0a34e5cad1c30c81d9ca553792ad903
+    id: https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml
+    version: 0.2.0
+    semanticSha256: 442ab39e646bfb5242cc7e1aeddea4a998a0b7a3082a6b34fc5b36c6e443804f
