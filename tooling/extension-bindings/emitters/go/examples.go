@@ -296,6 +296,9 @@ func (ir *packageIR) typedExpression(key string, value any, alias string) (strin
 }
 
 func goLiteral(builtin string, value any) (string, error) {
+	if builtin == "any" {
+		return untypedLiteral(value)
+	}
 	switch typed := value.(type) {
 	case string:
 		if builtin == "string" {
@@ -450,4 +453,47 @@ func (ir *packageIR) writeMarkdown(buffer *bytes.Buffer, text string) {
 		}
 		fmt.Fprintf(buffer, "```yaml\n%s\n```\n", profile)
 	}
+}
+
+// untypedLiteral writes a value whose schema gives it no Go type, such as the
+// items of an array that only has "contains", as an any, []any or map[string]any literal.
+func untypedLiteral(value any) (string, error) {
+	switch typed := value.(type) {
+	case nil:
+		return "nil", nil
+	case string:
+		return strconv.Quote(typed), nil
+	case bool:
+		return strconv.FormatBool(typed), nil
+	case json.Number:
+		return typed.String(), nil
+	case float64:
+		return strconv.FormatFloat(typed, 'g', -1, 64), nil
+	case []any:
+		items := make([]string, 0, len(typed))
+		for _, item := range typed {
+			literal, err := untypedLiteral(item)
+			if err != nil {
+				return "", err
+			}
+			items = append(items, literal)
+		}
+		return "[]any{" + strings.Join(items, ", ") + "}", nil
+	case map[string]any:
+		keys := make([]string, 0, len(typed))
+		for key := range typed {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+		entries := make([]string, 0, len(keys))
+		for _, key := range keys {
+			literal, err := untypedLiteral(typed[key])
+			if err != nil {
+				return "", err
+			}
+			entries = append(entries, strconv.Quote(key)+": "+literal)
+		}
+		return "map[string]any{" + strings.Join(entries, ", ") + "}", nil
+	}
+	return "", fmt.Errorf("value %v has no Go literal", value)
 }
