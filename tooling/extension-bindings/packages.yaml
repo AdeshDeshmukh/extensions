@@ -214,7 +214,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   gpu:
-    rootExtension: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/gpu/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
