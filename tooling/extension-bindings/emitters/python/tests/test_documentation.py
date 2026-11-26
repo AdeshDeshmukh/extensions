@@ -260,6 +260,23 @@ def test_nested_calls_and_long_imports_are_laid_out_like_ruff() -> None:
     assert import_lines("pkg", ("KeyValue", "cache")) == ["from pkg import KeyValue, cache"]
 
 
+def test_untyped_values_are_written_like_ruff() -> None:
+    from runtimeconditions_binding_emitter.examples import _Call, _layout, _untyped
+
+    # A field with no generated type, such as the items of google.analytics configuration.env.
+    short = [{"property": "measurementId", "name": "GA_MEASUREMENT_ID"}]
+    long = [{"property": "measurementId", "name": "GA_MEASUREMENT_ID", "sensitive": False, "required": True}]
+    assert _layout(_untyped(short), 0) == '[{"property": "measurementId", "name": "GA_MEASUREMENT_ID"}]'
+    assert _layout(_untyped({"size": 1.5, "on": True, "off": None}), 0) == '{"size": 1.5, "on": True, "off": None}'
+    blocks = [
+        _layout(_Call("google_analytics", (("", _Call("Configuration", (("env", _untyped(value)),))),)), 0)
+        for value in (short, long)
+    ]
+    readme = "".join(f"```python\n{block}\n```\n\n" for block in blocks)
+    # Short values stay on one line and long ones break; Ruff accepts both as they are.
+    _assert_ruff_formatted(readme)
+
+
 if __name__ == "__main__":
     test_descriptions_become_docstrings()
     test_docstrings_do_not_change_the_api()

@@ -183,8 +183,50 @@ final class Examples {
             imports.add(plan.target().javaPackage() + "." + name);
         }
 
+        /** A value whose schema gives it no Java type (Object), as a List.of, Map.of or scalar literal. */
+        Node untyped(JsonNode value) throws ExampleException {
+            if (value.isTextual()) {
+                return Node.atom(Source.literal(value.asText()));
+            }
+            if (value.isBoolean()) {
+                return Node.atom(String.valueOf(value.asBoolean()));
+            }
+            if (value.isIntegralNumber()) {
+                return Node.atom(value.asLong() + "L");
+            }
+            if (value.isNumber()) {
+                return Node.atom(value.asDouble() + "");
+            }
+            if (value.isNull()) {
+                return Node.atom("null");
+            }
+            if (value.isArray()) {
+                List<Node> items = new ArrayList<>();
+                for (JsonNode item : value) {
+                    items.add(untyped(item));
+                }
+                imports.add("java.util.List");
+                return new Node("List.of(", items, ")");
+            }
+            if (value.isObject() && value.size() <= 10) {
+                List<Node> entries = new ArrayList<>();
+                List<String> names = new ArrayList<>();
+                value.fieldNames().forEachRemaining(names::add);
+                names.sort(null);
+                for (String name : names) {
+                    entries.add(Node.atom(Source.literal(name)));
+                    entries.add(untyped(value.get(name)));
+                }
+                imports.add("java.util.Map");
+                return new Node("Map.of(", entries, ")");
+            }
+            throw new ExampleException("value has no Java literal");
+        }
+
         Node value(TypeExpr expression, JsonNode value) throws ExampleException {
             switch (expression.kind()) {
+                case "any":
+                    return untyped(value);
                 case "string":
                     if (value.isTextual()) {
                         return Node.atom(Source.literal(value.asText()));

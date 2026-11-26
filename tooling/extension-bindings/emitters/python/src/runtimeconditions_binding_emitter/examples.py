@@ -156,6 +156,31 @@ def import_lines(package: str, names: tuple[str, ...]) -> list[str]:
     return [f"from {package} import (", *(f"    {name}," for name in names), ")"]
 
 
+def _untyped(value: Any) -> Any:
+    """A value with no generated type, as a Python literal written the way Ruff formats it.
+
+    repr() would quote strings with single quotes, which Ruff rewrites to double quotes,
+    and would keep long lists and dicts on one line.
+    """
+    if isinstance(value, str):
+        return _Atom(json.dumps(value, ensure_ascii=False))
+    if isinstance(value, bool):
+        return _Atom("True" if value else "False")
+    if value is None:
+        return _Atom("None")
+    if isinstance(value, (int, float)):
+        return _Atom(repr(value))
+    if isinstance(value, list):
+        return _Collection("[", "]", tuple(("", _untyped(item)) for item in value))
+    if isinstance(value, dict):
+        return _Collection(
+            "{",
+            "}",
+            tuple((f"{json.dumps(str(key), ensure_ascii=False)}: ", _untyped(item)) for key, item in value.items()),
+        )
+    raise _ExampleError(f"value {value!r} has no Python literal")
+
+
 class _Renderer:
     def __init__(self, plan: EmissionPlan, imports: dict[str, set[str]]) -> None:
         self.plan = plan
@@ -178,7 +203,7 @@ class _Renderer:
         if kind == "null" and value is None:
             return _Atom("None")
         if kind == "any":
-            return _Atom(repr(value))
+            return _untyped(value)
         if kind == "array" and isinstance(value, list):
             return _Collection("[", "]", tuple(("", self.value(expression.arguments[0], item)) for item in value))
         if kind == "map" and isinstance(value, dict):
