@@ -9,7 +9,7 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = ROOT.parents[2]
 EXTENSION_ID = (
-    "https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/"
+    "https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/"
     "runtimeconditions.extension.yaml"
 )
 PUBLISH = {
@@ -22,7 +22,7 @@ CONSUME = {"resource": "queue", "action": "consume", "queue": "order-workers"}
 
 
 def definition():
-    path = ROOT / "releases/0.1.0/runtimeconditions.extension.yaml"
+    path = ROOT / "releases/0.2.0/runtimeconditions.extension.yaml"
     assert path.is_file(), "RabbitMQ release is missing"
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
@@ -47,7 +47,7 @@ def condition(operations, virtual_host="/orders"):
 def test_release_and_binding_registration():
     release = definition()
     assert release["metadata"]["id"] == EXTENSION_ID
-    assert release["metadata"]["version"] == "0.1.0"
+    assert release["metadata"]["version"] == "0.2.0"
     packages = yaml.safe_load(
         (REPOSITORY / "tooling/extension-bindings/packages.yaml").read_text(
             encoding="utf-8"
@@ -193,7 +193,7 @@ def test_shared_operation_descriptions_survive_branch_merging():
 )
 def test_examples_preserve_resource_requirements(filename, operations):
     profile = yaml.safe_load((ROOT / "examples" / filename).read_text(encoding="utf-8"))
-    assert profile["extensions"] == [f"{EXTENSION_ID}:0.1.0"]
+    assert profile["extensions"] == [f"{EXTENSION_ID}:0.2.0"]
     assert len(profile["conditions"]) == 1
     value = profile["conditions"][0]
     assert value["interface"]["virtualHost"] == "/orders"

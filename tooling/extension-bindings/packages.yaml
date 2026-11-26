@@ -389,7 +389,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   rabbitmq-service:
-    rootExtension: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
