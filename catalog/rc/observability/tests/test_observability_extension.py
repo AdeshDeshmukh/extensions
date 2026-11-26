@@ -8,9 +8,9 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = ROOT.parents[2]
-DEFINITION = ROOT / "releases/0.1.0/runtimeconditions.extension.yaml"
+DEFINITION = ROOT / "releases/0.2.0/runtimeconditions.extension.yaml"
 EXTENSION_ID = (
-    "https://runtimeconditions.io/extensions/rc/observability/0.1.0/"
+    "https://runtimeconditions.io/extensions/rc/observability/0.2.0/"
     "runtimeconditions.extension.yaml"
 )
 
@@ -41,7 +41,7 @@ class ObservabilityExtensionTest(unittest.TestCase):
 
     def test_release_identity_and_package_target(self):
         self.assertEqual(self.definition["metadata"]["id"], EXTENSION_ID)
-        self.assertEqual(self.definition["metadata"]["version"], "0.1.0")
+        self.assertEqual(self.definition["metadata"]["version"], "0.2.0")
         self.assertEqual(
             [entry["name"] for entry in self.definition["spec"]["kinds"]],
             ["rc.observability"],
@@ -120,7 +120,7 @@ class ObservabilityExtensionTest(unittest.TestCase):
                 profile = yaml.safe_load(
                     (ROOT / "examples" / filename).read_text(encoding="utf-8")
                 )
-                self.assertIn(f"{EXTENSION_ID}:0.1.0", profile["extensions"])
+                self.assertIn(f"{EXTENSION_ID}:0.2.0", profile["extensions"])
                 self.assertEqual(len(profile["conditions"]), 1)
                 condition = profile["conditions"][0]
                 self.assertEqual(condition["kind"], "rc.observability")

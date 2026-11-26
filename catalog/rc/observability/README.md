@@ -5,7 +5,7 @@ Condition describes one endpoint: `otlp_export` requires a compatible OTLP
 receiver, while `prometheus_scrape` identifies a metrics endpoint that a scraper
 must reach. A workload using both forms declares two Conditions.
 
-The first release is [`0.1.0`](releases/0.1.0/runtimeconditions.extension.yaml).
+The first release is [`0.1.0`](releases/0.1.0/runtimeconditions.extension.yaml). The newest is [`0.2.0`](releases/0.2.0/runtimeconditions.extension.yaml), with the same rules and simpler descriptions and examples.
 See the [OTLP export](examples/otlp-export-profile.yaml) and
 [Prometheus scrape](examples/prometheus-scrape-profile.yaml) examples.
 

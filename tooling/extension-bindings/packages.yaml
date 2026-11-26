@@ -354,7 +354,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   observability:
-    rootExtension: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/observability/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
