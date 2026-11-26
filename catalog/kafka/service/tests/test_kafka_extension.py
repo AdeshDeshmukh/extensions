@@ -9,14 +9,14 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = ROOT.parents[2]
 EXTENSION_ID = (
-    "https://runtimeconditions.io/extensions/kafka/service/0.1.0/"
+    "https://runtimeconditions.io/extensions/kafka/service/0.2.0/"
     "runtimeconditions.extension.yaml"
 )
 
 
 class KafkaExtensionTest(unittest.TestCase):
     def setUp(self):
-        definition = ROOT / "releases/0.1.0/runtimeconditions.extension.yaml"
+        definition = ROOT / "releases/0.2.0/runtimeconditions.extension.yaml"
         self.assertTrue(definition.is_file(), "Kafka release is missing")
         self.definition = yaml.safe_load(definition.read_text(encoding="utf-8"))
         schemas = self.definition["spec"]["schemas"]
@@ -38,7 +38,7 @@ class KafkaExtensionTest(unittest.TestCase):
 
     def test_release_and_all_language_targets_are_registered(self):
         self.assertEqual(self.definition["metadata"]["id"], EXTENSION_ID)
-        self.assertEqual(self.definition["metadata"]["version"], "0.1.0")
+        self.assertEqual(self.definition["metadata"]["version"], "0.2.0")
         packages = yaml.safe_load(
             (REPOSITORY / "tooling/extension-bindings/packages.yaml").read_text(
                 encoding="utf-8"
@@ -180,7 +180,7 @@ class KafkaExtensionTest(unittest.TestCase):
                 profile = yaml.safe_load(
                     (ROOT / "examples" / filename).read_text(encoding="utf-8")
                 )
-                self.assertIn(f"{EXTENSION_ID}:0.1.0", profile["extensions"])
+                self.assertIn(f"{EXTENSION_ID}:0.2.0", profile["extensions"])
                 self.assertEqual(len(profile["conditions"]), 1)
                 condition = profile["conditions"][0]
                 self.assertEqual(condition["interface"]["operations"], operations)

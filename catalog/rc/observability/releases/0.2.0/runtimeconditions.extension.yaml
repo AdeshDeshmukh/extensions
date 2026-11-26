@@ -1,0 +1,168 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/observability/0.2.0/runtimeconditions.extension.yaml
+  version: 0.2.0
+  description: |-
+    Use this extension to say how the platform can see what your workload is doing: its traces, metrics and
+    logs.
+
+    There are two ways, and each one is an interface type:
+
+    - otlp_export: your workload sends its traces, metrics or logs to a receiver, using OpenTelemetry
+      (OTLP). The platform gives it a receiver to send to.
+    - prometheus_scrape: your workload shows its metrics on a web address, and a Prometheus server reads
+      them from time to time. The platform sets up the reading.
+
+    If your workload does both, add one Condition for each.
+spec:
+  kinds:
+    - name: rc.observability
+      description: |-
+        Your workload sends telemetry to the platform, or shows telemetry that the platform must collect.
+
+        Example: a workload that sends its traces and logs with OpenTelemetry over gRPC.
+
+        ```condition
+        kind: rc.observability
+        interface:
+          type: otlp_export
+          signals: [traces, logs]
+          transport: grpc
+        ```
+  interfaceTypes:
+    - name: otlp_export
+      targetKind: rc.observability
+      description: |-
+        Your workload sends telemetry to an OpenTelemetry (OTLP) receiver.
+
+        Example: a workload that sends its traces, metrics and logs with OpenTelemetry over HTTP.
+
+        ```condition
+        kind: rc.observability
+        interface:
+          type: otlp_export
+          signals: [traces, metrics, logs]
+          transport: http/protobuf
+        ```
+    - name: prometheus_scrape
+      targetKind: rc.observability
+      description: |-
+        Your workload shows metrics that a Prometheus server can read.
+
+        Example: a workload that shows its metrics over HTTP, on port 9090, at the path /metrics.
+
+        ```condition
+        kind: rc.observability
+        interface:
+          type: prometheus_scrape
+          port: 9090
+          path: /metrics
+          scheme: http
+        ```
+  interfaceFields:
+    - name: signals
+      targetKind: rc.observability
+      targetType: otlp_export
+      description: The kinds of telemetry that your workload sends, such as traces, metrics and logs.
+    - name: transport
+      targetKind: rc.observability
+      targetType: otlp_export
+      description: How your workload sends the telemetry. The receiver must accept this way.
+    - name: port
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      description: The TCP port where your workload shows its metrics.
+    - name: path
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      description: The web path where your workload shows its metrics, such as /metrics.
+    - name: scheme
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      description: Whether Prometheus reads the metrics over http or https.
+  fieldValues:
+    - field: interface.signals[]
+      targetKind: rc.observability
+      targetType: otlp_export
+      values: [traces, metrics, logs]
+      valueDescriptions:
+        traces: Traces, which show how one request moves through your services.
+        metrics: Metrics, which are numbers measured over time, such as the number of requests.
+        logs: Logs, which are the lines of text that your workload writes about what it does.
+    - field: interface.transport
+      targetKind: rc.observability
+      targetType: otlp_export
+      values: [grpc, http/protobuf, http/json]
+      valueDescriptions:
+        grpc: OTLP over gRPC, with the data in Protocol Buffers.
+        http/protobuf: OTLP over HTTP, with the data in Protocol Buffers.
+        http/json: OTLP over HTTP, with the data in JSON.
+    - field: interface.scheme
+      targetKind: rc.observability
+      targetType: prometheus_scrape
+      values: [http, https]
+      valueDescriptions:
+        http: Read the metrics over plain HTTP.
+        https: Read the metrics over HTTPS.
+  schemas:
+    - id: observability-otlp-export
+      appliesToKind: rc.observability
+      appliesToInterfaceType: otlp_export
+      description: Checks that an otlp_export Condition lists at least one kind of telemetry and a way to send it.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required: [kind, interface]
+        properties:
+          kind:
+            const: rc.observability
+          interface:
+            type: object
+            required: [type, signals, transport]
+            properties:
+              type:
+                const: otlp_export
+              signals:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                items:
+                  enum: [traces, metrics, logs]
+                description: At least one of traces, metrics and logs, each one once.
+              transport:
+                enum: [grpc, http/protobuf, http/json]
+                description: grpc, http/protobuf or http/json. The receiver must accept it.
+            additionalProperties: true
+        additionalProperties: true
+    - id: observability-prometheus-scrape
+      appliesToKind: rc.observability
+      appliesToInterfaceType: prometheus_scrape
+      description: Checks that a prometheus_scrape Condition gives a port, a path and http or https.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required: [kind, interface]
+        properties:
+          kind:
+            const: rc.observability
+          interface:
+            type: object
+            required: [type, port, path, scheme]
+            properties:
+              type:
+                const: prometheus_scrape
+              port:
+                type: integer
+                minimum: 1
+                maximum: 65535
+                description: A TCP port, from 1 to 65535.
+              path:
+                type: string
+                pattern: '^/'
+                description: The web path. It must start with /.
+              scheme:
+                enum: [http, https]
+                description: http or https.
+            additionalProperties: true
+        additionalProperties: true

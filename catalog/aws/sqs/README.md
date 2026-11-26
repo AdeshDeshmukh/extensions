@@ -7,7 +7,7 @@ claim that the artifact has been published at that URL.
 
 ## Core files
 
-- [Extension definition](releases/0.1.0/runtimeconditions.extension.yaml): vocabulary,
+- [Extension definition](releases/0.2.0/runtimeconditions.extension.yaml): vocabulary,
   descriptions, canonical operation values, and scoped JSON Schemas.
 - [Design and provenance](docs/design-and-provenance.md): authoritative source,
   interface boundaries, permission translation, and exclusions.

@@ -21,16 +21,16 @@ Per the [spec](https://github.com/runtimeconditions/spec/blob/main/docs/sixth-dr
 | Common Integrations | `https://runtimeconditions.io/extensions/rc/common-integrations/v1alpha1/runtimeconditions.extension.yaml` | [`catalog/rc/common-integrations/`](catalog/rc/common-integrations/) |
 | Env Configuration | `https://runtimeconditions.io/extensions/rc/env-configuration/v1alpha1/runtimeconditions.extension.yaml` | [`catalog/rc/env-configuration/`](catalog/rc/env-configuration/) |
 | Source Control | `https://runtimeconditions.io/extensions/source-control/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/source-control/`](catalog/rc/source-control/) |
-| File System | `https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/file-system/`](catalog/rc/file-system/) |
+| File System | `https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml` | [`catalog/rc/file-system/`](catalog/rc/file-system/) |
 | Amazon S3 | `https://runtimeconditions.io/extensions/aws/s3/0.1.0/runtimeconditions.extension.yaml` | [`catalog/aws/s3/`](catalog/aws/s3/) |
-| Amazon SQS | `https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml` | [`catalog/aws/sqs/`](catalog/aws/sqs/) |
+| Amazon SQS | `https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml` | [`catalog/aws/sqs/`](catalog/aws/sqs/) |
 | Kubernetes API | `https://runtimeconditions.io/extensions/kubernetes/api/0.1.0/runtimeconditions.extension.yaml` | [`catalog/kubernetes/api/`](catalog/kubernetes/api/) |
 | NATS | `https://runtimeconditions.io/extensions/nats/service/0.1.0/runtimeconditions.extension.yaml` | [`catalog/nats/service/`](catalog/nats/service/) |
-| Kafka | `https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml` | [`catalog/kafka/service/`](catalog/kafka/service/) |
-| RabbitMQ | `https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rabbitmq/service/`](catalog/rabbitmq/service/) |
-| Google Analytics | `https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml` | [`catalog/google/analytics/`](catalog/google/analytics/) |
-| GPU Requirement | `https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/gpu/`](catalog/rc/gpu/) |
-| Observability | `https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml` | [`catalog/rc/observability/`](catalog/rc/observability/) |
+| Kafka | `https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml` | [`catalog/kafka/service/`](catalog/kafka/service/) |
+| RabbitMQ | `https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml` | [`catalog/rabbitmq/service/`](catalog/rabbitmq/service/) |
+| Google Analytics | `https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml` | [`catalog/google/analytics/`](catalog/google/analytics/) |
+| GPU Requirement | `https://runtimeconditions.io/extensions/rc/gpu/0.2.0/runtimeconditions.extension.yaml` | [`catalog/rc/gpu/`](catalog/rc/gpu/) |
+| Observability | `https://runtimeconditions.io/extensions/rc/observability/0.2.0/runtimeconditions.extension.yaml` | [`catalog/rc/observability/`](catalog/rc/observability/) |
 
 ## Folder layout
 

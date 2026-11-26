@@ -9,7 +9,7 @@ compatible node or report that the platform cannot fulfill the workload.
 or Intel GPU hardware; leave it out when any compatible GPU may fulfill the
 requirement.
 
-The definition is [`0.1.0`](releases/0.1.0/runtimeconditions.extension.yaml).
+The newest definition is [`0.2.0`](releases/0.2.0/runtimeconditions.extension.yaml).
 The [inference example](examples/inference-profile.yaml) asks for one NVIDIA GPU
 with at least 16 GiB of memory, as a CUDA-based image might require.
 

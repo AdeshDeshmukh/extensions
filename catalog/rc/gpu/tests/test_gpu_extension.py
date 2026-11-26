@@ -10,7 +10,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = ROOT.parents[2]
 EXTENSION_ID = (
-    "https://runtimeconditions.io/extensions/rc/gpu/0.1.0/"
+    "https://runtimeconditions.io/extensions/rc/gpu/0.2.0/"
     "runtimeconditions.extension.yaml"
 )
 
@@ -19,13 +19,13 @@ class GPURequirementTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.definition = yaml.safe_load(
-            (ROOT / "releases/0.1.0/runtimeconditions.extension.yaml").read_text(encoding="utf-8")
+            (ROOT / "releases/0.2.0/runtimeconditions.extension.yaml").read_text(encoding="utf-8")
         )
         cls.validator = Draft202012Validator(cls.definition["spec"]["schemas"][0]["schema"])
 
     def test_release_identity_and_delivery_target(self):
         self.assertEqual(self.definition["metadata"]["id"], EXTENSION_ID)
-        self.assertEqual(self.definition["metadata"]["version"], "0.1.0")
+        self.assertEqual(self.definition["metadata"]["version"], "0.2.0")
         self.assertEqual(
             [kind["name"] for kind in self.definition["spec"]["kinds"]], ["rc.gpu"]
         )
@@ -36,7 +36,7 @@ class GPURequirementTest(unittest.TestCase):
 
     def test_inference_profile_example_declares_one_gpu_with_16_gib(self):
         profile = yaml.safe_load((ROOT / "examples/inference-profile.yaml").read_text(encoding="utf-8"))
-        self.assertIn(f"{EXTENSION_ID}:0.1.0", profile["extensions"])
+        self.assertIn(f"{EXTENSION_ID}:0.2.0", profile["extensions"])
         self.assertEqual(len(profile["conditions"]), 1)
         condition = profile["conditions"][0]
         self.assertEqual(condition["kind"], "rc.gpu")

@@ -1,0 +1,160 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+metadata:
+  id: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
+  version: 0.2.0
+  description: |-
+    Use this extension when your workload talks to Kafka.
+
+    Kafka keeps messages in topics. A topic is like a named channel. Some workloads write messages to a
+    topic, and some workloads read messages from it. Workloads that read together can join a consumer
+    group. Kafka uses the group to share the messages between them and to remember how far each one has
+    read.
+
+    In a Condition, you list every topic and every consumer group that your workload uses, and say if it
+    reads or writes. The platform then creates them or gives your workload access to them.
+
+    Write the exact names. Patterns like orders-* are not allowed. Reading a topic does not give access to
+    a consumer group, so if your workload uses a group, add the group as its own line.
+spec:
+  kinds:
+    - name: kafka.service
+      description: |-
+        Your workload needs a Kafka cluster with the topics and consumer groups listed in the Condition.
+
+        Example: a billing workload. It reads new orders from the orders topic, as part of the billing
+        consumer group. It writes a message to the invoices topic for each order.
+
+        ```condition
+        kind: kafka.service
+        interface:
+          type: service
+          operations:
+            - resource: topic
+              action: read
+              topic: orders
+            - resource: group
+              action: read
+              groupId: billing
+            - resource: topic
+              action: write
+              topic: invoices
+        ```
+  interfaceTypes:
+    - name: service
+      targetKind: kafka.service
+      description: |-
+        Your workload connects to Kafka with a normal Kafka client library.
+
+        Example: a workload that only sends page-view events to Kafka and never reads them.
+
+        ```condition
+        kind: kafka.service
+        interface:
+          type: service
+          operations:
+            - resource: topic
+              action: write
+              topic: page-views
+        ```
+  interfaceFields:
+    - name: operations
+      targetKind: kafka.service
+      targetType: service
+      description: The topics and consumer groups that your workload uses. Each line names one of them and says what the workload does with it.
+  fieldValues:
+    - field: interface.operations[].resource
+      targetKind: kafka.service
+      targetType: service
+      values: [topic, group]
+      valueDescriptions:
+        topic: A Kafka topic, by its exact name.
+        group: A Kafka consumer group, by its exact name.
+    - field: interface.operations[].action
+      targetKind: kafka.service
+      targetType: service
+      values: [read, write]
+      valueDescriptions:
+        read: Read messages from the topic, or use the consumer group.
+        write: Send messages to the topic. This does not include transactions or idempotent writes.
+  schemas:
+    - id: kafka-service-interface
+      appliesToKind: kafka.service
+      appliesToInterfaceType: service
+      description: Checks the topics and consumer groups in a Kafka Condition.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        $defs:
+          topicName:
+            type: string
+            minLength: 1
+            maxLength: 249
+            description: The exact topic name. It can use letters, digits, dots, underscores and hyphens, and it cannot be '.' or '..'.
+            not:
+              anyOf:
+                - enum: ['.', '..']
+                - pattern: '[^a-zA-Z0-9._-]'
+          groupId:
+            type: string
+            minLength: 1
+            pattern: '^[^*]+$'
+            description: The exact consumer group name. It cannot be empty and cannot use * as a pattern.
+        type: object
+        required: [kind, interface]
+        properties:
+          kind:
+            const: kafka.service
+          interface:
+            type: object
+            required: [type, operations]
+            properties:
+              type:
+                const: service
+              operations:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                description: The topics and consumer groups that your workload uses. List at least one, and do not repeat a line.
+                items:
+                  oneOf:
+                    - type: object
+                      description: Read messages from a topic. This does not give access to a consumer group.
+                      required: [resource, action, topic]
+                      properties:
+                        resource:
+                          const: topic
+                          description: What the line is about, a topic or a consumer group.
+                        action:
+                          const: read
+                          description: What the workload does with it.
+                        topic:
+                          $ref: '#/$defs/topicName'
+                      additionalProperties: false
+                    - type: object
+                      description: Send messages to a topic. This does not ask the platform to let the workload create topics.
+                      required: [resource, action, topic]
+                      properties:
+                        resource:
+                          const: topic
+                          description: What the line is about, a topic or a consumer group.
+                        action:
+                          const: write
+                          description: What the workload does with it.
+                        topic:
+                          $ref: '#/$defs/topicName'
+                      additionalProperties: false
+                    - type: object
+                      description: Use a consumer group to share messages with other readers and to save how far the workload has read. This does not give access to any topic.
+                      required: [resource, action, groupId]
+                      properties:
+                        resource:
+                          const: group
+                          description: What the line is about, a topic or a consumer group.
+                        action:
+                          const: read
+                          description: What the workload does with it.
+                        groupId:
+                          $ref: '#/$defs/groupId'
+                      additionalProperties: false
+            additionalProperties: true
+        additionalProperties: true

@@ -1,0 +1,225 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
+  version: 0.2.0
+  description: |-
+    Use this extension when your workload needs a folder from the file system to be there when it starts,
+    for example a folder for its data, a folder for temporary files, or a folder of configuration files.
+
+    In a Condition, you say where the folder must be, and if the workload only reads it or also writes to
+    it. For a folder that the workload writes to, you also say if the files must still be there after the
+    workload restarts. You can also say if all copies of the workload must see the same files, and how much
+    space the folder needs.
+
+    The Condition does not say what kind of storage to use. A network file system, a cloud file service or
+    a local disk can all give the same folder. The platform chooses.
+spec:
+  kinds:
+    - name: rc.file_system
+      description: |-
+        Your workload needs a folder from the file system.
+
+        Example: a workload that keeps its media library in /var/lib/media-library. It writes there, the
+        files must still be there after a restart, and the folder needs at least 10 GiB of space.
+
+        ```condition
+        kind: rc.file_system
+        interface:
+          type: mount
+          path: /var/lib/media-library
+          access: read_write
+          persistence: persistent
+          minimumSize: 10Gi
+        ```
+
+  interfaceTypes:
+    - name: mount
+      targetKind: rc.file_system
+      description: |-
+        A folder that the platform mounts into your workload at a path.
+
+        Example: a workload that reads its settings from files in /etc/media-library. It never writes there.
+
+        ```condition
+        kind: rc.file_system
+        interface:
+          type: mount
+          path: /etc/media-library
+          access: read_only
+        ```
+
+  conditionFields:
+    - name: env
+      appliesToKinds:
+        - rc.file_system
+      appliesToInterfaceTypes:
+        - mount
+      description: |-
+        The environment variable that tells your workload where the folder is. Use it when your workload
+        reads the path from a variable, so the platform can choose where to mount the folder. If you also
+        give interface.path, that path is the default and the variable can change it.
+
+        Example: a workload that reads its credential files from the folder named in CREDENTIALS_DIR.
+
+        ```condition
+        kind: rc.file_system
+        interface:
+          type: mount
+          access: read_only
+        env:
+          - property: path
+            name: CREDENTIALS_DIR
+        ```
+
+  interfaceFields:
+    - name: path
+      targetKind: rc.file_system
+      targetType: mount
+      description: The full path where the folder must be, such as /var/lib/app. You need it unless env gives the path.
+    - name: access
+      targetKind: rc.file_system
+      targetType: mount
+      description: Whether your workload only reads the folder, or also writes to it.
+    - name: persistence
+      targetKind: rc.file_system
+      targetType: mount
+      description: Whether the files that your workload writes must still be there after it restarts or is replaced. You need it when access is read_write.
+    - name: sharing
+      targetKind: rc.file_system
+      targetType: mount
+      description: Whether every copy of your workload must see the same files, or each copy must have its own. Leave it out if either works.
+    - name: minimumSize
+      targetKind: rc.file_system
+      targetType: mount
+      description: The least space that the folder must have, such as 10Gi. Use a whole number with Mi, Gi or Ti.
+
+  fieldValues:
+    - field: interface.access
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - read_only
+        - read_write
+      valueDescriptions:
+        read_only: The workload only reads the folder. The platform puts the files there.
+        read_write: The workload also writes to the folder.
+    - field: interface.persistence
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - persistent
+        - ephemeral
+      valueDescriptions:
+        persistent: The files must still be there after the workload restarts or is replaced.
+        ephemeral: The files can be lost when the workload restarts or is replaced.
+    - field: interface.sharing
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - shared
+        - exclusive
+      valueDescriptions:
+        shared: Every copy of the workload sees the same files.
+        exclusive: Each copy of the workload has its own files.
+    - field: env[].property
+      targetKind: rc.file_system
+      targetType: mount
+      values:
+        - path
+      valueDescriptions:
+        path: The variable holds the path of the folder.
+
+  schemas:
+    - id: file-system-mount
+      appliesToKind: rc.file_system
+      appliesToInterfaceType: mount
+      description: Checks a folder Condition. It needs access, and a path from interface.path, env or both.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required:
+          - kind
+          - interface
+        properties:
+          kind:
+            const: rc.file_system
+          interface:
+            type: object
+            description: The folder that your workload needs. persistence is required when access is read_write.
+            required:
+              - type
+              - access
+            properties:
+              type:
+                const: mount
+              path:
+                type: string
+                pattern: '^/.'
+                description: The full path of the folder. It must start with / and cannot be only /.
+              access:
+                enum:
+                  - read_only
+                  - read_write
+                description: read_only or read_write.
+              persistence:
+                enum:
+                  - persistent
+                  - ephemeral
+                description: persistent or ephemeral.
+              sharing:
+                enum:
+                  - shared
+                  - exclusive
+                description: shared or exclusive.
+              minimumSize:
+                type: string
+                pattern: '^[1-9][0-9]*(Mi|Gi|Ti)$'
+                description: A whole number followed by Mi, Gi or Ti, such as 512Mi or 10Gi.
+            if:
+              required:
+                - access
+              properties:
+                access:
+                  const: read_write
+            then:
+              required:
+                - persistence
+            additionalProperties: false
+          env:
+            type: array
+            minItems: 1
+            uniqueItems: true
+            description: The environment variables that tell your workload where the folder is. List at least one, each one once.
+            items:
+              type: object
+              required:
+                - property
+                - name
+              properties:
+                property:
+                  enum:
+                    - path
+                  description: What the variable holds. Only path is allowed.
+                name:
+                  type: string
+                  pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
+                  description: The name of the variable, such as DATA_DIR. It uses letters, digits and underscores, and cannot start with a digit.
+                sensitive:
+                  type: boolean
+                  description: True when the value is a secret, so the platform can store and pass it securely.
+                required:
+                  type: boolean
+                  description: True when the workload cannot start without this variable.
+              additionalProperties: false
+        if:
+          not:
+            required:
+              - env
+        then:
+          properties:
+            interface:
+              required:
+                - path
+        additionalProperties: true

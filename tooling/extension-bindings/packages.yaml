@@ -39,7 +39,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   aws-sqs:
-    rootExtension: https://runtimeconditions.io/extensions/aws/sqs/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/aws/sqs/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
@@ -144,7 +144,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   file-system:
-    rootExtension: https://runtimeconditions.io/extensions/rc/file-system/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/file-system/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
@@ -179,20 +179,20 @@ packages:
         publicationMode: registry
         registryId: maven-central
   google-analytics:
-    rootExtension: https://runtimeconditions.io/extensions/google/analytics/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/google/analytics/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
         coordinate: runtimeconditions.io/x/google/analytics
         name: analytics
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/go
         languageVersion: 1.25.0
         publicationMode: github-tag
       python:
         coordinate: runtimeconditions-google-analytics
         name: runtimeconditions_google_analytics
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/python
         languageVersion: 3.12.10
         publicationMode: registry
@@ -200,7 +200,7 @@ packages:
       typescript:
         coordinate: '@runtimeconditions/google-analytics'
         name: '@runtimeconditions/google-analytics'
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/typescript
         languageVersion: 20.19.6
         publicationMode: registry
@@ -208,13 +208,13 @@ packages:
       java:
         coordinate: io.runtimeconditions.bindings:runtimeconditions-google-analytics
         name: io.runtimeconditions.bindings.googleanalytics
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/google-analytics/java
         languageVersion: 21.0.12
         publicationMode: registry
         registryId: maven-central
   gpu:
-    rootExtension: https://runtimeconditions.io/extensions/rc/gpu/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/gpu/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
@@ -249,7 +249,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   kafka-service:
-    rootExtension: https://runtimeconditions.io/extensions/kafka/service/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/kafka/service/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
@@ -354,7 +354,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   observability:
-    rootExtension: https://runtimeconditions.io/extensions/rc/observability/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/observability/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
@@ -389,7 +389,7 @@ packages:
         publicationMode: registry
         registryId: maven-central
   rabbitmq-service:
-    rootExtension: https://runtimeconditions.io/extensions/rabbitmq/service/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rabbitmq/service/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
@@ -424,20 +424,20 @@ packages:
         publicationMode: registry
         registryId: maven-central
   source-control:
-    rootExtension: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
         coordinate: runtimeconditions.io/x/rc/source
         name: source
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/go
         languageVersion: 1.25.0
         publicationMode: github-tag
       python:
         coordinate: runtimeconditions-source-control
         name: runtimeconditions_source_control
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/python
         languageVersion: 3.12.10
         publicationMode: registry
@@ -445,7 +445,7 @@ packages:
       typescript:
         coordinate: '@runtimeconditions/source-control'
         name: '@runtimeconditions/source-control'
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/typescript
         languageVersion: 20.19.6
         publicationMode: registry
@@ -453,7 +453,7 @@ packages:
       java:
         coordinate: io.runtimeconditions.bindings:runtimeconditions-source-control
         name: io.runtimeconditions.bindings.sourcecontrol
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/java
         languageVersion: 21.0.12
         publicationMode: registry
