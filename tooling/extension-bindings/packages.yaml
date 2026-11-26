@@ -424,20 +424,20 @@ packages:
         publicationMode: registry
         registryId: maven-central
   source-control:
-    rootExtension: https://runtimeconditions.io/extensions/rc/source-control/0.1.0/runtimeconditions.extension.yaml
+    rootExtension: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
     coreProfileSchemaVersion: 0.4.0
     languages:
       go:
         coordinate: runtimeconditions.io/x/rc/source
         name: source
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/go
         languageVersion: 1.25.0
         publicationMode: github-tag
       python:
         coordinate: runtimeconditions-source-control
         name: runtimeconditions_source_control
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/python
         languageVersion: 3.12.10
         publicationMode: registry
@@ -445,7 +445,7 @@ packages:
       typescript:
         coordinate: '@runtimeconditions/source-control'
         name: '@runtimeconditions/source-control'
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/typescript
         languageVersion: 20.19.6
         publicationMode: registry
@@ -453,7 +453,7 @@ packages:
       java:
         coordinate: io.runtimeconditions.bindings:runtimeconditions-source-control
         name: io.runtimeconditions.bindings.sourcecontrol
-        version: 0.1.0
+        version: 0.2.0
         sourceDirectory: bindings/source-control/java
         languageVersion: 21.0.12
         publicationMode: registry

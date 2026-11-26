@@ -1,0 +1,126 @@
+apiVersion: runtimeconditions.io/v1alpha1
+kind: RuntimeConditionsExtensionDefinition
+
+metadata:
+  id: https://runtimeconditions.io/extensions/rc/source-control/0.2.0/runtimeconditions.extension.yaml
+  version: 0.2.0
+  description: |-
+    Use this extension when your workload works with a Git repository while it runs, for example a build
+    tool that clones code, or a bot that pushes changes.
+
+    In a Condition, you say which Git host the workload uses, and what it does with the repository: clone,
+    fetch, pull or push. The platform then gives the workload access that allows exactly these actions.
+    Right now the only host is GitHub.
+spec:
+  kinds:
+    - name: rc.source_control
+      description: |-
+        Your workload needs access to a Git repository.
+
+        Example: a build tool that clones a repository on GitHub and fetches new changes.
+
+        ```condition
+        kind: rc.source_control
+        interface:
+          type: git
+          provider: github
+          access: [clone, fetch]
+        ```
+
+  interfaceTypes:
+    - name: git
+      targetKind: rc.source_control
+      description: |-
+        Access to a repository through Git.
+
+        Example: a bot that pulls the latest code, changes files and pushes the changes back to GitHub.
+
+        ```condition
+        kind: rc.source_control
+        interface:
+          type: git
+          provider: github
+          access: [pull, push]
+        ```
+
+  interfaceFields:
+    - name: provider
+      targetKind: rc.source_control
+      targetType: git
+      description: The service that hosts the repository. Right now this is always github.
+    - name: access
+      targetKind: rc.source_control
+      targetType: git
+      description: What your workload does with the repository. List every action that it needs.
+
+  fieldValues:
+    - field: interface.provider
+      targetKind: rc.source_control
+      targetType: git
+      values:
+        - github
+      valueDescriptions:
+        github: The repository is on GitHub.
+    - field: interface.access[]
+      targetKind: rc.source_control
+      targetType: git
+      values:
+        - clone
+        - fetch
+        - pull
+        - push
+      valueDescriptions:
+        clone: Make a copy of the repository.
+        fetch: Download new changes, without changing the local files.
+        pull: Download new changes and add them to the local files.
+        push: Send local changes back to the repository.
+
+  schemas:
+    - id: source-control-git
+      appliesToKind: rc.source_control
+      appliesToInterfaceType: git
+      description: Checks a Git Condition. It needs the host and at least one action.
+      schema:
+        $schema: https://json-schema.org/draft/2020-12/schema
+        type: object
+        required:
+          - kind
+          - interface
+        properties:
+          name:
+            type: string
+            minLength: 1
+            description: A name for this requirement. It cannot be empty.
+          optional:
+            type: boolean
+            description: Whether the workload can still run if the platform cannot give it this access.
+          kind:
+            const: rc.source_control
+            description: Always rc.source_control.
+          interface:
+            type: object
+            description: The Git host and the actions that your workload needs.
+            required:
+              - type
+              - provider
+              - access
+            properties:
+              type:
+                const: git
+                description: Always git.
+              provider:
+                const: github
+                description: Always github.
+              access:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                description: clone, fetch, pull or push. List at least one, each one once.
+                items:
+                  enum:
+                    - clone
+                    - fetch
+                    - pull
+                    - push
+            additionalProperties: false
+        additionalProperties: false
